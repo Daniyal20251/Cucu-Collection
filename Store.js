@@ -296,7 +296,7 @@ function filterProducts(term) {
   if (matched.length === 0) {
     itemContainer.innerHTML = `
       <div class="not-found" style="margin:140px 0 0 40px;">
-        <img src="Stores icons/not-found.png" alt="No Results">
+        <img src="Store icons/not-found.png" alt="No Results">
         <h3 style="color:#fe7004;">Oops! Item Not Found.</h3>
         <p>Try searching with a different keyword.</p>
       </div>`;
