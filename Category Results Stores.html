@@ -1,0 +1,188 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Category - cucucollection.shop</title>  
+  <link rel="stylesheet" href="Home.css">  
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f8f8f8;
+    }
+
+    /* 🔹 Modern Gradient Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(135deg, #ff6a00, #ff3d00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 65px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      border-bottom-left-radius: 35px;
+      border-bottom-right-radius: 35px;
+      z-index: 20;
+    }
+
+    /* 🔹 Back Button */
+    .back-btn {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .back-btn img {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* 🔹 Category Title */
+    header h4 {
+      color: #fff;
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      margin: 0;
+      text-align: center;
+      line-height: 65px;
+    }
+
+    /* 🔹 Container */
+    .container {
+      margin-top: 40px;
+      padding: 18px;
+    }
+
+    /* 🔹 Loading */
+    #loading {
+      text-align: center;
+      color: #666;
+      margin-top: 50px;
+      font-weight: 500;
+    }
+  </style>
+</head>  
+<body>  
+  
+  <!-- 🔹 Top Header -->  
+  <header>  
+    <div class="back-btn" onclick="history.back()">  
+      <img src="Store icons/Back.png" alt="Back">  
+    </div>  
+    <h4 id="categoryTitle">Category</h4>  
+  </header>  
+  
+  <!-- 🔹 Product Container -->  
+  <div class="container" id="itemContainer"></div>  
+  
+  <!-- 🔹 Loading -->  
+  <div class="loading" id="loading">Loading...</div>  
+  
+  <script>
+    // 🔥 HARDCODED STORE CONFIG - Sirf yeh change karo
+    const STORE_CONFIG = {
+      phone: "03352166725"  // Apna store phone number
+    };
+    
+    // 🔥 GET URL PARAMETER - Sirf category
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get("category");
+    
+    // Set title
+    document.getElementById("categoryTitle").textContent = category || "Category";
+    
+    // 🔥 LOAD PRODUCTS - HARDCODED STORE
+    async function loadCategoryProducts() {
+      const container = document.getElementById("itemContainer");
+      const loading = document.getElementById("loading");
+      
+      if (!category) {
+        loading.textContent = "⚠️ Missing category!";
+        return;
+      }
+      
+      try {
+        const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/products");
+        const allProducts = await res.json();
+        
+        // 🔥 FILTER: Category + HARDCODED Store Phone
+        const filtered = allProducts.filter(p => {
+          const matchCategory = p.category === category || p.title?.toLowerCase().includes(category.toLowerCase());
+          const matchStore = p.sellerPhone === STORE_CONFIG.phone;
+          return matchCategory && matchStore;
+        });
+        
+        loading.style.display = "none";
+        
+        if (filtered.length === 0) {
+          container.innerHTML = `
+       <div class="not-found" style="margin:135px 0 0 70px;">
+          <img src="Store icons/not-found.png" alt="No Results" style="width:180px; opacity:0.8;">
+          <h3>Oops! No Items Found</h3>
+          <p>Try another category.</p>
+        </div>`;
+          return;
+        }
+        
+        // Render products
+        filtered.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "item-card";
+          
+          const basePrice = parseInt(item.price?.replace(/[^\d]/g, "")) || 0;
+          const discount = parseInt(item.discount?.toString().replace(/[^\d]/g, "")) || 0;
+          const finalPrice = basePrice - discount;
+          
+          card.innerHTML = `
+            <img src="${item.images?.[0] || 'default.jpg'}" alt="${item.title}">
+            <h3>${item.title}</h3>
+            <p class="price-wrapper">
+              ${discount > 0 
+                ? `<span class="new-price">Rs. <strong>${finalPrice}</strong></span><br>
+                   <span class="old-price" style="text-decoration: line-through; color: gray;">Rs. ${basePrice}</span>`
+                : `<span class="new-price">Rs. <strong>${basePrice}</strong></span>`
+              }
+            </p>
+          `;
+          
+          card.addEventListener("click", () => {
+            const updatedItem = { ...item, finalPrice, basePrice };
+            localStorage.setItem("selectedItem", JSON.stringify(updatedItem));
+            window.location.href = "itemDetails.html";
+          });
+          
+          container.appendChild(card);
+        });
+        
+      } catch (err) {
+        console.error("Error:", err);
+        loading.textContent = "⚠️ Error loading products!";
+      }
+    }
+    
+    // Initialize
+    document.addEventListener("DOMContentLoaded", loadCategoryProducts);
+  </script>  
+</body>  
+</html>
