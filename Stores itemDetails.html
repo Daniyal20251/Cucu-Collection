@@ -56,6 +56,10 @@
   <div class="item-details">
     <div class="slider-container">
       <div class="slider" id="imageSlider"></div>
+    <!-- 🔥 FULLSCREEN ZOOM BUTTON -->
+<button class="fullscreen-zoom-btn" id="fullscreenZoomBtn" onclick="openFullscreenViewer()" title="View Fullscreen">
+  <img src="Store icons/Zoomarrow.png" alt="Fullscreen">
+</button>
     </div>
     <div class="dots" id="dotsContainer"></div>
     <p id="sty">_________________________________________________</p>
@@ -117,6 +121,22 @@
   <!-- 🔙 Home Bar -->
   <div class="bar">
     <a href="Store.html"><img src="Store icons/Home.png" width="23" height="22"></a>
+  </div>
+    <!-- 🔥 FULLSCREEN IMAGE VIEWER MODAL -->
+  <div class="fullscreen-viewer" id="fullscreenViewer">
+    <div class="fullscreen-overlay" onclick="closeFullscreenViewer()"></div>
+    <div class="fullscreen-content">
+      <button class="fullscreen-close" onclick="closeFullscreenViewer()">✕</button>
+      <div class="fullscreen-image-container" id="fullscreenImageContainer">
+        <img id="fullscreenImage" src="" alt="Fullscreen View">
+      </div>
+      <div class="fullscreen-controls">
+        <button class="fullscreen-prev" onclick="changeFullscreenImage(-1)">❮</button>
+        <span class="fullscreen-counter" id="fullscreenCounter">1 / 1</span>
+        <button class="fullscreen-next" onclick="changeFullscreenImage(1)">❯</button>
+      </div>
+      <div class="fullscreen-dots" id="fullscreenDots"></div>
+    </div>
   </div>
 
   <script src="Stores itemDetails.js"></script>

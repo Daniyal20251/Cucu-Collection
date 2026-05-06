@@ -358,6 +358,239 @@ document.addEventListener("DOMContentLoaded", async () => {
       window.location.href = "Store.html";
     });
   }
+  
+// ═══════════════════════════════════════════════════
+// 🔥 FULLSCREEN IMAGE VIEWER SYSTEM
+// ═══════════════════════════════════════════════════
+
+let fullscreenMediaList = [];
+let fullscreenCurrentIndex = 0;
+let isZoomed = false;
+let lastTapTime = 0;
+
+window.openFullscreenViewer = function() {
+  const viewer = document.getElementById("fullscreenViewer");
+  const img = document.getElementById("fullscreenImage");
+
+  // Get current media list from slider
+  const slides = document.querySelectorAll("#imageSlider .slide");
+  fullscreenMediaList = [];
+
+  slides.forEach(slide => {
+    if (slide.tagName === 'IMG') {
+      fullscreenMediaList.push({ type: 'image', src: slide.src });
+    } else if (slide.tagName === 'VIDEO') {
+      // Skip videos in fullscreen or handle separately
+      fullscreenMediaList.push({ type: 'video', src: slide.src });
+    }
+  });
+
+  if (fullscreenMediaList.length === 0) return;
+
+  fullscreenCurrentIndex = currentIndex || 0;
+  updateFullscreenImage();
+  updateFullscreenDots();
+
+  viewer.classList.add("active");
+  document.body.style.overflow = "hidden";
+
+  // Show zoom hint
+  showZoomHint();
+};
+
+window.closeFullscreenViewer = function() {
+  const viewer = document.getElementById("fullscreenViewer");
+  viewer.classList.remove("active");
+  document.body.style.overflow = "";
+  isZoomed = false;
+
+  const img = document.getElementById("fullscreenImage");
+  if (img) img.classList.remove("zoomed");
+};
+
+window.changeFullscreenImage = function(direction) {
+  const img = document.getElementById("fullscreenImage");
+
+  if (direction > 0) {
+    img.classList.add("slide-right");
+  } else {
+    img.classList.add("slide-left");
+  }
+
+  setTimeout(() => {
+    fullscreenCurrentIndex = (fullscreenCurrentIndex + direction + fullscreenMediaList.length) % fullscreenMediaList.length;
+    updateFullscreenImage();
+    updateFullscreenDots();
+    updateFullscreenCounter();
+
+    setTimeout(() => {
+      img.classList.remove("slide-right", "slide-left");
+    }, 50);
+  }, 150);
+};
+
+function updateFullscreenImage() {
+  const img = document.getElementById("fullscreenImage");
+  const media = fullscreenMediaList[fullscreenCurrentIndex];
+
+  if (media && media.type === 'image') {
+    img.src = media.src;
+    img.style.display = 'block';
+  }
+
+  // Reset zoom
+  isZoomed = false;
+  img.classList.remove("zoomed");
+  img.style.transform = "scale(1)";
+}
+
+function updateFullscreenDots() {
+  const dotsContainer = document.getElementById("fullscreenDots");
+  dotsContainer.innerHTML = "";
+
+  fullscreenMediaList.forEach((_, index) => {
+    const dot = document.createElement("span");
+    dot.className = "fullscreen-dot" + (index === fullscreenCurrentIndex ? " active" : "");
+    dot.addEventListener("click", () => {
+      fullscreenCurrentIndex = index;
+      updateFullscreenImage();
+      updateFullscreenDots();
+      updateFullscreenCounter();
+    });
+    dotsContainer.appendChild(dot);
+  });
+}
+
+function updateFullscreenCounter() {
+  const counter = document.getElementById("fullscreenCounter");
+  counter.textContent = `${fullscreenCurrentIndex + 1} / ${fullscreenMediaList.length}`;
+}
+
+function showZoomHint() {
+  // Remove existing hint
+  const existing = document.querySelector(".zoom-hint");
+  if (existing) existing.remove();
+
+  const hint = document.createElement("div");
+  hint.className = "zoom-hint";
+  hint.textContent = "👆 Double tap to zoom";
+  document.querySelector(".fullscreen-content").appendChild(hint);
+
+  setTimeout(() => hint.remove(), 3500);
+}
+
+// Double tap to zoom
+function setupFullscreenGestures() {
+  const img = document.getElementById("fullscreenImage");
+  const container = document.getElementById("fullscreenImageContainer");
+
+  if (!img || !container) return;
+
+  // Double tap zoom
+  img.addEventListener("click", function(e) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapTime;
+
+    if (tapLength < 300 && tapLength > 0) {
+      // Double tap detected
+      isZoomed = !isZoomed;
+
+      if (isZoomed) {
+        img.classList.add("zoomed");
+        // Center zoom on tap point
+        const rect = img.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        img.style.transformOrigin = `${x}% ${y}%`;
+      } else {
+        img.classList.remove("zoomed");
+        img.style.transformOrigin = "center center";
+      }
+    }
+
+    lastTapTime = currentTime;
+  });
+
+  // Swipe for next/prev in fullscreen
+  let fsStartX = 0;
+  let fsStartY = 0;
+
+  container.addEventListener("touchstart", function(e) {
+    fsStartX = e.touches[0].clientX;
+    fsStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  container.addEventListener("touchend", function(e) {
+    if (isZoomed) return; // Don't swipe when zoomed
+
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const diffX = fsStartX - endX;
+    const diffY = fsStartY - endY;
+
+    // Only horizontal swipes
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+      if (diffX > 0) {
+        changeFullscreenImage(1); // Swipe left = next
+      } else {
+        changeFullscreenImage(-1); // Swipe right = prev
+      }
+    }
+  }, { passive: true });
+
+  // Pinch zoom support
+  let initialDistance = 0;
+  let initialScale = 1;
+
+  container.addEventListener("touchstart", function(e) {
+    if (e.touches.length === 2) {
+      initialDistance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      initialScale = isZoomed ? 2 : 1;
+    }
+  }, { passive: true });
+
+  container.addEventListener("touchmove", function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const currentDistance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+
+      const scale = (currentDistance / initialDistance) * initialScale;
+
+      if (scale > 1.5) {
+        isZoomed = true;
+        img.style.transform = `scale(${Math.min(scale, 3)})`;
+      } else {
+        isZoomed = false;
+        img.style.transform = "scale(1)";
+      }
+    }
+  }, { passive: false });
+
+  container.addEventListener("touchend", function() {
+    if (isZoomed) {
+      img.classList.add("zoomed");
+    } else {
+      img.classList.remove("zoomed");
+      img.style.transform = "";
+    }
+  });
+}
+
+// Keyboard navigation for fullscreen
+window.addEventListener("keydown", function(e) {
+  const viewer = document.getElementById("fullscreenViewer");
+  if (!viewer.classList.contains("active")) return;
+
+  if (e.key === "Escape") closeFullscreenViewer();
+  if (e.key === "ArrowLeft") changeFullscreenImage(-1);
+  if (e.key === "ArrowRight") changeFullscreenImage(1);
+});
 
   // WhatsApp button - Hardcoded
   function setupWhatsAppButton() {
@@ -558,4 +791,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadSupplierInfo();
   setupWhatsAppButton();
   loadSimilarItems(item);
+  setupFullscreenGestures();
 });
