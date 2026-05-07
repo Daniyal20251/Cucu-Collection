@@ -4,7 +4,7 @@
   <meta charset="UTF-8">  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <title>Category - cucucollection.shop</title>  
-  <link rel="stylesheet" href="Home.css">  
+  <link rel="stylesheet" href="Store.css">  
   <style>
     body {
       margin: 0;
@@ -169,7 +169,7 @@
           card.addEventListener("click", () => {
             const updatedItem = { ...item, finalPrice, basePrice };
             localStorage.setItem("selectedItem", JSON.stringify(updatedItem));
-            window.location.href = "itemDetails.html";
+            window.location.href = "Stores itemDetails.html";
           });
           
           container.appendChild(card);
