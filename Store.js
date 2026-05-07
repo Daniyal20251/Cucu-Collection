@@ -62,92 +62,303 @@ async function incrementView(productId) {
   }
 }
 
-// Load store + products
-document.addEventListener("DOMContentLoaded", async () => {
-  const container = document.getElementById("itemContainer");
-  const sellerNameEl = document.getElementById("sellerName");
-  const sellerLogoEl = document.getElementById("sellerLogo");
-  const swiperWrapper = document.getElementById("swiperWrapper");
-  const adSlider = document.getElementById("adSlider");
+// ============================================================
+// 🔥 POWERFUL SEARCH ENGINE - Singular/Plural + Category Aware
+// ============================================================
 
-  showSkeleton();
-  container.innerHTML = "";
+const CATEGORY_MAP = {
+  "Men Fashion": ["T-Shirts", "Jeans", "Shoes", "Watches", "Caps"],
+  "Women Fashion": ["Dresses", "Handbags", "Jewelry Sets", "Sandals", "Makeup Kits"],
+  "Mobiles": ["Smartphones", "Keypad Phones", "Mobile Covers", "Chargers", "Earbuds"],
+  "Mobile Accessories": ["Power Banks", "Smart Watches", "Data Cables", "Earphones", "Stands & Holders"],
+  "Electronics": ["LED TV", "Bluetooth Speakers", "Headphones", "Cameras", "Smart Gadgets"],
+  "Beauty Products": ["Perfumes", "Lipsticks", "Face Creams", "Hair Oils", "Makeup Brushes"],
+  "Home & Living": ["Home Gadgets", "Cleaning Tools", "Kitchen Accessories", "Room Decor", "Small Appliances"],
+  "Watches": ["Smart Watches", "Digital Watches", "Analog Watches", "Couple Watches", "Fitness Bands"],
+  "Shoes": ["Sneakers", "Sandals", "Joggers", "Slippers", "Formal Shoes"],
+  "Bags": ["School Bags", "Laptop Bags", "Hand Bags", "Travel Bags", "Wallets"],
+  "Jewelry": ["Rings", "Necklaces", "Earrings", "Bracelets", "Anklets"],
+  "Baby Products": ["Baby Toys", "Baby Clothes"],
+  "Sports Items": ["Gym Gloves", "Water Bottles", "Dumbbells", "Football", "Yoga Mats"],
+  "Gaming": ["Gamepads", "Gaming Headsets", "PS5 / Xbox Accessories", "Mouse Pads", "Gaming Keyboards"],
+  "Computer Accessories": ["Keyboards", "Mouse", "USB Drives", "Headsets", "Laptop Stands"],
+  "Other": ["Other Things"]
+};
 
-  const storeName = STORE_CONFIG.name;
-  const sellerPhone = STORE_CONFIG.phone;
+const PLURAL_RULES = {
+  'watches': 'watch', 'clothes': 'cloth', 'shoes': 'shoe', 'glasses': 'glass',
+  'jeans': 'jean', 'pants': 'pant', 'shorts': 'short', 'sneakers': 'sneaker',
+  'sandals': 'sandal', 'slippers': 'slipper', 'joggers': 'jogger', 'caps': 'cap',
+  'dresses': 'dress', 'handbags': 'handbag', 'rings': 'ring', 'necklaces': 'necklace',
+  'earrings': 'earring', 'bracelets': 'bracelet', 'anklets': 'anklet', 'wallets': 'wallet',
+  'toys': 'toy', 'bottles': 'bottle', 'mats': 'mat', 'gloves': 'glove',
+  'speakers': 'speaker', 'headphones': 'headphone', 'earphones': 'earphone', 'earbuds': 'earbud',
+  'chargers': 'charger', 'cables': 'cable', 'covers': 'cover', 'banks': 'bank',
+  'keyboards': 'keyboard', 'pads': 'pad', 'drives': 'drive', 'stands': 'stand',
+  'gadgets': 'gadget', 'tools': 'tool', 'accessories': 'accessory', 'appliances': 'appliance',
+  'products': 'product', 'items': 'item', 'things': 'thing',
+  'watch': 'watches', 'cloth': 'clothes', 'shoe': 'shoes', 'glass': 'glasses',
+  'jean': 'jeans', 'pant': 'pants', 'short': 'shorts', 'sneaker': 'sneakers',
+  'sandal': 'sandals', 'slipper': 'slippers', 'jogger': 'joggers', 'cap': 'caps',
+  'dress': 'dresses', 'handbag': 'handbags', 'ring': 'rings', 'necklace': 'necklaces',
+  'earring': 'earrings', 'bracelet': 'bracelets', 'anklet': 'anklets', 'wallet': 'wallets',
+  'toy': 'toys', 'bottle': 'bottles', 'mat': 'mats', 'glove': 'gloves',
+  'speaker': 'speakers', 'headphone': 'headphones', 'earphone': 'earphones', 'earbud': 'earbuds',
+  'charger': 'chargers', 'cable': 'cables', 'cover': 'covers', 'bank': 'banks',
+  'keyboard': 'keyboards', 'pad': 'pads', 'drive': 'drives', 'stand': 'stands',
+  'gadget': 'gadgets', 'tool': 'tools', 'accessory': 'accessories', 'appliance': 'appliances',
+  'product': 'products', 'item': 'items', 'thing': 'things'
+};
 
-  sellerNameEl.textContent = storeName;
-  sellerLogoEl.src = STORE_CONFIG.logo;
+function normalizeWord(word) {
+  const lower = word.toLowerCase().trim();
+  if (PLURAL_RULES[lower]) return PLURAL_RULES[lower];
+  if (lower.endsWith('ies') && lower.length > 4) return lower.slice(0, -3) + 'y';
+  if (lower.endsWith('es') && (lower.endsWith('ches') || lower.endsWith('shes') || lower.endsWith('xes') || lower.endsWith('zes') || lower.endsWith('oes'))) return lower.slice(0, -2);
+  if (lower.endsWith('s') && !lower.endsWith('ss') && lower.length > 2) return lower.slice(0, -1);
+  return lower;
+}
 
-  try {
-    // Load Slider Ads
-    try {
-      const adsRes = await fetch(`${API_BASE}/admin/ads`);
-      const ads = await adsRes.json();
-      
-      const matchedAds = ads.filter(ad => {
-        const adName = getAdName(ad).toLowerCase();
-        return adName === storeName.toLowerCase();
-      });
+function getWordVariations(word) {
+  const normalized = normalizeWord(word);
+  const variations = new Set([normalized, word.toLowerCase().trim()]);
+  if (PLURAL_RULES[normalized] && PLURAL_RULES[normalized] !== normalized) variations.add(PLURAL_RULES[normalized]);
+  variations.add(normalized);
+  return Array.from(variations);
+}
 
-      if (matchedAds.length > 0) {
-        swiperWrapper.innerHTML = matchedAds
-          .map(ad => `<div class="swiper-slide"><img src="${ad.image}" alt="${getAdName(ad) || 'Ad'}" loading="lazy"></div>`)
-          .join("");
-        
-        if (swiperInstance) swiperInstance.destroy(true, true);
-        
-        swiperInstance = new Swiper(".mySwiper", {
-          loop: matchedAds.length > 1,
-          autoplay: { 
-            delay: 3000, 
-            disableOnInteraction: false 
-          },
-          pagination: { 
-            el: ".swiper-pagination", 
-            clickable: true,
-            dynamicBullets: matchedAds.length > 5
-          },
-          lazy: {
-            loadPrevNext: true,
-          }
-        });
-        
-        adSlider.style.display = "block";
-      } else {
-        adSlider.style.display = "none";
-      }
-    } catch (err) {
-      console.error("Failed to load ads:", err);
-      adSlider.style.display = "none";
+function buildSearchIndex(products) {
+  return products.map(product => {
+    const searchFields = [];
+    if (product.title) searchFields.push(...product.title.toLowerCase().split(/\s+/));
+    if (product.category) {
+      searchFields.push(product.category.toLowerCase());
+      searchFields.push(product.category.toLowerCase().replace(/[&\s]/g, ''));
+    }
+    if (product.subcategory) searchFields.push(product.subcategory.toLowerCase());
+    if (product.description) searchFields.push(...product.description.toLowerCase().split(/\s+/));
+    if (product.price) searchFields.push(String(product.price).replace(/[^\d]/g, ''));
+    return { product, tokens: [...new Set(searchFields.filter(w => w.length > 1))] };
+  });
+}
+
+function calculateRelevance(product, searchTerms, searchVariations) {
+  let score = 0;
+  const title = (product.title || '').toLowerCase();
+  const category = (product.category || '').toLowerCase();
+  const subcategory = (product.subcategory || '').toLowerCase();
+  const description = (product.description || '').toLowerCase();
+
+  searchTerms.forEach((term, idx) => {
+    const variations = searchVariations[idx];
+    const isFirstTerm = idx === 0;
+
+    variations.forEach(variation => {
+      if (title === variation) score += 100;
+      if (title.startsWith(variation + ' ')) score += 80;
+      if (new RegExp(`\\b${variation}\\b`, 'i').test(title)) score += 60;
+      if (title.includes(variation)) score += 40;
+      if (subcategory === variation) score += 70;
+      if (subcategory.includes(variation)) score += 50;
+      if (category === variation) score += 60;
+      if (category.includes(variation)) score += 40;
+      if (description.includes(variation)) score += 20;
+      if (isFirstTerm) score *= 1.5;
+    });
+  });
+
+  const allInTitle = searchTerms.every((term, i) => 
+    searchVariations[i].some(v => title.includes(v))
+  );
+  if (allInTitle) score += 50;
+
+  return score;
+}
+
+function findRelatedCategories(term) {
+  const related = new Set();
+  const normalizedTerm = normalizeWord(term);
+
+  Object.entries(CATEGORY_MAP).forEach(([cat, subs]) => {
+    const catNorm = cat.toLowerCase().replace(/[&\s]/g, '');
+    const catLower = cat.toLowerCase();
+
+    if (catLower.includes(normalizedTerm) || normalizedTerm.includes(catLower) || 
+        catNorm.includes(normalizedTerm) || normalizedTerm.includes(catNorm)) {
+      related.add(cat);
+      subs.forEach(sub => related.add(sub));
     }
 
-    // Load products
-    const res = await fetch(`${API_BASE}/products`);
-    let data = await res.json();
+    subs.forEach(sub => {
+      const subNorm = sub.toLowerCase().replace(/[&\s]/g, '');
+      const subLower = sub.toLowerCase();
+      if (subLower.includes(normalizedTerm) || normalizedTerm.includes(subLower) ||
+          subNorm.includes(normalizedTerm) || normalizedTerm.includes(subNorm)) {
+        related.add(cat);
+        related.add(sub);
+      }
+    });
+  });
 
-    allProducts = data.filter(item => item.sellerPhone === sellerPhone);
-    allProducts = shuffleArray(allProducts);
+  return Array.from(related);
+}
 
-    hideSkeleton();
+function levenshteinDistance(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
 
-    if (!allProducts.length) {
-      container.innerHTML = "<p style='text-align:center;color:#777;'>No items found for this store.</p>";
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      matrix[i][j] = b[i-1] === a[j-1] 
+        ? matrix[i-1][j-1] 
+        : Math.min(matrix[i-1][j-1] + 1, matrix[i][j-1] + 1, matrix[i-1][j] + 1);
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function fuzzySearch(products, terms) {
+  return products.filter(product => {
+    const text = `${product.title || ''} ${product.category || ''} ${product.subcategory || ''}`.toLowerCase();
+    return terms.some(term => {
+      if (term.length > 4) {
+        return text.split(/\s+/).some(word => levenshteinDistance(word, term) <= 2);
+      }
+      return text.includes(term);
+    });
+  });
+}
+
+function getSuggestions(term) {
+  const suggestions = [];
+  const normalized = normalizeWord(term);
+
+  Object.entries(CATEGORY_MAP).forEach(([cat, subs]) => {
+    if (cat.toLowerCase().includes(normalized) || normalized.includes(cat.toLowerCase())) {
+      suggestions.push(cat);
+    }
+    subs.forEach(sub => {
+      if (sub.toLowerCase().includes(normalized) || normalized.includes(sub.toLowerCase())) {
+        suggestions.push(sub);
+      }
+    });
+  });
+
+  return suggestions.slice(0, 5);
+}
+
+let searchIndex = [];
+
+function initSearchIndex() {
+  searchIndex = buildSearchIndex(allProducts);
+}
+
+// ============================================================
+// 🔥 HIDE/SHOW ADS & FLASH SALE HELPERS
+// ============================================================
+
+function hideAdsAndFlashSale() {
+  const adSlider = document.getElementById("adSlider");
+  const flashSaleBox = document.getElementById("flashSaleBox");
+  if (adSlider) adSlider.style.display = "none";
+  if (flashSaleBox) flashSaleBox.style.display = "none";
+}
+
+function showAdsAndFlashSale() {
+  const adSlider = document.getElementById("adSlider");
+  const flashSaleBox = document.getElementById("flashSaleBox");
+  if (adSlider) adSlider.style.display = "block";
+  if (flashSaleBox) flashSaleBox.style.display = "block";
+}
+
+// ============================================================
+// MAIN SEARCH FUNCTIONS
+// ============================================================
+
+function filterProducts(term) {
+  // 🔥 HIDE ADS & FLASH SALE ON SEARCH
+  hideAdsAndFlashSale();
+
+  if (!term || term.trim() === '') {
+    // 🔥 SHOW ADS & FLASH SALE BACK WHEN CLEAR
+    showAdsAndFlashSale();
+    renderProducts(allProducts);
+    return;
+  }
+
+  const rawTerms = term.toLowerCase().trim().split(/\s+/).filter(t => t.length > 1);
+  if (rawTerms.length === 0) {
+    showAdsAndFlashSale();
+    renderProducts(allProducts);
+    return;
+  }
+
+  const searchVariations = rawTerms.map(t => getWordVariations(t));
+  const relatedCategories = rawTerms.flatMap(t => findRelatedCategories(t));
+
+  console.log('Search:', rawTerms, 'Variations:', searchVariations, 'Related:', relatedCategories);
+
+  const scored = allProducts.map(product => {
+    let score = calculateRelevance(product, rawTerms, searchVariations);
+
+    relatedCategories.forEach(rel => {
+      const relLower = rel.toLowerCase();
+      if ((product.category || '').toLowerCase().includes(relLower)) score += 30;
+      if ((product.subcategory || '').toLowerCase().includes(relLower)) score += 40;
+      if ((product.title || '').toLowerCase().includes(relLower)) score += 25;
+    });
+
+    return { product, score };
+  });
+
+  const matched = scored
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.product);
+
+  if (matched.length === 0) {
+    const fuzzyMatched = fuzzySearch(allProducts, rawTerms);
+    if (fuzzyMatched.length > 0) {
+      renderProducts(fuzzyMatched);
       return;
     }
 
-    renderProducts(allProducts);
-    renderRecentSearches();
-    
-    // 🔥 FLASH SALE LOAD KARO
-    loadFlashSale();
-
-  } catch (err) {
-    console.error("⚠️ Error fetching store products:", err);
-    hideSkeleton();
-    container.innerHTML = "<p style='text-align:center;color:#777;'>⚠️ Error loading products!</p>";
+    itemContainer.innerHTML = `
+      <div class="not-found" style="margin:140px 0 0 40px;">
+        <img src="Store icons/not-found.png" alt="No Results">
+        <h3 style="color:#fe7004;">Oops! Item Not Found.</h3>
+        <p>Try searching with a different keyword.</p>
+        <p style="color:#999;font-size:12px;margin-top:10px;">
+          Searched for: "${term}"<br>
+          Try: ${getSuggestions(term).join(', ')}
+        </p>
+      </div>`;
+    return;
   }
-});
+
+  renderProducts(matched);
+}
+
+function searchItems() {
+  const term = searchInput.value.trim();
+  if (!term) return;
+
+  const termLower = term.toLowerCase().trim();
+  if (!recentSearches.includes(termLower)) {
+    recentSearches.unshift(termLower);
+    if (recentSearches.length > 6) recentSearches.pop();
+    localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
+  }
+
+  renderRecentSearches();
+  filterProducts(term);
+  searchPanel.classList.remove("active");
+}
+
+// ============================================================
+// RENDER & UI FUNCTIONS
+// ============================================================
 
 function renderProducts(list) {
   itemContainer.innerHTML = "";
@@ -187,15 +398,38 @@ function renderProducts(list) {
   });
 }
 
-// 🔥 LOAD FLASH SALE - SIRF STORE KE PRODUCTS
+function renderRecentSearches() {
+  recentList.innerHTML = "";
+
+  if (recentSearches.length === 0) {
+    recentList.innerHTML = "<li style='color:#999;'>No recent searches</li>";
+    return;
+  }
+
+  recentSearches.forEach(term => {
+    const li = document.createElement("li");
+    li.textContent = term;
+    li.onclick = () => fillAndSearch(term);
+    recentList.appendChild(li);
+  });
+}
+
+function fillAndSearch(term) {
+  searchInput.value = term;
+  searchItems();
+}
+
+// ============================================================
+// FLASH SALE
+// ============================================================
+
 async function loadFlashSale() {
   if (!flashSaleContainer || !flashSaleBox) return;
-  
+
   try {
     const res = await fetch(`${API_BASE}/products`);
     let products = await res.json();
 
-    // SIRF APNE STORE KE PRODUCTS
     products = products.filter(p => p.sellerPhone === STORE_CONFIG.phone);
 
     products = products.map(p => {
@@ -205,17 +439,15 @@ async function loadFlashSale() {
       return { ...p, discountPercentage, finalPrice: price - discount };
     });
 
-    products = products.filter(p => p.discountPercentage >= 50);
+    products = products.filter(p => p.discountPercentage >= 40);
     products = shuffleArray(products);
     flashSaleContainer.innerHTML = "";
 
     if (!products.length) {
-      // 🔥 AGAR PRODUCTS NAHO TO BOX HIDE KARO
       flashSaleBox.style.display = "none";
       return;
     }
 
-    // 🔥 PRODUCTS HAIN TO BOX SHOW KARO
     flashSaleBox.style.display = "block";
 
     products.forEach(product => {
@@ -242,23 +474,9 @@ async function loadFlashSale() {
   }
 }
 
-
-// Recent Searches
-function renderRecentSearches() {
-  recentList.innerHTML = "";
-
-  if (recentSearches.length === 0) {
-    recentList.innerHTML = "<li style='color:#999;'>No recent searches</li>";
-    return;
-  }
-
-  recentSearches.forEach(term => {
-    const li = document.createElement("li");
-    li.textContent = term;
-    li.onclick = () => fillAndSearch(term);
-    recentList.appendChild(li);
-  });
-}
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
 
 searchInput.addEventListener("focus", () => {
   renderRecentSearches();
@@ -271,59 +489,114 @@ document.addEventListener("click", (e) => {
   }
 });
 
-function searchItems() {
-  const term = searchInput.value.trim().toLowerCase();
-  if (!term) return;
-
-  if (!recentSearches.includes(term)) {
-    recentSearches.unshift(term);
-    if (recentSearches.length > 6) recentSearches.pop();
-    localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
+searchInput.addEventListener("input", () => {
+  if (searchInput.value.trim() === "") {
+    // 🔥 SHOW ADS & FLASH SALE BACK WHEN INPUT CLEAR
+    showAdsAndFlashSale();
+    renderProducts(allProducts);
   }
-
-  renderRecentSearches();
-  filterProducts(term);
-  searchPanel.classList.remove("active");
-  
-  document.getElementById("adSlider").style.display = "none";
-}
-
-function filterProducts(term) {
-  const matched = allProducts.filter(p =>
-    p.title.toLowerCase().includes(term)
-  );
-
-  if (matched.length === 0) {
-    itemContainer.innerHTML = `
-      <div class="not-found" style="margin:140px 0 0 40px;">
-        <img src="Store icons/not-found.png" alt="No Results">
-        <h3 style="color:#fe7004;">Oops! Item Not Found.</h3>
-        <p>Try searching with a different keyword.</p>
-      </div>`;
-    return;
-  }
-
-  renderProducts(matched);
-}
-
-function fillAndSearch(term) {
-  searchInput.value = term;
-  searchItems();
-}
+});
 
 clearBtn.addEventListener("click", () => {
   localStorage.removeItem("recentSearches");
   recentSearches = [];
   renderRecentSearches();
-  
+
   searchInput.value = "";
-  document.getElementById("adSlider").style.display = "block";
+  // 🔥 SHOW ADS & FLASH SALE BACK WHEN CLEAR HISTORY
+  showAdsAndFlashSale();
   renderProducts(allProducts);
 });
 
-searchInput.addEventListener("input", () => {
-  if (searchInput.value.trim() === "") {
-    document.getElementById("adSlider").style.display = "block";
+// ============================================================
+// DOMContentLoaded - MAIN LOAD
+// ============================================================
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("itemContainer");
+  const sellerNameEl = document.getElementById("sellerName");
+  const sellerLogoEl = document.getElementById("sellerLogo");
+  const swiperWrapper = document.getElementById("swiperWrapper");
+  const adSlider = document.getElementById("adSlider");
+
+  showSkeleton();
+  container.innerHTML = "";
+
+  const storeName = STORE_CONFIG.name;
+  const sellerPhone = STORE_CONFIG.phone;
+
+  sellerNameEl.textContent = storeName;
+  sellerLogoEl.src = STORE_CONFIG.logo;
+
+  try {
+    // Load Slider Ads
+    try {
+      const adsRes = await fetch(`${API_BASE}/admin/ads`);
+      const ads = await adsRes.json();
+
+      const matchedAds = ads.filter(ad => {
+        const adName = getAdName(ad).toLowerCase();
+        return adName === storeName.toLowerCase();
+      });
+
+      if (matchedAds.length > 0) {
+        swiperWrapper.innerHTML = matchedAds
+          .map(ad => `<div class="swiper-slide"><img src="${ad.image}" alt="${getAdName(ad) || 'Ad'}" loading="lazy"></div>`)
+          .join("");
+
+        if (swiperInstance) swiperInstance.destroy(true, true);
+
+        swiperInstance = new Swiper(".mySwiper", {
+          loop: matchedAds.length > 1,
+          autoplay: { 
+            delay: 3000, 
+            disableOnInteraction: false 
+          },
+          pagination: { 
+            el: ".swiper-pagination", 
+            clickable: true,
+            dynamicBullets: matchedAds.length > 5
+          },
+          lazy: {
+            loadPrevNext: true,
+          }
+        });
+
+        adSlider.style.display = "block";
+      } else {
+        adSlider.style.display = "none";
+      }
+    } catch (err) {
+      console.error("Failed to load ads:", err);
+      adSlider.style.display = "none";
+    }
+
+    // Load products
+    const res = await fetch(`${API_BASE}/products`);
+    let data = await res.json();
+
+    allProducts = data.filter(item => item.sellerPhone === sellerPhone);
+    allProducts = shuffleArray(allProducts);
+
+    // 🔥 INIT SEARCH INDEX
+    initSearchIndex();
+
+    hideSkeleton();
+
+    if (!allProducts.length) {
+      container.innerHTML = "<p style='text-align:center;color:#777;'>No items found for this store.</p>";
+      return;
+    }
+
     renderProducts(allProducts);
+    renderRecentSearches();
+
+    // 🔥 FLASH SALE LOAD KARO
+    loadFlashSale();
+
+  } catch (err) {
+    console.error("⚠️ Error fetching store products:", err);
+    hideSkeleton();
+    container.innerHTML = "<p style='text-align:center;color:#777;'>⚠️ Error loading products!</p>";
   }
 });
