@@ -1,27 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
-    <loc>https://delightpk.qzz.io/</loc>
-    <lastmod>2026-05-04</lastmod>
+    <loc>https://my.cucucollection.shop/</loc>
+    <lastmod>2026-05-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
   <url>
-    <loc>https://domain/Categories.html</loc>
-    <lastmod>2026-05-04</lastmod>
+    <loc>https://my.cucucollection.shop/index.html</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://my.cucucollection.shop/Categories%20Stores.html</loc>
+    <lastmod>2026-05-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://delightpk.qzz.io/cart.html</loc>
-    <lastmod>2026-05-04</lastmod>
+    <loc>https://my.cucucollection.shop/Cart%20Stores.html</loc>
+    <lastmod>2026-05-08</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.5</priority>
   </url>
+
   <url>
-    <loc>https://delightpk.qzz.io/profile.html</loc>
-    <lastmod>2026-05-04</lastmod>
+    <loc>https://my.cucucollection.shop/Profile%20Stores.html</loc>
+    <lastmod>2026-05-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
 </urlset>
