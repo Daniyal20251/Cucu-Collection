@@ -783,7 +783,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           discountAmount,
           discountPercentage: basePrice > 0 ? Math.round((discountAmount / basePrice) * 100) : 0
         }));
-        window.location.href = "itemDetails.html";
+        window.location.href = "Stores itemDetails.html";
       });
 
       container.appendChild(card);
