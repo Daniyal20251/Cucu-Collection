@@ -10,6 +10,17 @@ const STORE_CONFIG = {
   logo: "Store icons/Cucu.png"
 };
 
+// 🔥 AD NAMES ORDER ARRAY - Ads will be sorted in this exact order
+const AD_NAMES = [
+  "Cucu Collection",
+  "Cucu Collection1",
+  "Cucu Collection2", 
+  "Cucu Collection3",
+  "Cucu Collection4",
+  "Cucu Collection5",
+  "Cucu Collection6"
+];
+
 const searchInput = document.getElementById("searchInput");
 const searchPanel = document.getElementById("searchPanel");
 const recentList = document.getElementById("recentSearches");
@@ -39,19 +50,75 @@ function hideSkeleton() {
   if (itemContainer) itemContainer.style.display = "flex";
 }
 
+// 🔥 IMPROVED: Better ad name extraction with multiple fallback strategies
 function getAdName(ad) {
-  const possibleFields = ['name', 'title', 'text', 'label', 'caption', 'heading', 'description', 'adName', 'adTitle'];
+  // Priority fields to check
+  const possibleFields = ['name', 'title', 'text', 'label', 'caption', 'heading', 'description', 'adName', 'adTitle', 'storeName', 'store'];
+
   for (let field of possibleFields) {
-    if (ad[field] && typeof ad[field] === 'string') {
+    if (ad[field] && typeof ad[field] === 'string' && ad[field].trim()) {
       return ad[field].trim();
     }
   }
+
+  // If no standard field found, check all string fields
   for (let key in ad) {
-    if (typeof ad[key] === 'string' && ad[key].length < 100) {
+    if (typeof ad[key] === 'string' && ad[key].length < 100 && ad[key].trim()) {
       return ad[key].trim();
     }
   }
   return "";
+}
+
+// 🔥 NEW: Flexible matching function that handles variations
+function adMatchesStore(ad, storeName) {
+  const adName = getAdName(ad).toLowerCase();
+  const storeNameLower = storeName.toLowerCase();
+
+  // Exact match
+  if (adName === storeNameLower) return true;
+
+  // Contains match (e.g., "Cucu Collection Store" matches "Cucu Collection")
+  if (adName.includes(storeNameLower)) return true;
+  if (storeNameLower.includes(adName) && adName.length > 3) return true;
+
+  // Word-by-word match (e.g., "Cucu" matches "Cucu Collection")
+  const storeWords = storeNameLower.split(/\s+/);
+  const adWords = adName.split(/\s+/);
+
+  for (let word of storeWords) {
+    if (word.length > 2 && adWords.some(aw => aw.includes(word) || word.includes(aw))) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// 🔥 NEW: Sort ads according to AD_NAMES order
+function sortAdsByOrder(ads, adNames) {
+  const sorted = [];
+
+  // Create a map for quick lookup (case-insensitive)
+  const adMap = new Map();
+  ads.forEach(ad => {
+    const name = getAdName(ad);
+    adMap.set(name.toLowerCase(), ad);
+  });
+
+  // Add ads in the order specified by AD_NAMES
+  adNames.forEach(name => {
+    const lowerName = name.toLowerCase();
+    if (adMap.has(lowerName)) {
+      sorted.push(adMap.get(lowerName));
+      adMap.delete(lowerName); // Remove to avoid duplicates
+    }
+  });
+
+  // Add any remaining ads that weren't in AD_NAMES (at the end)
+  adMap.forEach(ad => sorted.push(ad));
+
+  return sorted;
 }
 
 async function incrementView(productId) {
@@ -475,6 +542,66 @@ async function loadFlashSale() {
 }
 
 // ============================================================
+// 🔥 ADS LOADING WITH PROPER ORDERING
+// ============================================================
+
+async function loadAds() {
+  const swiperWrapper = document.getElementById("swiperWrapper");
+  const adSlider = document.getElementById("adSlider");
+
+  if (!swiperWrapper || !adSlider) return;
+
+  try {
+    const adsRes = await fetch(`${API_BASE}/admin/ads`);
+    const ads = await adsRes.json();
+
+    console.log("📢 All ads from API:", ads);
+    console.log("🏪 Store name:", STORE_CONFIG.name);
+
+    // Filter ads for this store
+    const matchedAds = ads.filter(ad => adMatchesStore(ad, STORE_CONFIG.name));
+
+    console.log("✅ Matched ads before sorting:", matchedAds);
+
+    // 🔥 SORT ADS according to AD_NAMES order
+    const sortedAds = sortAdsByOrder(matchedAds, AD_NAMES);
+
+    console.log("📊 Sorted ads:", sortedAds);
+
+    if (sortedAds.length > 0) {
+      swiperWrapper.innerHTML = sortedAds
+        .map(ad => `<div class="swiper-slide"><img src="${ad.image}" alt="${getAdName(ad) || 'Ad'}" loading="lazy"></div>`)
+        .join("");
+
+      if (swiperInstance) swiperInstance.destroy(true, true);
+
+      swiperInstance = new Swiper(".mySwiper", {
+        loop: sortedAds.length > 1,
+        autoplay: { 
+          delay: 3000, 
+          disableOnInteraction: false 
+        },
+        pagination: { 
+          el: ".swiper-pagination", 
+          clickable: true,
+          dynamicBullets: sortedAds.length > 5
+        },
+        lazy: {
+          loadPrevNext: true,
+        }
+      });
+
+      adSlider.style.display = "block";
+    } else {
+      adSlider.style.display = "none";
+    }
+  } catch (err) {
+    console.error("Failed to load ads:", err);
+    adSlider.style.display = "none";
+  }
+}
+
+// ============================================================
 // EVENT LISTENERS
 // ============================================================
 
@@ -516,8 +643,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("itemContainer");
   const sellerNameEl = document.getElementById("sellerName");
   const sellerLogoEl = document.getElementById("sellerLogo");
-  const swiperWrapper = document.getElementById("swiperWrapper");
-  const adSlider = document.getElementById("adSlider");
 
   showSkeleton();
   container.innerHTML = "";
@@ -529,47 +654,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   sellerLogoEl.src = STORE_CONFIG.logo;
 
   try {
-    // Load Slider Ads
-    try {
-      const adsRes = await fetch(`${API_BASE}/admin/ads`);
-      const ads = await adsRes.json();
-
-      const matchedAds = ads.filter(ad => {
-        const adName = getAdName(ad).toLowerCase();
-        return adName === storeName.toLowerCase();
-      });
-
-      if (matchedAds.length > 0) {
-        swiperWrapper.innerHTML = matchedAds
-          .map(ad => `<div class="swiper-slide"><img src="${ad.image}" alt="${getAdName(ad) || 'Ad'}" loading="lazy"></div>`)
-          .join("");
-
-        if (swiperInstance) swiperInstance.destroy(true, true);
-
-        swiperInstance = new Swiper(".mySwiper", {
-          loop: matchedAds.length > 1,
-          autoplay: { 
-            delay: 3000, 
-            disableOnInteraction: false 
-          },
-          pagination: { 
-            el: ".swiper-pagination", 
-            clickable: true,
-            dynamicBullets: matchedAds.length > 5
-          },
-          lazy: {
-            loadPrevNext: true,
-          }
-        });
-
-        adSlider.style.display = "block";
-      } else {
-        adSlider.style.display = "none";
-      }
-    } catch (err) {
-      console.error("Failed to load ads:", err);
-      adSlider.style.display = "none";
-    }
+    // 🔥 Load Slider Ads with proper ordering
+    await loadAds();
 
     // Load products
     const res = await fetch(`${API_BASE}/products`);
