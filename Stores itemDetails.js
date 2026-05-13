@@ -5,6 +5,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const productFromUrl = urlParams.get('product');
 
   let item = null;
+  
+    // 🔥 Increment View Count Function (also for direct link opens)
+  async function incrementView(productId) {
+    try {
+      await fetch(`https://delight-backend--araindaniyalo2.replit.app/products/${productId}/view`, { method: "POST" });
+    } catch (err) {
+      console.error("View count error:", err);
+    }
+  }
 
   if (productFromUrl) {
     // 🔥 URL se product name mila → Backend se fetch karo
@@ -77,6 +86,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔥 IMPORTANT: Save fetched item to localStorage for future use
   localStorage.setItem("selectedItem", JSON.stringify(item));
+  
+    // 🔥 FIX: Increment view count when opened via direct link
+  if (productFromUrl && item.id) {
+    incrementView(item.id);
+  }
 
   // State
   let currentIndex = 0;
