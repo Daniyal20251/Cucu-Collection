@@ -531,7 +531,7 @@ async function loadFlashSale() {
       `;
       card.addEventListener("click", () => {
         localStorage.setItem("selectedItem", JSON.stringify(product));
-        window.location.href = "itemDetails.html";
+        window.location.href = "Stores itemDetails.html";
       });
       flashSaleContainer.appendChild(card);
     });
