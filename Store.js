@@ -12,13 +12,13 @@ const STORE_CONFIG = {
 
 // 🔥 AD NAMES ORDER ARRAY - Ads will be sorted in this exact order
 const AD_NAMES = [
-  "Cucu Collection",
-  "Cucu Collection1",
-  "Cucu Collection2", 
-  "Cucu Collection3",
-  "Cucu Collection4",
-  "Cucu Collection5",
-  "Cucu Collection6"
+  "Cucu-collection",
+  "Cucu-collection1",
+  "Cucu-collection2", 
+  "Cucu-collection3",
+  "Cucu-collection4",
+  "Cucu-collection5",
+  "Cucu-collection6"
 ];
 
 const searchInput = document.getElementById("searchInput");
