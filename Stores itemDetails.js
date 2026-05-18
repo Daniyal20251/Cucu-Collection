@@ -684,29 +684,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (e.key === "ArrowRight") changeFullscreenImage(1);
   });
 
-  // ═══════════════════════════════════════════════════
-  // WHATSAPP CHAT BUTTON
-  // ═══════════════════════════════════════════════════
-  function setupWhatsAppButton() {
-    const chatAnchor = document.querySelector(".whatsapp-btn a");
-    if (!chatAnchor) return;
-    if (item.sellerPhone) {
-      const digits = item.sellerPhone.toString().replace(/\D/g, "");
-      let waPhone = digits;
-      if (digits.length === 10 && digits.startsWith("3")) {
-        waPhone = "92" + digits;
-      } else if (digits.length === 11 && digits.startsWith("0")) {
-        waPhone = "92" + digits.slice(1);
-      } else if (digits.length === 12 && digits.startsWith("92")) {
-        waPhone = digits;
-      } else if (digits.length === 13 && digits.startsWith("091")) {
-        waPhone = digits;
-      }
-      chatAnchor.href = `https://wa.me/${waPhone}`;
-    } else {
-      chatAnchor.href = "https://wa.me/923133196595";
+// ═══════════════════════════════════════════════════
+// WHATSAPP CHAT BUTTON
+// ═══════════════════════════════════════════════════
+function setupWhatsAppButton() {
+  const chatAnchor = document.querySelector(".whatsapp-btn a");
+  if (!chatAnchor) return;
+  if (item.sellerPhone) {
+    const digits = item.sellerPhone.toString().replace(/\D/g, "");
+    let waPhone = digits;
+    if (digits.length === 10 && digits.startsWith("3")) {
+      waPhone = "92" + digits;
+    } else if (digits.length === 11 && digits.startsWith("0")) {
+      waPhone = "92" + digits.slice(1);
+    } else if (digits.length === 12 && digits.startsWith("92")) {
+      waPhone = digits;
+    } else if (digits.length === 13 && digits.startsWith("091")) {
+      waPhone = digits;
     }
+
+    // 🔥 Product details ke saath WhatsApp message banao
+    const currentUrl = window.location.href.split('?')[0];
+    const productLink = `${currentUrl}?product=${encodeURIComponent(item.title)}`;
+    
+    const { finalPrice, originalPrice, discountPercentage } = getPriceData(item);
+    
+    let message = `*${item.title || 'Product'}*\n`;
+    message += `💰 Price: Rs. ${finalPrice}`;
+    if (originalPrice > finalPrice) {
+      message += ` (was Rs. ${originalPrice})`;
+      if (discountPercentage > 0) message += ` - ${discountPercentage}% OFF`;
+    }
+    message += `\n\n🔗 ${productLink}`;
+    
+    // WhatsApp link with pre-filled message
+    chatAnchor.href = `https://wa.me/${waPhone}?text=${encodeURIComponent(message)}`;
   }
+}
+
 
   // ═══════════════════════════════════════════════════
   // ✅ SIMILAR ITEMS — SAME STORE ONLY
