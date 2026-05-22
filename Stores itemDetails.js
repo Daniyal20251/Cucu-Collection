@@ -447,7 +447,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const btn = supplierContainer.querySelector("#viewSupplierBtn");
     if (btn) {
       btn.addEventListener("click", () => {
-        window.location.href = `Store.html?phone=${encodeURIComponent(item.sellerPhone)}`;
+        window.location.href = `index.html`;
       });
     }
   }
