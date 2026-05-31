@@ -19,13 +19,25 @@
 <button class="buy-all-btn" id="buyBtn" onclick="goToOrderPage()">Buy All</button>
 <button class="continue-btn" id="continueBtn" style="display:none;" onclick="goHome()">Continue Shopping</button>
 
-  <!-- 🔹 Bottom Navigation Bar - SIMPLE LINKS -->
-  <div class="bar">
-    <a href="index.html" id="homeLink"><img src="Store icons/Home.png" width="25" height="25"><br>Home</a>
-    <a href="Categories Stores.html" id="categoriesLink"><img src="Store icons/Categories.png" width="25" height="25"><br>Categories</a>
-    <a href="Cart Stores.html" id="cartLink" class="active"><img src="Store icons/Cart.png" width="25" height="25"><br>Cart</a>
-    <a href="Profile Stores.html" id="profileLink"><img src="Store icons/Profile.png" width="25" height="25"><br>Profile</a>
-  </div>
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bar">
+    <a href="index.html" id="homeLink">
+      <img src="Store icons/Home.png" width="22" height="22" alt="Home">
+      <span>Home</span>
+    </a>
+    <a href="Categories Stores.html" id="categoriesLink">
+      <img src="Store icons/Categories.png" width="22" height="22" alt="Categories">
+      <span>Categories</span>
+    </a>
+    <a href="Cart Stores.html"  class="active" id="cartLink">
+      <img src="Store icons/Cart.png" width="22" height="22" alt="Cart">
+      <span>Cart</span>
+    </a>
+    <a href="Profile Stores.html" id="profileLink">
+      <img src="Store icons/Profile.png" width="22" height="22" alt="Profile">
+      <span>Profile</span>
+    </a>
+  </nav>
   
 <script>
 let cart = JSON.parse(localStorage.getItem('cart')) || [];

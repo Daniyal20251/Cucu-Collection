@@ -3,104 +3,207 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="Categories.css">
-<title>Category - cucucollection.shop</title>
+<title>Categories - DelightPK</title>
+<style>
+  /* ── Header fix ── */
+  .main-header {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    width: 100%;
+  }
+
+  /* ── Sidebar item with image+label ── */
+  .sidebar-item span {
+    display: block;
+    font-size: 9.5px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: inherit;
+  }
+
+  /* ── Category section heading ── */
+  .content h2 {
+    font-size: 14px;
+  }
+
+  /* ── Sub item badge on hover ── */
+  .sub-item {
+    position: relative;
+    overflow: hidden;
+  }
+  .sub-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,107,0,0.07), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: 12px;
+  }
+  .sub-item:hover::after { opacity: 1; }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-light);
+  }
+  .empty-state svg {
+    width: 64px; height: 64px;
+    opacity: 0.3;
+    margin-bottom: 12px;
+  }
+  .empty-state p {
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ── Page fade-in ── */
+  .content { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ── Sub-grid stagger ── */
+  .sub-item {
+    animation: popIn 0.35s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.88); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* ── Bottom bar fix for centered layout ── */
+  .bar {
+    max-width: 440px;
+  }
+
+  /* ── Active sidebar indicator dot ── */
+  .sidebar-item.active::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 24px;
+    background: var(--primary);
+    border-radius: 3px 0 0 3px;
+  }
+  .sidebar-item { position: relative; }
+
+
+</style>
 </head>
 <body>
-  
-<!-- 🔥 HARDCODED HEADER -->
-<header>
-  <h1 id="storeName"></h1>
-  <div class="logo1">
-    <img id="storeLogo" src="Store icons/Cucu.png" width="50" height="50" alt="logo">
+
+<!-- HEADER -->
+<header class="main-header">
+  <div class="header-left">
+    <div class="logo-wrap">
+      <img id="storeLogo" src="Store icons/Cucu.png" alt="logo">
+    </div>
+    <div class="brand-name" id="storeName">DelightPK</div>
   </div>
+
 </header>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-item active" data-cat="Men Fashion">
     <img src="Category icons/men.png" alt="Men Fashion">
-    Men Fashion
+    <span>Men Fashion</span>
   </div>
   <div class="sidebar-item" data-cat="Women Fashion">
     <img src="Category icons/women.png" alt="Women Fashion">
-    Women Fashion
+    <span>Women</span>
   </div>
   <div class="sidebar-item" data-cat="Mobiles">
     <img src="Category icons/mobile.png" alt="Mobiles">
-    Mobiles
+    <span>Mobiles</span>
   </div>
   <div class="sidebar-item" data-cat="Mobile Accessories">
     <img src="Category icons/mobile Accessories.png" alt="Mobile Accessories">
-    Accessories
+    <span>Accessories</span>
   </div>
   <div class="sidebar-item" data-cat="Electronics">
     <img src="Category icons/electronics.png" alt="Electronics">
-    Electronics
+    <span>Electronics</span>
   </div>
   <div class="sidebar-item" data-cat="Beauty Products">
     <img src="Category icons/beauty category.png" alt="Beauty">
-    Beauty
+    <span>Beauty</span>
   </div>
   <div class="sidebar-item" data-cat="Home & Living">
     <img src="Category icons/home category.png" alt="Home">
-    Home & Living
+    <span>Home</span>
   </div>
   <div class="sidebar-item" data-cat="Watches">
     <img src="Category icons/clock.png" alt="Watches">
-    Watches
+    <span>Watches</span>
   </div>
   <div class="sidebar-item" data-cat="Shoes">
     <img src="Category icons/shoes category.png" alt="Shoes">
-    Shoes
+    <span>Shoes</span>
   </div>
   <div class="sidebar-item" data-cat="Bags">
     <img src="Category icons/bag.png" alt="Bags">
-    Bags
+    <span>Bags</span>
   </div>
   <div class="sidebar-item" data-cat="Jewelry">
     <img src="Category icons/jewelry category.png" alt="Jewelry">
-    Jewelry
+    <span>Jewelry</span>
   </div>
   <div class="sidebar-item" data-cat="Baby Products">
     <img src="Category icons/baby.png" alt="Baby">
-    Baby
+    <span>Baby</span>
   </div>
   <div class="sidebar-item" data-cat="Sports Items">
     <img src="Category icons/sports.png" alt="Sports">
-    Sports
+    <span>Sports</span>
   </div>
   <div class="sidebar-item" data-cat="Gaming">
     <img src="Category icons/game.png" alt="Gaming">
-    Gaming
+    <span>Gaming</span>
   </div>
   <div class="sidebar-item" data-cat="Computer Accessories">
     <img src="Category icons/laptop.png" alt="Computer">
-    Computer
+    <span>Computer</span>
   </div>
   <div class="sidebar-item" data-cat="Other">
     <img src="Category icons/other.png" alt="Other">
-    Other
+    <span>Other</span>
   </div>
 </div>
 
-<!-- Content -->
+<!-- CONTENT -->
 <div class="content" id="contentArea"></div>
 
-  <!-- 🔹 Bottom Navigation Bar - SIMPLE LINKS -->
-  <div class="bar">
-    <a href="index.html" id="homeLink"><img src="Store icons/Home.png" width="25" height="25"><br>Home</a>
-    <a href="Categories Stores.html" id="categoriesLink" class="active"><img src="Store icons/Categories.png" width="25" height="25"><br>Categories</a>
-    <a href="Cart Stores.html" id="cartLink"><img src="Store icons/Cart.png" width="25" height="25"><br>Cart</a>
-    <a href="Profile Stores.html" id="profileLink"><img src="Store icons/Profile.png" width="25" height="25"><br>Profile</a>
-  </div>
+<!-- BOTTOM NAV -->
+<div class="bar">
+  <a href="index.html">
+    <img src="Store icons/Home.png" width="22" height="22" alt="Home">
+    <span>Home</span>
+  </a>
+  <a href="Categories Stores.html" class="active">
+    <img src="Store icons/Categories.png" width="22" height="22" alt="Categories">
+    <span>Categories</span>
+  </a>
+  <a href="Cart Stores.html">
+    <img src="Store icons/Cart.png" width="22" height="22" alt="Cart">
+    <span>Cart</span>
+  </a>
+  <a href="Profile Stores.html">
+    <img src="Store icons/Profile.png" width="22" height="22" alt="Profile">
+    <span>Profile</span>
+  </a>
+</div>
 
 <script>
-// 🔥 HARDCODED STORE CONFIG - Sirf yeh change karo
 const STORE_CONFIG = {
-  phone: "03352166725",        // Apna store phone number
-  name: "Cucu Collection",          // Apna store name
-  logo: "Store icons/Cucu.png" // Apna logo path
+  phone: "03352166725",
+  name: "Cucu-collection",
+  logo: "Store icons/Cucu.png"
 };
 
 const categories = {
@@ -196,35 +299,31 @@ const subcategoryIcons = {
   "Other Things": "Category icons/other.png"
 };
 
-// 🔥 HARDCODED - URL params nahi chahiye
 const sellerPhone = STORE_CONFIG.phone;
 
 function loadStoreInfo() {
-  // Direct hardcoded values
   document.getElementById("storeName").textContent = STORE_CONFIG.name;
   document.getElementById("storeLogo").src = STORE_CONFIG.logo;
 }
 
 function showSubcategories(catName) {
   const area = document.getElementById('contentArea');
+  const subs = categories[catName] || [];
   area.innerHTML = `
     <h2>${catName}</h2>
     <div class="sub-grid">
-      ${categories[catName]
-        .map(sub => `
-          <div class="sub-item" data-value="${catName} - ${sub}">
-            <img src="${subcategoryIcons[sub] || 'Category icons/default.png'}" alt="${sub}">
-            <span>${sub}</span>
-          </div>
-        `)
-        .join("")}
+      ${subs.map((sub, i) => `
+        <div class="sub-item" data-value="${catName} - ${sub}" style="animation-delay:${i * 40}ms">
+          <img src="${subcategoryIcons[sub] || 'Category icons/default.png'}" alt="${sub}" onerror="this.src='Category icons/other.png'">
+          <span>${sub}</span>
+        </div>
+      `).join("")}
     </div>
   `;
 
   document.querySelectorAll('.sub-item').forEach(el => {
     el.addEventListener('click', () => {
       const selectedCategory = el.dataset.value;
-      // 🔥 SIMPLE LINK - phone parameter nahi
       window.location.href = `Category Results Stores.html?category=${encodeURIComponent(selectedCategory)}`;
     });
   });
@@ -235,6 +334,8 @@ document.querySelectorAll('.sidebar-item').forEach(btn => {
     document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
     btn.classList.add('active');
     showSubcategories(btn.dataset.cat);
+    // Scroll sidebar item into view
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 });
 

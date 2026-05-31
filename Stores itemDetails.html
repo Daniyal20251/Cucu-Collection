@@ -71,6 +71,13 @@
     </div>
     <div class="dots" id="dotsContainer"></div>
 
+    <!-- ⭐ RATING HEADER -->
+    <div class="rating-header" id="ratingHeader">
+      <span class="rating-stars" id="ratingStars"></span>
+      <span class="rating-score" id="ratingScore"></span>
+      <span class="rating-count" id="ratingCount"></span>
+    </div>
+
     <div class="price-section">
       <p id="price"></p>
     </div>
@@ -106,6 +113,35 @@
       </div>
     </div>
 
+    <!-- ⭐ RATINGS & REVIEWS SECTION -->
+    <div class="reviews-section" id="reviewsSection">
+      <div class="reviews-section-header">
+        <h3>Ratings &amp; Reviews <span id="reviewsTotalCount"></span></h3>
+        <a href="javascript:void(0)" class="view-all-link" onclick="showAllReviews()">View All</a>
+      </div>
+
+      <div class="rating-summary-daraz" id="ratingSummaryDaraz">
+        <div class="rating-left">
+          <div class="rating-big-number" id="ratingBigNumber">0.0</div>
+          <div class="rating-big-stars" id="ratingBigStars"></div>
+          <div class="rating-total-text" id="ratingTotalText">0 Ratings</div>
+        </div>
+        <div class="rating-right">
+          <div class="rating-bars-daraz" id="ratingBarsDaraz"></div>
+        </div>
+      </div>
+
+      <button class="write-review-btn-daraz" onclick="openReviewModal()">
+        <span>⭐</span> Write a Review
+      </button>
+
+      <div class="reviews-list-daraz" id="reviewsListDaraz"></div>
+
+      <button class="load-more-reviews" id="loadMoreReviews" onclick="loadMoreReviews()" style="display:none;">
+        Load More Reviews
+      </button>
+    </div>
+
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   </div>
@@ -118,7 +154,7 @@
   <!-- 🛒 Buttons -->
   <div class="back">
     <div class="whatsapp-btn">
-      <a href="https://wa.me/923133196595" id="whatsappLink">
+      <a href="#" id="chatLink" onclick="event.preventDefault(); openDelightChat();">
         <button type="button">Chat</button>
       </a>
     </div>
@@ -144,6 +180,63 @@
         <button class="fullscreen-next" onclick="changeFullscreenImage(1)" aria-label="Next image">❯</button>
       </div>
       <div class="fullscreen-dots" id="fullscreenDots"></div>
+    </div>
+  </div>
+
+  <!-- ⭐ REVIEW MODAL -->
+  <div class="review-modal-daraz" id="reviewModalDaraz" style="display:none;">
+    <div class="review-modal-overlay" onclick="closeReviewModal()"></div>
+    <div class="review-modal-sheet">
+      <div class="review-modal-header">
+        <h3>Write a Review</h3>
+        <button class="review-modal-close" onclick="closeReviewModal()">✕</button>
+      </div>
+
+      <div class="review-product-info">
+        <img src="" alt="Product" id="reviewProductImg">
+        <span id="reviewProductTitle"></span>
+      </div>
+
+      <div class="review-star-select">
+        <p>How would you rate this product?</p>
+        <div class="star-rating-input-daraz" id="starRatingInputDaraz">
+          <span class="star-big" data-rating="1">☆</span>
+          <span class="star-big" data-rating="2">☆</span>
+          <span class="star-big" data-rating="3">☆</span>
+          <span class="star-big" data-rating="4">☆</span>
+          <span class="star-big" data-rating="5">☆</span>
+        </div>
+        <div class="rating-text" id="ratingText">Tap a star to rate</div>
+      </div>
+
+      <div class="review-form-fields">
+        <textarea id="reviewMessageDaraz" placeholder="Share your experience with this product..." rows="4"></textarea>
+
+        <div class="review-photo-upload">
+          <label>Add Photos (optional)</label>
+          <div class="photo-upload-area" onclick="document.getElementById('reviewPhotoInput').click()">
+            <span>📷</span>
+            <span>Tap to add photos</span>
+          </div>
+          <input type="file" id="reviewPhotoInput" accept="image/*" multiple style="display:none;" onchange="handleReviewPhotos(this)">
+          <div class="review-photo-preview" id="reviewPhotoPreview"></div>
+        </div>
+      </div>
+
+      <button class="submit-review-daraz" id="submitReviewBtn" onclick="submitReviewDaraz()">Submit Review</button>
+    </div>
+  </div>
+
+  <!-- ALL REVIEWS MODAL -->
+  <div class="all-reviews-modal" id="allReviewsModal" style="display:none;">
+    <div class="all-reviews-overlay" onclick="closeAllReviews()"></div>
+    <div class="all-reviews-sheet">
+      <div class="all-reviews-header">
+        <button class="all-reviews-back" onclick="closeAllReviews()">←</button>
+        <h3>All Reviews</h3>
+        <span></span>
+      </div>
+      <div class="all-reviews-content" id="allReviewsContent"></div>
     </div>
   </div>
 

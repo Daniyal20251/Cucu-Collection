@@ -86,17 +86,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔥 IMPORTANT: Save fetched item to localStorage for future use
   localStorage.setItem("selectedItem", JSON.stringify(item));
-  
-    // 🔥 FIX: Increment view count when opened via direct link
+
+  // 🔥 FIX: Increment view count when opened via direct link
   if (productFromUrl && item.id) {
     incrementView(item.id);
   }
+
 
   // State
   let currentIndex = 0;
   let startX = 0;
   let selectedColor = "";
   let selectedSize = "";
+  let reviewRating = 0;
+  let reviewPhotoFiles = [];
+  let allReviews = [];
+  let displayedReviews = 0;
+  const REVIEWS_PER_PAGE = 3;
+  const API_BASE = "https://delight-backend--araindaniyalo2.replit.app";
 
   // Elements
   const slider = document.getElementById("imageSlider");
@@ -453,7 +460,263 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ═══════════════════════════════════════════════════
-  // 🔥 FULLSCREEN IMAGE VIEWER SYSTEM
+  // ⭐ RATINGS & REVIEWS SYSTEM
+  // ═══════════════════════════════════════════════════
+  function renderStars(rating) {
+    const full = Math.floor(rating);
+    const half = rating % 1 >= 0.5;
+    let s = "";
+    for (let i = 0; i < full; i++) s += "★";
+    if (half) s += "½";
+    for (let i = full + (half ? 1 : 0); i < 5; i++) s += "☆";
+    return s;
+  }
+
+  async function loadRatingAndReviews() {
+    if (!item || !item.id) return;
+    try {
+      const ratingRes = await fetch(API_BASE + "/product-rating/" + item.id);
+      const ratingData = await ratingRes.json();
+      const avg = ratingData.averageRating || 0;
+      const total = ratingData.totalReviews || 0;
+
+      // Inline header
+      const rs = document.getElementById("ratingStars");
+      const rsc = document.getElementById("ratingScore");
+      const rc = document.getElementById("ratingCount");
+      if (rs) rs.textContent = renderStars(avg);
+      if (rsc) rsc.textContent = avg.toFixed(1);
+      if (rc) rc.textContent = "(" + total + ")";
+
+      // Big summary
+      const rbn = document.getElementById("ratingBigNumber");
+      const rbs = document.getElementById("ratingBigStars");
+      const rtt = document.getElementById("ratingTotalText");
+      const rtc = document.getElementById("reviewsTotalCount");
+      if (rbn) rbn.textContent = avg.toFixed(1);
+      if (rbs) rbs.textContent = renderStars(avg);
+      if (rtt) rtt.textContent = total + " Ratings";
+      if (rtc) rtc.textContent = "(" + total + ")";
+
+      // Bars
+      const barsDiv = document.getElementById("ratingBarsDaraz");
+      if (barsDiv && ratingData.ratingBreakdown) {
+        barsDiv.innerHTML = [5,4,3,2,1].map(star => {
+          const count = ratingData.ratingBreakdown[star] || 0;
+          const pct = total > 0 ? (count / total * 100) : 0;
+          return '<div class="rating-bar-daraz">' +
+            '<span>' + star + '★</span>' +
+            '<div class="rating-bar-track"><div class="rating-bar-fill-daraz" style="width:' + pct + '%"></div></div>' +
+            '<span>' + count + '</span>' +
+          '</div>';
+        }).join("");
+      }
+
+      // Reviews list
+      const revRes = await fetch(API_BASE + "/reviews/" + item.id);
+      const revData = await revRes.json();
+      allReviews = revData.reviews || [];
+      displayedReviews = 0;
+      renderReviewsList();
+
+    } catch (err) {
+      console.error("Load reviews error:", err);
+    }
+  }
+
+  function renderReviewsList() {
+    const container = document.getElementById("reviewsListDaraz");
+    const loadMoreBtn = document.getElementById("loadMoreReviews");
+    if (!container) return;
+
+    if (allReviews.length === 0) {
+      container.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">No reviews yet. Be the first to review!</p>';
+      if (loadMoreBtn) loadMoreBtn.style.display = "none";
+      return;
+    }
+
+    const toShow = allReviews.slice(0, displayedReviews + REVIEWS_PER_PAGE);
+    container.innerHTML = toShow.map(review => {
+      const initial = (review.buyerName || "A").charAt(0).toUpperCase();
+      const maskedName = review.buyerName ? review.buyerName.charAt(0) + "***" + review.buyerName.slice(-1) : "Anonymous";
+      const dateStr = new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      return '<div class="review-card-daraz">' +
+        '<div class="review-header-daraz">' +
+          '<div class="review-buyer-info">' +
+            '<div class="review-buyer-avatar">' + initial + '</div>' +
+            '<div>' +
+              '<div class="review-buyer-name">' + maskedName + '</div>' +
+              (review.isVerifiedPurchase ? '<div class="review-verified">✓ Verified Purchase</div>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="review-stars-daraz">' + renderStars(review.rating) + '</div>' +
+        '</div>' +
+        '<div class="review-date-daraz">' + dateStr + '</div>' +
+        '<div class="review-message-daraz">' + (review.message || "") + '</div>' +
+        (review.images && review.images.length > 0 ?
+          '<div class="review-photos-daraz">' +
+            review.images.map(img => '<img src="' + img + '" onclick="openFullscreenViewerFromSrc(\'' + img + '\')">').join("") +
+          '</div>' : '') +
+      '</div>';
+    }).join("");
+
+    displayedReviews = toShow.length;
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = displayedReviews < allReviews.length ? "block" : "none";
+    }
+  }
+
+  window.loadMoreReviews = function() { renderReviewsList(); };
+
+  window.showAllReviews = function() {
+    const modal = document.getElementById("allReviewsModal");
+    const content = document.getElementById("allReviewsContent");
+    if (!modal || !content) return;
+    content.innerHTML = allReviews.map(review => {
+      const initial = (review.buyerName || "A").charAt(0).toUpperCase();
+      const maskedName = review.buyerName ? review.buyerName.charAt(0) + "***" + review.buyerName.slice(-1) : "Anonymous";
+      const dateStr = new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      return '<div class="review-card-daraz" style="margin-bottom:16px;">' +
+        '<div class="review-header-daraz">' +
+          '<div class="review-buyer-info">' +
+            '<div class="review-buyer-avatar">' + initial + '</div>' +
+            '<div>' +
+              '<div class="review-buyer-name">' + maskedName + '</div>' +
+              (review.isVerifiedPurchase ? '<div class="review-verified">✓ Verified Purchase</div>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="review-stars-daraz">' + renderStars(review.rating) + '</div>' +
+        '</div>' +
+        '<div class="review-date-daraz">' + dateStr + '</div>' +
+        '<div class="review-message-daraz">' + (review.message || "") + '</div>' +
+        (review.images && review.images.length > 0 ?
+          '<div class="review-photos-daraz">' +
+            review.images.map(img => '<img src="' + img + '" onclick="openFullscreenViewerFromSrc(\'' + img + '\')">').join("") +
+          '</div>' : '') +
+      '</div>';
+    }).join("");
+    modal.style.display = "block";
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  };
+
+  window.closeAllReviews = function() {
+    const modal = document.getElementById("allReviewsModal");
+    if (modal) { modal.style.display = "none"; modal.classList.remove("active"); }
+    document.body.style.overflow = "";
+  };
+
+  window.openReviewModal = function() {
+    const customer = JSON.parse(localStorage.getItem("customer"));
+    if (!customer) {
+      alert("Please login to write a review");
+      window.location.href = "login.html";
+      return;
+    }
+    const modal = document.getElementById("reviewModalDaraz");
+    const productImg = document.getElementById("reviewProductImg");
+    const productTitle = document.getElementById("reviewProductTitle");
+    if (productImg) productImg.src = item.images?.[0] || item.image || "noimg.png";
+    if (productTitle) productTitle.textContent = item.title || "Product";
+    reviewRating = 0;
+    reviewPhotoFiles = [];
+    updateStarDisplay(0);
+    document.getElementById("reviewMessageDaraz").value = "";
+    document.getElementById("reviewPhotoPreview").innerHTML = "";
+    document.getElementById("ratingText").textContent = "Tap a star to rate";
+    if (modal) { modal.style.display = "flex"; modal.classList.add("active"); document.body.style.overflow = "hidden"; }
+  };
+
+  window.closeReviewModal = function() {
+    const modal = document.getElementById("reviewModalDaraz");
+    if (modal) { modal.style.display = "none"; modal.classList.remove("active"); }
+    document.body.style.overflow = "";
+  };
+
+  function setupStarClicks() {
+    const stars = document.querySelectorAll("#starRatingInputDaraz .star-big");
+    stars.forEach(star => {
+      star.addEventListener("click", function() {
+        const rating = parseInt(this.getAttribute("data-rating"));
+        reviewRating = rating;
+        updateStarDisplay(rating);
+        const texts = ["Terrible", "Poor", "Average", "Good", "Excellent"];
+        document.getElementById("ratingText").textContent = texts[rating - 1] || "Tap a star to rate";
+      });
+    });
+  }
+
+  function updateStarDisplay(rating) {
+    const stars = document.querySelectorAll("#starRatingInputDaraz .star-big");
+    stars.forEach((star, idx) => {
+      star.textContent = idx < rating ? "★" : "☆";
+      star.classList.toggle("active", idx < rating);
+    });
+  }
+
+  window.handleReviewPhotos = function(input) {
+    const preview = document.getElementById("reviewPhotoPreview");
+    preview.innerHTML = "";
+    reviewPhotoFiles = [];
+    Array.from(input.files).forEach(file => {
+      reviewPhotoFiles.push(file);
+      const reader = new FileReader();
+      reader.onload = e => {
+        const div = document.createElement("div");
+        div.className = "review-photo-preview-item";
+        div.innerHTML = '<img src="' + e.target.result + '"><button class="review-photo-remove" onclick="this.parentElement.remove()">✕</button>';
+        preview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  window.submitReviewDaraz = async function() {
+    if (reviewRating === 0) { alert("Please select a rating by tapping the stars"); return; }
+    const message = document.getElementById("reviewMessageDaraz").value.trim();
+    if (!message) { alert("Please write a review message"); return; }
+    const customer = JSON.parse(localStorage.getItem("customer"));
+    if (!customer) { alert("Please login first"); return; }
+    const btn = document.getElementById("submitReviewBtn");
+    btn.disabled = true;
+    btn.textContent = "Submitting...";
+    try {
+      const formData = new FormData();
+      formData.append("buyerPhone", customer.phone);
+      formData.append("buyerName", customer.name || "Anonymous");
+      formData.append("rating", reviewRating);
+      formData.append("message", message);
+      reviewPhotoFiles.forEach(file => formData.append("images", file));
+      const res = await fetch(API_BASE + "/reviews/" + item.id, { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.success) {
+        alert("✅ Review submitted successfully!");
+        closeReviewModal();
+        loadRatingAndReviews();
+      } else {
+        alert(data.message || "Failed to submit review");
+      }
+    } catch (err) {
+      alert("❌ Error submitting review. Please try again.");
+      console.error(err);
+    }
+    btn.disabled = false;
+    btn.textContent = "Submit Review";
+  };
+
+  window.openFullscreenViewerFromSrc = function(src) {
+    fullscreenMediaList = [{ type: 'image', src: src }];
+    fullscreenCurrentIndex = 0;
+    const viewer = document.getElementById("fullscreenViewer");
+    updateFullscreenImage();
+    updateFullscreenDots();
+    updateFullscreenCounter();
+    viewer.classList.add("active");
+    document.body.style.overflow = "hidden";
+  };
+
+  // ═══════════════════════════════════════════════════
+  // ⭐ FULLSCREEN IMAGE VIEWER SYSTEM
   // ═══════════════════════════════════════════════════
   let fullscreenMediaList = [];
   let fullscreenCurrentIndex = 0;
@@ -685,43 +948,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
 // ═══════════════════════════════════════════════════
-// WHATSAPP CHAT BUTTON
+// DELIGHT CHAT BUTTON
 // ═══════════════════════════════════════════════════
 function setupWhatsAppButton() {
   const chatAnchor = document.querySelector(".whatsapp-btn a");
   if (!chatAnchor) return;
-  if (item.sellerPhone) {
-    const digits = item.sellerPhone.toString().replace(/\D/g, "");
-    let waPhone = digits;
-    if (digits.length === 10 && digits.startsWith("3")) {
-      waPhone = "92" + digits;
-    } else if (digits.length === 11 && digits.startsWith("0")) {
-      waPhone = "92" + digits.slice(1);
-    } else if (digits.length === 12 && digits.startsWith("92")) {
-      waPhone = digits;
-    } else if (digits.length === 13 && digits.startsWith("091")) {
-      waPhone = digits;
-    }
-
-    // 🔥 Product details ke saath WhatsApp message banao
-    const currentUrl = window.location.href.split('?')[0];
-    const productLink = `${currentUrl}?product=${encodeURIComponent(item.title)}`;
-    
-    const { finalPrice, originalPrice, discountPercentage } = getPriceData(item);
-    
-    let message = `*${item.title || 'Product'}*\n`;
-    message += `💰 Price: Rs. ${finalPrice}`;
-    if (originalPrice > finalPrice) {
-      message += ` (was Rs. ${originalPrice})`;
-      if (discountPercentage > 0) message += ` - ${discountPercentage}% OFF`;
-    }
-    message += `\n\n🔗 ${productLink}`;
-    
-    // WhatsApp link with pre-filled message
-    chatAnchor.href = `https://wa.me/${waPhone}?text=${encodeURIComponent(message)}`;
-  }
+  chatAnchor.removeAttribute("href");
+  chatAnchor.onclick = function(e) {
+    e.preventDefault();
+    openDelightChat();
+  };
 }
 
+window.openDelightChat = function() {
+  const customer = JSON.parse(localStorage.getItem("customer"));
+  if (!customer) {
+    alert("Please login to chat with seller");
+    window.location.href = "login.html";
+    return;
+  }
+  if (!item || !item.sellerPhone) {
+    alert("Seller information not available");
+    return;
+  }
+  localStorage.setItem("selectedItem", JSON.stringify(item));
+  window.location.href = "Delight Chat.html?product=" + encodeURIComponent(item.title) + "&seller=" + encodeURIComponent(item.sellerPhone);
+};
 
   // ═══════════════════════════════════════════════════
   // ✅ SIMILAR ITEMS — SAME STORE ONLY
@@ -932,4 +1184,6 @@ function setupWhatsAppButton() {
   setupWhatsAppButton();
   loadSimilarItems(item);
   setupFullscreenGestures();
+  setupStarClicks();
+  if (item.id) { loadRatingAndReviews(); }
 });

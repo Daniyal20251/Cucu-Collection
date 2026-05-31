@@ -3,11 +3,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const loading = document.getElementById("loading");
   const title = document.getElementById("categoryTitle");
 
-  // 🔹 Get category name from URL
+  // Get category name from URL
   const params = new URLSearchParams(window.location.search);
   const categoryName = params.get("category") || "Category";
 
-  // ✅ Extract only Subcategory (last part after "-")
+  // Extract only Subcategory (last part after "-")
   const subCategory =
     categoryName.includes("-")
       ? categoryName.split("-").pop().trim()
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   title.textContent = subCategory;
 
-  // 🔹 Increment View Count
+  // Increment View Count
   async function incrementView(productId) {
     try {
       await fetch(`https://delight-backend--araindaniyalo2.replit.app/products/${productId}/view`, { method: "POST" });
@@ -24,22 +24,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // 🔹 Fetch products
+  // Fetch products
   try {
     const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/products");
     const data = await res.json();
 
-    // 🔹 Filter by category or subcategory
-    const filteredItems = data.filter(item =>
-      item.category?.toLowerCase().includes(categoryName.toLowerCase())
-    );
+    console.log("Total products:", data.length);
+    console.log("Searching for:", categoryName);
+
+    // Filter by category or subcategory
+    const filteredItems = data.filter(item => {
+      const match = item.category?.toLowerCase().includes(categoryName.toLowerCase());
+      if (match) console.log("Matched:", item.title, "| Cat:", item.category);
+      return match;
+    });
+
+    console.log("Filtered count:", filteredItems.length);
 
     if (filteredItems.length === 0) {
       container.innerHTML = `
-        <div class="not-found" style="margin:135px 0 0 70px;">
-          <img src="Delight icons/not-found.png" alt="No Results" style="width:180px; opacity:0.8;">
-          <h3>Oops! No Items Found</h3>
-          <p>Try another category.</p>
+        <div class="not-found" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px;">
+          <img src="Delight icons/not-found.png" alt="No Results" style="width:180px; opacity:0.8; margin-bottom: 14px;">
+          <h3 style="font-size: 18px; font-weight: 800; color: #ff6b00; margin-bottom: 6px;">Oops! No Items Found</h3>
+          <p style="color: #555577; font-size: 14px;">Try another category.</p>
         </div>`;
       if (loading) loading.style.display = "none";
       return;
@@ -47,48 +54,72 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     renderItems(filteredItems);
   } catch (err) {
-    console.error("⚠️ Error fetching products:", err);
-    container.innerHTML = "<p style='text-align:center;'>Unable to load products.</p>";
+    console.error("Error fetching products:", err);
+    container.innerHTML = "<p style='text-align:center; padding: 20px;'>Unable to load products.</p>";
   } finally {
     if (loading) loading.style.display = "none";
   }
 
-  // ✅ Render Items with discount logic + views counter
+  // Render Items with discount logic + views counter
   function renderItems(items) {
     container.innerHTML = "";
+    container.style.display = "grid";
 
-    items.forEach(item => {
+    items.forEach((item, index) => {
       const card = document.createElement("div");
       card.className = "item-card";
+      card.style.animationDelay = `${(index % 10) * 40}ms`;
 
-      // 🔸 Convert price & discount
+      // Convert price & discount
       const basePrice = parseInt(item.price?.toString().replace(/[^\d]/g, "")) || 0;
       const discount = parseInt(item.discount?.toString().replace(/[^\d]/g, "")) || 0;
 
-      // 🔹 Final discounted price
+      // Final discounted price
       const finalPrice = Math.max(basePrice - discount, 0);
       const views = item.views || 0;
+      const img = item.images?.[0] || item.image || 'https://via.placeholder.com/150';
 
       card.innerHTML = `
-        <img src="${item.image || item.images?.[0] || 'default.jpg'}" alt="${item.title}">
-        <h3>${item.title}</h3>
-        <p class="price-wrapper">
-          <span class="new-price">Rs. <strong>${finalPrice}</strong></span><br>
-          ${discount > 0
-            ? `<span class="old-price">Rs. ${basePrice}</span>`
-            : ""}
-        </p>
-        <p style="margin:2px 8px 6px;font-size:11px;color:#888; display:none;">
-          <i class="fas fa-eye" style="color:#bbb;"></i> ${views} views
-        </p>`;
+        <div class="card-img-wrap">
+          <img src="${img}" alt="${item.title}" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>${item.title}</h3>
+          <p class="price-wrapper">
+            <span class="new-price"><span class="rs">Rs.</span><strong>${finalPrice}</strong></span>
+            ${discount > 0 ? `<span class="old-price-inline">Rs. ${basePrice}</span>` : ""}
+          </p>
+        </div>`;
 
       card.addEventListener("click", () => {
         incrementView(item.id);
-        localStorage.setItem("selectedItem", JSON.stringify(item));
+        const productData = { ...item, finalPrice, originalPrice: basePrice };
+        localStorage.setItem("selectedItem", JSON.stringify(productData));
         window.location.href = "itemDetails.html";
       });
 
       container.appendChild(card);
     });
+
+    // Scroll-reveal animation
+    setupScrollReveal();
+  }
+
+  // Scroll reveal animation using IntersectionObserver
+  function setupScrollReveal() {
+    const cards = document.querySelectorAll('.item-card');
+    if (!('IntersectionObserver' in window)) {
+      cards.forEach(c => c.classList.add('visible'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+    cards.forEach(c => observer.observe(c));
   }
 });
