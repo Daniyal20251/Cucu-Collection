@@ -99,13 +99,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     recentlyViewedBox.style.display = "block";
     recentlyViewedContainer.innerHTML = list.map(product => {
-      const basePrice  = parseInt(product.price?.toString().replace(/[^\d]/g, "")) || 0;
-      const discount   = parseInt(product.discount?.toString().replace(/[^\d]/g, "")) || 0;
+      const basePrice  = parseInt((product.price || "0").toString().replace(/[^\d]/g, "")) || 0;
+      const discount   = parseInt((product.discount || "0").toString().replace(/[^\d]/g, "")) || 0;
       const finalPrice = product.finalPrice || (basePrice - discount);
       const img = product.images?.[0] || product.image || 'https://via.placeholder.com/150';
       return `
-        <div class="flash-sale-card" onclick='openProduct(${JSON.stringify(JSON.stringify(product))})'>
-          <img src="${img}" alt="${product.title}" loading="lazy">
+        <div class="flash-sale-card rv-card">
+          <img src="${img}" alt="${product.title || ''}" loading="lazy">
           <div class="card-info">
             <div class="card-title">${product.title || ''}</div>
             <div class="price-block">
@@ -115,6 +115,17 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
         </div>`;
     }).join('');
+
+    // Safe click events - no inline JSON, no double-stringify
+    recentlyViewedContainer.querySelectorAll('.rv-card').forEach((card, idx) => {
+      card.addEventListener('click', () => {
+        const product = list[idx];
+        if (!product) return;
+        addToRecentlyViewed(product);
+        localStorage.setItem("selectedItem", JSON.stringify(product));
+        window.location.href = "Stores itemDetails.html";
+      });
+    });
   }
 
   window.openProduct = function(jsonStr) {
@@ -305,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!recentSearchesList) return;
     const recent = JSON.parse(localStorage.getItem("recentSearches_store") || "[]");
     recentSearchesList.innerHTML = recent.length
-      ? recent.map(t => `<li onclick="fillAndSearch('${t.replace(/'/g,"\\'")}')"><i class="fas fa-history" style="color:#ccc;font-size:12px;"></i> ${t}</li>`).join('')
+      ? recent.map(t => `<li onclick="fillAndSearch('${t.replace(/'/g,"\\'")}')"> ${t}</li>`).join('')
       : '<li style="color:#bbb;font-size:13px;">No recent searches</li>';
   }
 
@@ -614,12 +625,147 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // ─── CACHE HELPERS ────────────────────────────────────────────
+  const CACHE_TTL = 5 * 60 * 1000;
+
+  function saveCache(key, data) {
+    try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+  }
+
+  function loadCache(key) {
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (!raw) return null;
+      const { ts, data } = JSON.parse(raw);
+      if (Date.now() - ts > CACHE_TTL) return null;
+      return data;
+    } catch(e) { return null; }
+  }
+
+  function initSwiper(adsArr) {
+    swiperWrapper.innerHTML = adsArr.map(ad =>
+      `<div class="swiper-slide"><img src="${ad.image}" alt="${getAdName(ad)||'Ad'}" loading="lazy"></div>`
+    ).join('');
+    hideAdsSkeleton();
+    adSlider.style.display = "block";
+    if (swiperInstance) { try { swiperInstance.destroy(true,true); } catch(e){} }
+    swiperInstance = new Swiper(".mySwiper", {
+      loop: adsArr.length > 1,
+      autoplay: { delay: 3000, disableOnInteraction: false },
+      pagination: { el: ".swiper-pagination", clickable: true, dynamicBullets: adsArr.length > 5 }
+    });
+  }
+
+  async function loadSliderWithCache() {
+    const cached = loadCache("cucu_ads");
+    if (cached && cached.length > 0) {
+      initSwiper(cached);
+    } else {
+      showAdsSkeleton();
+      try {
+        const res = await fetch(`${API_BASE}/admin/ads`);
+        const ads = await res.json();
+        const matchedAds = ads.filter(ad => adMatchesStore(ad, STORE_CONFIG.name));
+        const sortedAds  = sortAdsByOrder(matchedAds, AD_NAMES);
+        if (sortedAds.length > 0) {
+          saveCache("cucu_ads", sortedAds);
+          initSwiper(sortedAds);
+        } else {
+          hideAdsSkeleton();
+          adSlider.style.display = "none";
+        }
+      } catch(e) { hideAdsSkeleton(); adSlider.style.display = "none"; }
+    }
+  }
+
+  async function loadFlashSaleWithCache() {
+    if (!flashSaleContainer || !flashSaleBox) return;
+    const cached = loadCache("cucu_flash");
+    const products = cached || await (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/products`);
+        let data = await res.json();
+        data = data.filter(p => p.sellerPhone === STORE_CONFIG.phone);
+        data = data.map(p => {
+          const price    = parseInt((p.price||"0").toString().replace(/[^\d]/g,"")) || 0;
+          const discount = parseInt((p.discount||"0").toString().replace(/[^\d]/g,"")) || 0;
+          const pct      = price > 0 ? Math.round((discount/price)*100) : 0;
+          return { ...p, discountPercentage: pct, finalPrice: price - discount };
+        }).filter(p => p.discountPercentage >= 40);
+        data = shuffleArray(data);
+        if (data.length) saveCache("cucu_flash", data);
+        return data;
+      } catch(e) { return []; }
+    })();
+
+    flashSaleContainer.innerHTML = "";
+    if (!products.length) { flashSaleBox.style.display = "none"; return; }
+
+    flashSaleBox.dataset.hasItems = "1";
+    flashSaleBox.style.display = "block";
+    products.forEach(product => {
+      const card = document.createElement("div");
+      card.className = "flash-sale-card";
+      card.innerHTML = `
+        ${product.discountPercentage > 0 ? `<div class="discount-badge">SAVE ${product.discountPercentage}%</div>` : ""}
+        <img src="${product.images?.[0] || product.image || ''}" alt="${product.title}" loading="lazy">
+        <div class="card-info">
+          <div class="card-title">${product.title}</div>
+          <div class="price-block">
+            <span class="final-price">Rs. ${product.finalPrice}</span>
+            ${product.price ? `<span class="old-price">Rs. ${product.price}</span>` : ""}
+          </div>
+          <div class="stock-badge">Limited Stock</div>
+        </div>`;
+      card.addEventListener("click", () => {
+        addToRecentlyViewed({ ...product });
+        localStorage.setItem("selectedItem", JSON.stringify(product));
+        window.location.href = "Stores itemDetails.html";
+      });
+      flashSaleContainer.appendChild(card);
+    });
+  }
+
+  async function loadProductsWithCache() {
+    const cached = loadCache("cucu_products");
+    if (cached) {
+      allProducts = cached;
+      renderItems(allProducts);
+      renderRecentSearches();
+    } else {
+      showProductsSkeleton();
+      try {
+        const res  = await fetch(`${API_BASE}/products`);
+        const data = await res.json();
+        allProducts = shuffleArray(data.filter(item => item.sellerPhone === STORE_CONFIG.phone));
+        saveCache("cucu_products", allProducts);
+        renderItems(allProducts);
+        renderRecentSearches();
+      } catch(e) {
+        hideProductsSkeleton();
+        if (container) container.innerHTML = "<p style='padding:20px;text-align:center;color:#777;'>⚠️ Keep Internet Connection</p>";
+      }
+    }
+  }
+
   // ─── INIT ──────────────────────────────────────────────────────
   if (sellerNameEl) sellerNameEl.textContent = STORE_CONFIG.name;
   if (sellerLogoEl) sellerLogoEl.src = STORE_CONFIG.logo;
 
-  await loadSliderImages();
-  await loadFlashSale();
+  const savedScroll = sessionStorage.getItem("cucu_scroll");
+
+  await loadSliderWithCache();
+  await loadFlashSaleWithCache();
   renderRecentlyViewed();
-  await loadProducts();
+  await loadProductsWithCache();
+
+  if (savedScroll) {
+    sessionStorage.removeItem("cucu_scroll");
+    requestAnimationFrame(() => window.scrollTo({ top: parseInt(savedScroll), behavior: "instant" }));
+  }
+});
+
+// ─── SCROLL SAVE ON LEAVE ─────────────────────────────────────
+window.addEventListener("pagehide", () => {
+  sessionStorage.setItem("cucu_scroll", String(window.scrollY));
 });
