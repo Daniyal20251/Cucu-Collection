@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ─── Elements ──────────────────────────────────────────────────
   const container               = document.getElementById("itemContainer");
+  const containerRest           = document.getElementById("itemContainerRest");
   const skeletonContainer       = document.getElementById("skeletonContainer");
   const flashSaleContainer      = document.getElementById("flashSaleContainer");
   const flashSaleBox            = document.getElementById("flashSaleBox");
@@ -60,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function hideProductsSkeleton() {
     if (skeletonContainer) skeletonContainer.style.display = "none";
     if (container) container.style.display = "grid";
+    if (containerRest) containerRest.style.display = "grid";
     if (allProductsHeader) allProductsHeader.style.display = "flex";
   }
 
@@ -98,26 +100,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!list.length) { recentlyViewedBox.style.display = "none"; return; }
 
     recentlyViewedBox.style.display = "block";
-    recentlyViewedContainer.innerHTML = list.map(product => {
+
+    // Update count badge
+    const countBadge = document.getElementById("rvCountBadge");
+    if (countBadge) {
+      countBadge.textContent = list.length;
+      countBadge.classList.add("show");
+    }
+
+    recentlyViewedContainer.innerHTML = list.map((product, i) => {
       const basePrice  = parseInt((product.price || "0").toString().replace(/[^\d]/g, "")) || 0;
       const discount   = parseInt((product.discount || "0").toString().replace(/[^\d]/g, "")) || 0;
       const finalPrice = product.finalPrice || (basePrice - discount);
       const img = product.images?.[0] || product.image || 'https://via.placeholder.com/150';
       return `
-        <div class="flash-sale-card rv-card">
+        <div class="rv-card-new" style="animation-delay:${i * 60}ms">
+          <div class="rv-viewed-dot"></div>
           <img src="${img}" alt="${product.title || ''}" loading="lazy">
-          <div class="card-info">
-            <div class="card-title">${product.title || ''}</div>
-            <div class="price-block">
-              <span class="final-price">Rs. ${finalPrice}</span>
-              ${basePrice && discount > 0 ? `<span class="old-price">Rs. ${basePrice}</span>` : ''}
+          <div class="rv-card-body">
+            <div class="rv-card-title">${product.title || ''}</div>
+            <div>
+              <span class="rv-price">Rs. ${finalPrice}</span>
+              ${basePrice && discount > 0 ? `<span class="rv-old-price">Rs. ${basePrice}</span>` : ''}
             </div>
           </div>
         </div>`;
     }).join('');
 
-    // Safe click events - no inline JSON, no double-stringify
-    recentlyViewedContainer.querySelectorAll('.rv-card').forEach((card, idx) => {
+    // Safe click events
+    recentlyViewedContainer.querySelectorAll('.rv-card-new').forEach((card, idx) => {
       card.addEventListener('click', () => {
         const product = list[idx];
         if (!product) return;
@@ -126,6 +137,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.href = "Stores itemDetails.html";
       });
     });
+
+    // Clear button
+    const rvClearBtn = document.getElementById("rvClearBtn");
+    if (rvClearBtn) {
+      rvClearBtn.onclick = () => {
+        localStorage.removeItem("recentlyViewed_store");
+        recentlyViewedBox.style.display = "none";
+      };
+    }
   }
 
   window.openProduct = function(jsonStr) {
@@ -339,21 +359,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   // ─── RENDER ITEMS ──────────────────────────────────────────────
+  // Layout: First 6 cards → Recently Viewed → Rest of products
   function renderItems(itemsToRender, hideExtras = false) {
     if (adSlider) adSlider.style.display = hideExtras ? "none" : "block";
     if (adsSkeleton) adsSkeleton.style.display = "none";
     if (flashSaleBox) flashSaleBox.style.display = hideExtras ? "none" : (flashSaleBox.dataset.hasItems === "1" ? "block" : "none");
-    if (recentlyViewedBox) recentlyViewedBox.style.display = hideExtras ? "none" : (getRecentlyViewed().length ? "block" : "none");
     if (allProductsHeader) allProductsHeader.style.display = hideExtras ? "none" : "flex";
 
     hideProductsSkeleton();
-    container.innerHTML = "";
-    container.style.display = "grid";
+    if (container) { container.innerHTML = ""; container.style.display = "grid"; }
+    if (containerRest) { containerRest.innerHTML = ""; containerRest.style.display = "grid"; }
+
+    // Hide recently viewed during search
+    if (hideExtras && recentlyViewedBox) {
+      recentlyViewedBox.style.display = "none";
+    }
 
     if (!itemsToRender.length) {
       const searchTerm = searchInput ? searchInput.value.trim() : '';
       const suggestions = searchTerm ? getSuggestions(searchTerm) : [];
-      container.innerHTML = `
+      if (container) container.innerHTML = `
         <div class="not-found">
           <img src="Store icons/not-found.png" alt="No Results">
           <h3>Oops! Item Not Found</h3>
@@ -363,14 +388,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    itemsToRender.forEach((item, index) => {
+    function makeCard(item, index) {
       const basePrice  = parseInt(item.price?.toString().replace(/[^\d]/g, "")) || 0;
       const discount   = parseInt(item.discount?.toString().replace(/[^\d]/g, "")) || 0;
       const finalPrice = basePrice - discount;
-
       const card = document.createElement("div");
       card.className = "item-card";
-      card.style.animationDelay = `${(index % 10) * 40}ms`;
+      card.style.animationDelay = `${(index % 10) * 45}ms`;
       card.innerHTML = `
         <div class="card-img-wrap">
           <img src="${item.images?.[0] || item.image || 'https://via.placeholder.com/150'}" alt="${item.title}" loading="lazy">
@@ -382,7 +406,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             ${discount > 0 ? `<span class="old-price-inline">Rs. ${basePrice}</span>` : ''}
           </p>
         </div>`;
-
       card.addEventListener("click", () => {
         incrementView(item.id);
         const productData = { ...item, finalPrice, originalPrice: basePrice };
@@ -390,8 +413,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         localStorage.setItem("selectedItem", JSON.stringify(productData));
         window.location.href = "Stores itemDetails.html";
       });
+      return card;
+    }
 
-      container.appendChild(card);
+    // First 6 cards → main container (3 rows × 2 cols)
+    const first6 = itemsToRender.slice(0, 6);
+    const rest    = itemsToRender.slice(6);
+
+    first6.forEach((item, i) => {
+      if (container) container.appendChild(makeCard(item, i));
+    });
+
+    // Show Recently Viewed in between (only on main listing, not search)
+    if (!hideExtras) {
+      renderRecentlyViewed();
+    }
+
+    // Remaining products below recently viewed
+    rest.forEach((item, i) => {
+      if (containerRest) containerRest.appendChild(makeCard(item, i + 6));
     });
 
     setupScrollReveal();
@@ -452,11 +492,98 @@ document.addEventListener("DOMContentLoaded", async () => {
     toggleSearchPanel(false);
   };
 
+  // ─── ANIMATED PLACEHOLDER (Daraz style) ───────────────────────
+  const placeholderEl = document.getElementById("searchPlaceholderAnim");
+  const header        = document.querySelector("header");
+  const searchBackBtn = document.getElementById("searchBackBtn");
+
+  const PLACEHOLDER_TEXTS = [
+    "Search products...",
+    "Dresses & Fashion 👗",
+    "Watches & Jewelry ⌚",
+    "Kitchen Accessories🍳",
+    "Beauty Products 💄",
+    "Toys & Baby Items 🧸",
+    "Men's Collection 👔",
+    "Shoes & Bags 👟"
+  ];
+
+  let phIndex = 0;
+  let phTimer = null;
+  let phActive = true; // show animated placeholder when input empty & not focused
+
+  function typePlaceholder(text, cb) {
+    if (!placeholderEl) return;
+    let i = 0;
+    placeholderEl.textContent = "";
+    placeholderEl.style.opacity = "1";
+    const interval = setInterval(() => {
+      if (!phActive) { clearInterval(interval); return; }
+      placeholderEl.textContent = text.slice(0, ++i);
+      if (i >= text.length) {
+        clearInterval(interval);
+        setTimeout(() => {
+          // Fade out
+          placeholderEl.style.transition = "opacity 0.3s ease";
+          placeholderEl.style.opacity = "0";
+          setTimeout(() => { if (cb) cb(); }, 350);
+        }, 1800);
+      }
+    }, 55);
+  }
+
+  function rotatePlaceholder() {
+    if (!phActive || !placeholderEl) return;
+    placeholderEl.style.transition = "none";
+    typePlaceholder(PLACEHOLDER_TEXTS[phIndex], () => {
+      phIndex = (phIndex + 1) % PLACEHOLDER_TEXTS.length;
+      phTimer = setTimeout(rotatePlaceholder, 200);
+    });
+  }
+
+  function startPlaceholderAnim() {
+    phActive = true;
+    if (placeholderEl) placeholderEl.style.display = "block";
+    rotatePlaceholder();
+  }
+
+  function stopPlaceholderAnim() {
+    phActive = false;
+    clearTimeout(phTimer);
+    if (placeholderEl) {
+      placeholderEl.style.opacity = "0";
+      setTimeout(() => { if (placeholderEl) placeholderEl.style.display = "none"; }, 300);
+    }
+  }
+
+  // Start animated placeholder on load
+  setTimeout(startPlaceholderAnim, 600);
+
+  // ─── SEARCH EXPAND (header collapse left, search full width) ───
+  function activateSearch() {
+    if (header) header.classList.add("search-active");
+    stopPlaceholderAnim();
+  }
+
+  function deactivateSearch() {
+    if (header) header.classList.remove("search-active");
+    if (!searchInput.value.trim()) startPlaceholderAnim();
+  }
+
   // ─── SEARCH INPUT EVENTS ───────────────────────────────────────
   if (searchInput) {
+    searchInput.addEventListener('focus', () => {
+      activateSearch();
+      const val = searchInput.value.trim();
+      if (val.length >= 1) showSuggestions(val);
+      else toggleSearchPanel(true);
+    });
+
     searchInput.addEventListener('input', () => {
       const val = searchInput.value.trim();
       if (searchClearBtn) searchClearBtn.style.display = val ? 'block' : 'none';
+      // Hide animated placeholder when typing
+      if (placeholderEl) placeholderEl.style.display = val ? 'none' : 'block';
       if (val.length >= 1) {
         showSuggestions(val);
         toggleSearchPanel(false);
@@ -466,14 +593,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-    searchInput.addEventListener('focus', () => {
-      const val = searchInput.value.trim();
-      if (val.length >= 1) showSuggestions(val);
-      else toggleSearchPanel(true);
-    });
-
     searchInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') { searchItems(); searchInput.blur(); }
+    });
+
+    searchInput.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (!document.activeElement?.closest('.search-input-box')) {
+          if (!searchInput.value.trim()) deactivateSearch();
+        }
+      }, 150);
+    });
+  }
+
+  // Back arrow button
+  if (searchBackBtn) {
+    searchBackBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      if (searchClearBtn) searchClearBtn.style.display = 'none';
+      hideSuggestions();
+      toggleSearchPanel(false);
+      deactivateSearch();
+      searchInput.blur();
+      renderItems(allProducts);
     });
   }
 
@@ -481,6 +623,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     searchClearBtn.addEventListener('click', () => {
       searchInput.value = '';
       searchClearBtn.style.display = 'none';
+      if (placeholderEl) placeholderEl.style.display = 'block';
       hideSuggestions();
       renderItems(allProducts);
       searchInput.focus();
@@ -488,8 +631,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   document.addEventListener('click', e => {
-    const inside = searchInput?.contains(e.target) || suggestionsDropdown?.contains(e.target) || searchPanel?.contains(e.target);
-    if (!inside) { hideSuggestions(); toggleSearchPanel(false); }
+    const inside = searchInput?.contains(e.target)
+      || suggestionsDropdown?.contains(e.target)
+      || searchPanel?.contains(e.target)
+      || searchBackBtn?.contains(e.target);
+    if (!inside) {
+      hideSuggestions();
+      toggleSearchPanel(false);
+      if (!searchInput?.value.trim()) deactivateSearch();
+    }
   });
 
   if (clearHistoryBtn) clearHistoryBtn.addEventListener('click', () => {
@@ -749,15 +899,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ─── INIT ──────────────────────────────────────────────────────
-  if (sellerNameEl) sellerNameEl.textContent = STORE_CONFIG.name;
+  if (sellerNameEl) { const n = STORE_CONFIG.name; sellerNameEl.innerHTML = `<span class="store-marquee">${n}&nbsp;&nbsp;•&nbsp;&nbsp;${n}&nbsp;&nbsp;•&nbsp;&nbsp;</span>`; }
   if (sellerLogoEl) sellerLogoEl.src = STORE_CONFIG.logo;
 
   const savedScroll = sessionStorage.getItem("cucu_scroll");
 
   await loadSliderWithCache();
   await loadFlashSaleWithCache();
-  renderRecentlyViewed();
   await loadProductsWithCache();
+  // Note: renderRecentlyViewed() is called inside renderItems() after first 6 cards
 
   if (savedScroll) {
     sessionStorage.removeItem("cucu_scroll");
@@ -769,3 +919,44 @@ document.addEventListener("DOMContentLoaded", async () => {
 window.addEventListener("pagehide", () => {
   sessionStorage.setItem("cucu_scroll", String(window.scrollY));
 });
+
+// ─── WHATSAPP BUTTON ──────────────────────────────────────────
+(function() {
+  const waBtn = document.getElementById("waFloatBtn");
+  if (!waBtn) return;
+
+  // Start hidden
+  waBtn.style.opacity = "0";
+  waBtn.style.transform = "scale(0) rotate(-90deg)";
+  waBtn.style.transition = "opacity 0.45s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)";
+
+  let waVisible = false;
+  let hideTimer = null;
+
+  function showWa() {
+    if (waVisible) return;
+    waVisible = true;
+    waBtn.style.opacity = "1";
+    waBtn.style.transform = "scale(1) rotate(0deg)";
+    waBtn.style.pointerEvents = "auto";
+
+    // Hide after 60 seconds
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hideWa, 60000);
+  }
+
+  function hideWa() {
+    waVisible = false;
+    waBtn.style.opacity = "0";
+    waBtn.style.transform = "scale(0) rotate(90deg)";
+    waBtn.style.pointerEvents = "none";
+  }
+
+  // Show on scroll past 200px
+  window.addEventListener("scroll", function() {
+    if (window.scrollY > 200) showWa();
+  }, { passive: true });
+
+  // Show after 3s on mobile even without scroll
+  setTimeout(showWa, 3000);
+})();
