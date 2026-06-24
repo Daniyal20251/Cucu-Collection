@@ -121,25 +121,22 @@
   </div>
 
   <!-- ===== FLASH SALE SECTION ===== -->
-  <div class="section-block" id="flashSaleBox" style="display:none;">
+  <section class="section-block" id="flashSaleBox" aria-label="Flash Sale" style="display:none;">
     <div class="section-header">
       <div class="section-title flash-title">
-        <div class="css-fire" aria-hidden="true">
-          <div class="fire-base"></div>
-          <div class="fire-mid"></div>
-          <div class="fire-top"></div>
-          <div class="fire-core"></div>
-          <div class="fire-spark s1"></div>
-          <div class="fire-spark s2"></div>
-          <div class="fire-spark s3"></div>
-        </div>
+        <span class="fire-icon">
+          <span class="fire-glow"></span>
+          <span class="fire-spark fire-spark-1"></span>
+          <span class="fire-spark fire-spark-2"></span>
+          <span class="fire-spark fire-spark-3"></span>
+        </span>
         <span class="flash-text">Flash Sale</span>
         <span class="live-badge">LIVE</span>
       </div>
       <a class="see-all-btn" href="#">See All</a>
     </div>
-    <div id="flashSaleContainer" class="flash-sale-grid"></div>
-  </div>
+    <div id="flashSaleContainer" class="flash-sale-grid" role="list" aria-label="Flash Sale Products"></div>
+  </section>
 
   <!-- ===== ALL PRODUCTS HEADER ===== -->
   <div class="products-section-header" id="allProductsHeader" style="display:none;">
