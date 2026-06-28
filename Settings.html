@@ -4,12 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings - cucucollection.shop</title>
-
+  <!-- ── DELIGHT THEME ENGINE ── -->
+  <script src="themeEngine.js"></script>
   <style>
     body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: #f8f8f8;
+  background: var(--bg, #f8f8f8);
+  color: var(--text-dark, #1a1a2e);
   margin-top: 70px;
 }
 
@@ -18,7 +20,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(135deg, #ff6a00, #ff3d00);
+  background: var(--primary, linear-gradient(135deg, #ff6a00, #ff3d00));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,7 +67,7 @@ header h4 {
 
     /* Setting Option Card */
     .setting-option {
-      background: white;
+      background: var(--card-bg, white);
       padding: 15px;
       border-radius: 10px;
       margin-bottom: 15px;
@@ -77,14 +79,14 @@ header h4 {
 
     .setting-option span {
       font-size: 15px;
-      color: #333;
+      color: var(--text-dark, #333);
       font-weight: 500;
     }
 
     .setting-option button {
       padding: 7px 14px;
       border: none;
-      background: linear-gradient(45deg, #ff8800, #ff5500);
+      background: var(--primary, linear-gradient(45deg, #ff8800, #ff5500));
       color: white;
       border-radius: 6px;
       cursor: pointer;
@@ -96,6 +98,29 @@ header h4 {
       transform: scale(0.96);
     }
   </style>
+
+  <!-- ===== META PIXEL (Facebook) ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  // Initialize Pixel
+  fbq('init', 'YOUR_PIXEL_ID');
+
+  // PageView - every page
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- ===== END META PIXEL ===== -->
 </head>
 
 <body>
@@ -140,6 +165,11 @@ header h4 {
     localStorage.removeItem("customer");
     window.location.href = "profile.html";
   }
+  // Theme apply
+  (function() {
+    const _sp = localStorage.getItem("sellerPhone") || null;
+    if (typeof DelightTheme !== "undefined") DelightTheme.apply(_sp);
+  })();
 </script>
 
 </body>

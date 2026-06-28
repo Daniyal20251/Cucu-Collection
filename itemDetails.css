@@ -1,4 +1,24 @@
 /* ═══════════════════════════════════════════════
+   THEME VARIABLES — Controlled by themeEngine.js
+   ═══════════════════════════════════════════════ */
+:root {
+  --primary: #ef6c00;
+  --primary-dark: #c42400;
+  --primary-light: #fff3e0;
+  --primary-glow: rgba(239, 108, 0, 0.18);
+  --bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --text-dark: #1a1a1a;
+  --text-mid: #666666;
+  --text-light: #999999;
+  --border: #e0e0e0;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --shadow-sm: 0 2px 10px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* ═══════════════════════════════════════════════
    BASE STYLES & RESET
    ═══════════════════════════════════════════════ */
 *, *::before, *::after {
@@ -11,7 +31,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   margin: 0;
   padding: 0 8px 90px 8px;
-  background: #f8f9fa;
+  background: var(--bg);
+  color: var(--text-dark);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -30,7 +51,7 @@ body {
   position: relative;
   width: 100%;
   height: 380px;
-  background: #f0f0f0;
+  background: var(--bg);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -75,7 +96,7 @@ body {
   height: 7px;
   width: 7px;
   margin: 0 4px;
-  background-color: #ccc;
+  background-color: var(--border);
   border-radius: 50%;
   display: inline-block;
   transition: background-color 0.3s, transform 0.3s;
@@ -83,7 +104,7 @@ body {
 }
 
 .dot.active {
-  background-color: #ff7d29;
+  background-color: var(--primary);
   transform: scale(1.2);
 }
 
@@ -123,7 +144,7 @@ body {
 }
 
 .fullscreen-zoom-btn:hover {
-  background: rgba(239, 108, 0, 0.9);
+  background: var(--primary);
   transform: scale(1.1);
 }
 
@@ -132,52 +153,143 @@ body {
 }
 
 /* ═══════════════════════════════════════════════
-   CART BAG
+   ⭐ PROFESSIONAL FLOATING ACTION BUTTONS (FAB)
    ═══════════════════════════════════════════════ */
-.cart-bag {
+
+/* ── Common FAB Base ── */
+.fab-btn {
   position: fixed;
-  top: 20px;
-  right: 11px;
   z-index: 100;
-  background: white;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
-  width: 37px;
-  height: 37px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 2px solid #ef6c00;
+  border: 1.5px solid var(--border);
+  background: #ffffff;
+  box-shadow: 
+    0 2px 12px rgba(0,0,0,0.10),
+    0 1px 4px rgba(0,0,0,0.07);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: visible;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.cart-bag:hover {
-  transform: scale(1.15);
-  box-shadow: 0 4px 15px rgba(239,108,0,0.3);
+/* SVG icon inside FAB */
+.fab-icon {
+  width: 20px;
+  height: 20px;
+  fill: #222222;
+  position: relative;
+  z-index: 1;
+  transition: fill 0.2s ease, transform 0.2s ease;
+  display: block;
+  flex-shrink: 0;
 }
 
-.cart-bag:active {
-  transform: scale(0.95);
+/* Hover state */
+.fab-btn:hover {
+  transform: scale(1.10) translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 
+    0 4px 18px rgba(0,0,0,0.13),
+    0 0 0 3px var(--primary-glow);
 }
 
+.fab-btn:hover .fab-icon {
+  fill: var(--primary);
+  transform: scale(1.08);
+}
+
+/* Active / tap state */
+.fab-btn:active {
+  transform: scale(0.94);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.10);
+}
+
+/* Anchor inside FAB */
+.fab-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  text-decoration: none;
+}
+
+/* ── HOME BUTTON (Top-Left) ── */
+.bar {
+  top: 18px;
+  left: 12px;
+}
+
+/* ── CART BAG (Top-Right) ── */
+.cart-bag {
+  top: 18px;
+  right: 12px;
+}
+
+/* Cart count badge */
 .cart-count {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background: linear-gradient(135deg, #ef6c00, #ff3d00);
-  color: white;
-  border-radius: 50%;
-  padding: 2px 6px;
+  top: -7px;
+  right: -7px;
+  background: var(--primary);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 0 5px;
   font-size: 10px;
-  font-weight: bold;
+  font-weight: 700;
   display: none;
   min-width: 18px;
+  height: 18px;
+  line-height: 18px;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.22);
+  border: 2px solid #ffffff;
+  z-index: 10;
+  letter-spacing: -0.3px;
 }
 
-/* Fly Animation */
+/* ── SHARE BUTTON (Below Cart) ── */
+.share-btn {
+  top: 60px;
+  right: 12px;
+  padding: 0;
+}
+
+/* ── DARK MODE (system) ── */
+@media (prefers-color-scheme: dark) {
+  .bar.fab-btn,
+  .cart-bag.fab-btn,
+  .share-btn.fab-btn {
+    background: #0a0a0a;
+    border-color: #6366f1;
+    box-shadow: 
+      0 2px 12px rgba(0,0,0,0.5),
+      0 0 0 1px rgba(99,102,241,0.18);
+  }
+  .fab-icon {
+    fill: #ffffff;
+  }
+  .fab-btn:hover {
+    border-color: #818cf8;
+    box-shadow: 
+      0 4px 18px rgba(99,102,241,0.35),
+      0 0 0 3px rgba(99,102,241,0.18);
+  }
+  .cart-count {
+    border-color: #0a0a0a;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Fly Animation
+   ═══════════════════════════════════════════════ */
 .fly-image {
   position: fixed;
   width: 60px;
@@ -187,41 +299,6 @@ body {
   pointer-events: none;
   object-fit: cover;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-/* ═══════════════════════════════════════════════
-   HOME BAR
-   ═══════════════════════════════════════════════ */
-.bar {
-  position: fixed;
-  top: 20px;
-  left: 11px;
-  z-index: 100;
-  background: white;
-  border-radius: 50%;
-  width: 37px;
-  height: 37px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 2px solid #ef6c00;
-}
-
-.bar:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(239,108,0,0.2);
-}
-
-.bar:active {
-  transform: scale(0.95);
-}
-
-.bar img {
-  width: 22px;
-  height: 22px;
 }
 
 /* ═══════════════════════════════════════════════
@@ -246,7 +323,7 @@ body {
 
 .new-price {
   font-weight: bold;
-  color: #ef6c00;
+  color: var(--primary);
   display: flex;
   align-items: baseline;
   gap: 2px;
@@ -260,7 +337,7 @@ body {
 
 .old-price {
   font-size: 14px;
-  color: #888;
+  color: var(--text-light);
   text-decoration: line-through;
   display: flex;
   align-items: baseline;
@@ -273,9 +350,9 @@ body {
 
 .discount-badge {
   font-size: 12px;
-  color: #ef6c00;
+  color: var(--primary);
   font-weight: 600;
-  background: #fff3e0;
+  background: var(--primary-light);
   padding: 2px 8px;
   border-radius: 4px;
 }
@@ -283,7 +360,7 @@ body {
 #title {
   font-size: 16px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-dark);
   margin: 8px 0 40px 0;
   line-height: 1.4;
 }
@@ -304,7 +381,7 @@ body {
 .size-options h5 {
   font-size: 14px;
   font-weight: 600;
-  color: #555;
+  color: var(--text-mid);
   margin-bottom: 8px;
 }
 
@@ -313,38 +390,38 @@ body {
   display: inline-block;
   padding: 6px 14px;
   margin: 3px 5px 3px 0;
-  border: 1.5px solid #ddd;
+  border: 1.5px solid var(--border);
   border-radius: 20px;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--card-bg);
   font-size: 13px;
-  color: #444;
+  color: var(--text-dark);
   transition: all 0.2s ease;
   user-select: none;
 }
 
 .color-btn:hover,
 .size-btn:hover {
-  border-color: #ff9800;
-  background-color: #fff8e1;
+  border-color: var(--primary);
+  background-color: var(--primary-light);
 }
 
 .color-btn.selected,
 .size-btn.selected {
-  border: 2px solid #ef6c00;
-  background-color: #ffecb3;
+  border: 2px solid var(--primary);
+  background-color: var(--primary-light);
   font-weight: 600;
-  color: #ef6c00;
-  box-shadow: 0 2px 8px rgba(239, 108, 0, 0.15);
+  color: var(--primary);
+  box-shadow: 0 2px 8px var(--primary-glow);
 }
 
 /* ═══════════════════════════════════════════════
    ACCORDION SECTIONS
    ═══════════════════════════════════════════════ */
 .section {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border);
   margin: 4px 0;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -356,19 +433,20 @@ body {
   padding: 14px 16px;
   font-size: 15px;
   cursor: pointer;
-  background: #fff;
+  background: var(--card-bg);
+  color: var(--text-dark);
   transition: background 0.2s;
   user-select: none;
 }
 
 .section-header:hover {
-  background: #f7f7f7;
+  background: var(--bg);
 }
 
 .section-header .material-icons,
 .section-header i {
   font-size: 18px;
-  color: #666;
+  color: var(--text-mid);
   margin-right: 8px;
   vertical-align: middle;
 }
@@ -377,8 +455,8 @@ body {
   display: none;
   padding: 12px 16px;
   font-size: 14px;
-  background: #fafafa;
-  color: #444;
+  background: var(--bg);
+  color: var(--text-mid);
   line-height: 1.6;
 }
 
@@ -404,6 +482,7 @@ body {
 .arrow {
   transition: transform 0.3s;
   display: inline-flex;
+  color: var(--text-light);
 }
 
 .section.open .arrow {
@@ -417,18 +496,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 10px;
   padding: 12px 16px;
   margin: 12px 0;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
 }
 
 .shop-logo {
   width: 45px;
   height: 45px;
-  border: 2px solid #27ae60;
-  color: #27ae60;
+  border: 2px solid var(--primary);
+  color: var(--primary);
   border-radius: 50%;
   font-weight: bold;
   display: flex;
@@ -436,6 +516,7 @@ body {
   justify-content: center;
   font-size: 15px;
   flex-shrink: 0;
+  background: var(--card-bg);
 }
 
 .shop-name {
@@ -443,28 +524,29 @@ body {
   margin-left: 12px;
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-dark);
 }
 
 .visit-btn {
-  border: 1px solid #1a1a1a;
+  border: 1px solid var(--text-dark);
   padding: 6px 12px;
   border-radius: 6px;
   text-decoration: none;
   font-size: 14px;
-  color: #1a1a1a;
+  color: var(--text-dark);
+  background: var(--card-bg);
   transition: 0.2s;
   white-space: nowrap;
 }
 
 .visit-btn:hover {
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--text-dark);
+  color: var(--card-bg);
 }
 
 .supplier-info {
-  background: #fff;
-  border: 1px solid #ff9800;
+  background: var(--card-bg);
+  border: 1px solid var(--primary);
   border-radius: 10px;
   padding: 12px;
   display: flex;
@@ -479,16 +561,17 @@ body {
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
+  border: 2px solid var(--border);
 }
 
 .supplier-name {
   font-weight: 600;
   font-size: 15px;
-  color: #1a1a1a;
+  color: var(--text-dark);
 }
 
 .view-supplier-btn {
-  background: linear-gradient(to right, #c45500, #ff7d29);
+  background: linear-gradient(to right, var(--primary-dark), var(--primary));
   color: #fff;
   border: none;
   padding: 6px 12px;
@@ -501,7 +584,7 @@ body {
 
 .view-supplier-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(239, 108, 0, 0.3);
+  box-shadow: 0 3px 8px var(--primary-glow);
 }
 
 /* ═══════════════════════════════════════════════
@@ -510,7 +593,7 @@ body {
 .similar-heading {
   font-size: 15px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-dark);
   margin: 30px 0 0px 12px;
 }
 
@@ -522,7 +605,7 @@ body {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color: #ffb300 transparent;
+  scrollbar-color: var(--primary) transparent;
 }
 
 .container::-webkit-scrollbar {
@@ -534,15 +617,15 @@ body {
 }
 
 .container::-webkit-scrollbar-thumb {
-  background-color: #ffb300;
+  background-color: var(--primary);
   border-radius: 3px;
 }
 
 .item-card {
   flex: 0 0 auto;
   width: 150px;
-  background: #fff;
-  border: 1px solid #eee;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   text-align: center;
@@ -562,7 +645,7 @@ body {
 .item-card h3 {
   font-size: 13px;
   margin: 8px 0 4px 0;
-  color: #333;
+  color: var(--text-dark);
   height: 36px;
   overflow: hidden;
   display: -webkit-box;
@@ -573,7 +656,7 @@ body {
 
 .item-card .price-wrapper {
   font-size: 13px;
-  color: #ff6f00;
+  color: var(--primary);
   margin-top: 4px;
   justify-content: center;
 }
@@ -584,7 +667,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════
-   BOTTOM ACTION BAR
+   BOTTOM ACTION BAR — No Overlap Fix
    ═══════════════════════════════════════════════ */
 .back {
   position: fixed;
@@ -595,8 +678,8 @@ body {
   justify-content: center;
   align-items: center;
   gap: 10px;
-  background: white;
-  border-top: 1px solid #e0e0e0;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
   padding: 10px 12px;
   box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
   z-index: 1000;
@@ -630,7 +713,7 @@ body {
 }
 
 .buy-button button {
-  background: linear-gradient(135deg, #c42400, #ff7d29);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
 }
 
 .add-cart-btn button {
@@ -648,37 +731,8 @@ body {
 }
 
 /* ═══════════════════════════════════════════════
-   SHARE BUTTON & MODAL
+   SHARE BUTTON & MODAL — Theme Aware
    ═══════════════════════════════════════════════ */
-.share-btn {
-  position: fixed;
-  top: 68px;
-  right: 12px;
-  z-index: 100;
-  background: linear-gradient(135deg, #ff6a00, #ff3d00);
-  border: none;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 3px 10px rgba(255, 106, 0, 0.4);
-  transition: all 0.3s ease;
-}
-
-.share-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(255, 106, 0, 0.6);
-}
-
-.share-btn svg {
-  width: 22px;
-  height: 22px;
-  fill: white;
-}
-
 .share-modal {
   display: none;
   position: fixed;
@@ -703,7 +757,7 @@ body {
 }
 
 .share-sheet {
-  background: white;
+  background: var(--card-bg);
   width: 100%;
   max-width: 400px;
   border-radius: 20px 20px 0 0;
@@ -711,6 +765,8 @@ body {
   animation: slideUp 0.3s ease;
   position: relative;
   margin: 0 auto;
+  border: 1px solid var(--border);
+  border-bottom: none;
 }
 
 @keyframes slideUp {
@@ -721,7 +777,7 @@ body {
 .share-sheet h3 {
   text-align: center;
   margin: 0 0 20px 0;
-  color: #333;
+  color: var(--text-dark);
   font-size: 18px;
 }
 
@@ -744,7 +800,7 @@ body {
 }
 
 .share-option:hover {
-  background: #f5f5f5;
+  background: var(--bg);
 }
 
 .share-icon {
@@ -756,19 +812,21 @@ body {
   justify-content: center;
   font-size: 22px;
 }
+
 .share-label {
   font-size: 12px;
-  color: #666;
+  color: var(--text-mid);
   text-align: center;
 }
 
 .share-link-box {
-  background: #f5f5f5;
+  background: var(--bg);
   border-radius: 10px;
   padding: 10px 12px;
   display: flex;
   gap: 10px;
   align-items: center;
+  border: 1px solid var(--border);
 }
 
 .share-link-box input {
@@ -776,12 +834,12 @@ body {
   border: none;
   background: transparent;
   font-size: 13px;
-  color: #666;
+  color: var(--text-mid);
   outline: none;
 }
 
 .copy-btn {
-  background: #ef6c00;
+  background: var(--primary);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -793,7 +851,7 @@ body {
 }
 
 .copy-btn:hover {
-  background: #d45a00;
+  background: var(--primary-dark);
 }
 
 .close-share {
@@ -804,7 +862,7 @@ body {
   border: none;
   font-size: 28px;
   cursor: pointer;
-  color: #999;
+  color: var(--text-light);
   line-height: 1;
   padding: 0;
   width: 32px;
@@ -817,8 +875,8 @@ body {
 }
 
 .close-share:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--bg);
+  color: var(--text-dark);
 }
 
 /* ═══════════════════════════════════════════════
@@ -972,7 +1030,7 @@ body {
 }
 
 .fullscreen-dot.active {
-  background: #ff7d29;
+  background: var(--primary);
   transform: scale(1.3);
 }
 
@@ -1041,6 +1099,16 @@ body {
   #imageSlider {
     height: 300px;
   }
+
+  .fab-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .fab-btn img,
+  .fab-btn svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -1070,8 +1138,9 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
 /* ═══════════════════════════════════════════════
-   ⭐ DARAZ-STYLE RATING & REVIEWS - FIXED
+   ⭐ DARAZ-STYLE RATING & REVIEWS — THEME AWARE
    ═══════════════════════════════════════════════ */
 
 /* Inline Rating Header */
@@ -1084,28 +1153,29 @@ body {
 }
 
 .rating-stars {
-  color: #ffb300;
+  color: var(--primary);
   font-size: 15px;
   letter-spacing: 1px;
 }
 
 .rating-score {
   font-size: 14px;
-  color: #333;
+  color: var(--text-dark);
   font-weight: 600;
 }
 
 .rating-count {
   font-size: 13px;
-  color: #999;
+  color: var(--text-light);
 }
 
 /* Reviews Section */
 .reviews-section {
-  background: #fff;
+  background: var(--card-bg);
   margin: 12px -8px;
   padding: 16px;
   border-radius: 12px;
+  border: 1px solid var(--border);
 }
 
 .reviews-section-header {
@@ -1118,18 +1188,18 @@ body {
 .reviews-section-header h3 {
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-dark);
 }
 
 .reviews-section-header h3 span {
-  color: #999;
+  color: var(--text-light);
   font-weight: 400;
   font-size: 14px;
   margin-left: 4px;
 }
 
 .view-all-link {
-  color: #ef6c00;
+  color: var(--primary);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -1141,7 +1211,7 @@ body {
   gap: 20px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .rating-left {
@@ -1154,12 +1224,12 @@ body {
 .rating-big-number {
   font-size: 44px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-dark);
   line-height: 1;
 }
 
 .rating-big-stars {
-  color: #ffb300;
+  color: var(--primary);
   font-size: 18px;
   letter-spacing: 2px;
   margin: 4px 0;
@@ -1167,7 +1237,7 @@ body {
 
 .rating-total-text {
   font-size: 12px;
-  color: #999;
+  color: var(--text-light);
 }
 
 .rating-right {
@@ -1191,7 +1261,7 @@ body {
 }
 
 .rating-bar-daraz > span:first-child {
-  color: #ffb300;
+  color: var(--primary);
   min-width: 22px;
   font-size: 12px;
 }
@@ -1199,21 +1269,21 @@ body {
 .rating-bar-track {
   flex: 1;
   height: 6px;
-  background: #f0f0f0;
+  background: var(--border);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .rating-bar-fill-daraz {
   height: 100%;
-  background: #ffb300;
+  background: var(--primary);
   border-radius: 3px;
   transition: width 0.4s ease;
   min-width: 2px;
 }
 
 .rating-bar-daraz > span:last-child {
-  color: #999;
+  color: var(--text-light);
   min-width: 20px;
   text-align: right;
   font-size: 11px;
@@ -1223,9 +1293,9 @@ body {
 .write-review-btn-daraz {
   width: 100%;
   padding: 14px;
-  background: #fff;
-  border: 1.5px solid #ef6c00;
-  color: #ef6c00;
+  background: var(--card-bg);
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
   border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
@@ -1239,7 +1309,7 @@ body {
 }
 
 .write-review-btn-daraz:active {
-  background: #fff3e0;
+  background: var(--primary-light);
   transform: scale(0.98);
 }
 
@@ -1255,7 +1325,7 @@ body {
 }
 
 .review-card-daraz {
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--border);
   padding: 14px 0;
 }
 
@@ -1280,7 +1350,7 @@ body {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ef6c00, #ff9800);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   display: flex;
   align-items: center;
@@ -1294,7 +1364,7 @@ body {
 
 .review-buyer-name {
   font-size: 13px;
-  color: #666;
+  color: var(--text-mid);
   font-weight: 500;
 }
 
@@ -1308,7 +1378,7 @@ body {
 }
 
 .review-stars-daraz {
-  color: #ffb300;
+  color: var(--primary);
   font-size: 13px;
   letter-spacing: 1px;
   flex-shrink: 0;
@@ -1316,13 +1386,13 @@ body {
 
 .review-date-daraz {
   font-size: 11px;
-  color: #bbb;
+  color: var(--text-light);
   margin-bottom: 6px;
 }
 
 .review-message-daraz {
   font-size: 14px;
-  color: #333;
+  color: var(--text-dark);
   line-height: 1.5;
   margin-bottom: 10px;
 }
@@ -1345,17 +1415,17 @@ body {
 .load-more-reviews {
   width: 100%;
   padding: 12px;
-  background: #f8f8f8;
+  background: var(--bg);
   border: none;
   border-radius: 8px;
-  color: #666;
+  color: var(--text-mid);
   font-size: 14px;
   cursor: pointer;
   margin-top: 8px;
 }
 
 /* ═══════════════════════════════════════════════
-   REVIEW MODAL - FIXED & WORKING
+   REVIEW MODAL — THEME AWARE
    ═══════════════════════════════════════════════ */
 
 .review-modal-daraz {
@@ -1385,7 +1455,7 @@ body {
 
 .review-modal-sheet {
   position: relative;
-  background: white;
+  background: var(--card-bg);
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
@@ -1394,11 +1464,8 @@ body {
   border-radius: 20px 20px 0 0;
   z-index: 2;
   animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  border: 1px solid var(--border);
+  border-bottom: none;
 }
 
 .review-modal-header {
@@ -1406,24 +1473,24 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--card-bg);
   z-index: 10;
 }
 
 .review-modal-header h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-dark);
 }
 
 .review-modal-close {
   background: none;
   border: none;
   font-size: 24px;
-  color: #999;
+  color: var(--text-light);
   cursor: pointer;
   width: 36px;
   height: 36px;
@@ -1434,7 +1501,7 @@ body {
 }
 
 .review-modal-close:active {
-  background: #f5f5f5;
+  background: var(--bg);
 }
 
 .review-product-info {
@@ -1442,7 +1509,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 16px 20px;
-  background: #fafafa;
+  background: var(--bg);
 }
 
 .review-product-info img {
@@ -1450,12 +1517,12 @@ body {
   height: 50px;
   object-fit: cover;
   border-radius: 8px;
-  background: #f0f0f0;
+  background: var(--border);
 }
 
 .review-product-info span {
   font-size: 14px;
-  color: #333;
+  color: var(--text-dark);
   font-weight: 500;
   line-height: 1.3;
 }
@@ -1467,7 +1534,7 @@ body {
 
 .review-star-select p {
   font-size: 14px;
-  color: #666;
+  color: var(--text-mid);
   margin-bottom: 16px;
 }
 
@@ -1480,7 +1547,7 @@ body {
 
 .star-big {
   font-size: 42px;
-  color: #ddd;
+  color: var(--border);
   cursor: pointer;
   transition: color 0.15s;
   user-select: none;
@@ -1488,7 +1555,7 @@ body {
 }
 
 .star-big.active {
-  color: #ffb300;
+  color: var(--primary);
 }
 
 .star-big:active {
@@ -1497,7 +1564,7 @@ body {
 
 .rating-text {
   font-size: 14px;
-  color: #999;
+  color: var(--text-light);
   min-height: 20px;
   margin-top: 4px;
 }
@@ -1509,7 +1576,7 @@ body {
 .review-form-fields textarea {
   width: 100%;
   padding: 14px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   font-size: 15px;
   resize: vertical;
@@ -1517,23 +1584,25 @@ body {
   font-family: inherit;
   margin-bottom: 16px;
   box-sizing: border-box;
+  background: var(--card-bg);
+  color: var(--text-dark);
 }
 
 .review-form-fields textarea:focus {
   outline: none;
-  border-color: #ef6c00;
+  border-color: var(--primary);
 }
 
 .review-photo-upload label {
   display: block;
   font-size: 13px;
-  color: #666;
+  color: var(--text-mid);
   margin-bottom: 8px;
   font-weight: 500;
 }
 
 .photo-upload-area {
-  border: 2px dashed #ddd;
+  border: 2px dashed var(--border);
   border-radius: 12px;
   padding: 24px;
   text-align: center;
@@ -1542,13 +1611,14 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  color: #999;
+  color: var(--text-light);
   transition: all 0.2s;
+  background: var(--bg);
 }
 
 .photo-upload-area:active {
-  border-color: #ef6c00;
-  background: #fff8f0;
+  border-color: var(--primary);
+  background: var(--primary-light);
 }
 
 .photo-upload-area span:first-child {
@@ -1596,7 +1666,7 @@ body {
   width: calc(100% - 40px);
   margin: 0 20px 20px;
   padding: 16px;
-  background: linear-gradient(135deg, #ef6c00, #ff9800);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   border: none;
   border-radius: 12px;
@@ -1616,7 +1686,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════
-   ALL REVIEWS MODAL
+   ALL REVIEWS MODAL — THEME AWARE
    ═══════════════════════════════════════════════ */
 
 .all-reviews-modal {
@@ -1644,7 +1714,7 @@ body {
 
 .all-reviews-sheet {
   position: relative;
-  background: white;
+  background: var(--card-bg);
   height: 100%;
   max-width: 480px;
   margin: 0 auto;
@@ -1658,10 +1728,10 @@ body {
   align-items: center;
   gap: 16px;
   padding: 13px 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--card-bg);
   z-index: 10;
 }
 
@@ -1669,7 +1739,7 @@ body {
   background: none;
   border: none;
   font-size: 22px;
-  color: #333;
+  color: var(--text-dark);
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -1682,10 +1752,561 @@ body {
   font-size: 18px;
   font-weight: 600;
   flex: 1;
+  color: var(--text-dark);
 }
 
 .all-reviews-content {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
+}
+
+/* ═══════════════════════════════════════════════
+   THEME ENGINE OVERRIDES
+   These are targeted by themeEngine.js injected CSS
+   ═══════════════════════════════════════════════ */
+
+/* Ensure body background always uses theme */
+body {
+  background: var(--bg) !important;
+  color: var(--text-dark) !important;
+}
+
+/* ═══════════════════════════════════════════════
+   ⭐ FAB BUTTON THEME ENGINE OVERRIDES
+   — Glass-morphism works with ALL themes
+   ═══════════════════════════════════════════════ */
+
+/* FAB buttons use CSS custom properties directly */
+.fab-btn {
+  background: rgba(var(--card-bg-rgb, 255, 255, 255), 0.72) !important;
+  border-color: var(--border) !important;
+  box-shadow: 
+    0 2px 8px rgba(0,0,0,0.08),
+    0 4px 16px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+.fab-btn:hover {
+  border-color: var(--primary) !important;
+  box-shadow: 
+    0 4px 14px rgba(0,0,0,0.12),
+    0 8px 24px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+
+.fab-btn img,
+.fab-btn svg {
+  filter: brightness(0.35) !important;
+}
+
+.fab-btn:hover img,
+.fab-btn:hover svg {
+  filter: brightness(0.2) !important;
+}
+
+/* Dark theme detection via CSS */
+@media (prefers-color-scheme: dark) {
+  .fab-btn {
+    background: rgba(30, 30, 40, 0.75) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+    box-shadow: 
+      0 2px 8px rgba(0,0,0,0.3),
+      0 4px 16px rgba(0,0,0,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  }
+  .fab-btn img,
+  .fab-btn svg {
+    filter: brightness(1.8) saturate(0.8) !important;
+  }
+  .fab-btn:hover img,
+  .fab-btn:hover svg {
+    filter: brightness(2.2) saturate(1) !important;
+  }
+}
+
+/* Cart bag badge */
+.cart-count {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+  border-color: var(--card-bg) !important;
+}
+
+/* Share button SVG fill */
+.share-btn svg {
+  fill: var(--text-mid) !important;
+}
+.share-btn:hover svg {
+  fill: var(--primary) !important;
+}
+
+/* Fullscreen dots */
+.fullscreen-dot.active {
+  background: var(--primary) !important;
+}
+
+/* Review buyer avatar */
+.review-buyer-avatar {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+}
+
+/* Copy button */
+.copy-btn {
+  background: var(--primary) !important;
+}
+.copy-btn:hover {
+  background: var(--primary-dark) !important;
+}
+
+/* View supplier button */
+.view-supplier-btn {
+  background: linear-gradient(to right, var(--primary-dark), var(--primary)) !important;
+}
+
+/* Section header hover */
+.section-header:hover {
+  background: var(--bg) !important;
+}
+
+/* Photo upload area active */
+.photo-upload-area:active {
+  border-color: var(--primary) !important;
+  background: var(--primary-light) !important;
+}
+
+/* Review form textarea focus */
+.review-form-fields textarea:focus {
+  border-color: var(--primary) !important;
+}
+
+/* Star rating active */
+.star-big.active {
+  color: var(--primary) !important;
+}
+
+/* Submit review button */
+.submit-review-daraz {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+}
+
+/* Buy now button */
+.buy-button button {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary)) !important;
+}
+
+/* Add to cart button - keep blue/green functional but theme-aware if needed */
+.add-cart-btn button {
+  background: linear-gradient(135deg, #4390de, #43cea2) !important;
+}
+
+/* WhatsApp button - keep green functional */
+.whatsapp-btn button {
+  background: linear-gradient(135deg, #25D366, #128C7E) !important;
+}
+
+/* View all link */
+.view-all-link {
+  color: var(--primary) !important;
+}
+
+/* Write review button */
+.write-review-btn-daraz {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+.write-review-btn-daraz:active {
+  background: var(--primary-light) !important;
+}
+
+/* Rating bar fill */
+.rating-bar-fill-daraz {
+  background: var(--primary) !important;
+}
+
+/* Discount badge */
+.discount-badge {
+  color: var(--primary) !important;
+  background: var(--primary-light) !important;
+}
+
+/* New price */
+.new-price {
+  color: var(--primary) !important;
+}
+
+/* Item card price */
+.item-card .price-wrapper {
+  color: var(--primary) !important;
+}
+
+/* Color/Size button selected state */
+.color-btn.selected,
+.size-btn.selected {
+  border-color: var(--primary) !important;
+  background-color: var(--primary-light) !important;
+  color: var(--primary) !important;
+  box-shadow: 0 2px 8px var(--primary-glow) !important;
+}
+
+/* Color/Size button hover */
+.color-btn:hover,
+.size-btn:hover {
+  border-color: var(--primary) !important;
+  background-color: var(--primary-light) !important;
+}
+
+/* Active dot */
+.dot.active {
+  background-color: var(--primary) !important;
+}
+
+/* Close share hover */
+.close-share:hover {
+  background: var(--bg) !important;
+  color: var(--text-dark) !important;
+}
+
+/* Share option hover */
+.share-option:hover {
+  background: var(--bg) !important;
+}
+
+/* All reviews back button */
+.all-reviews-back {
+  color: var(--text-dark) !important;
+}
+
+/* Review modal close */
+.review-modal-close {
+  color: var(--text-light) !important;
+}
+.review-modal-close:active {
+  background: var(--bg) !important;
+}
+
+/* Supplier info border */
+.supplier-info {
+  border-color: var(--primary) !important;
+}
+
+/* Shop info border */
+.shop-info {
+  border-color: var(--border) !important;
+}
+
+/* Shop logo */
+.shop-logo {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+/* Visit button */
+.visit-btn {
+  border-color: var(--text-dark) !important;
+  color: var(--text-dark) !important;
+}
+.visit-btn:hover {
+  background: var(--text-dark) !important;
+  color: var(--card-bg) !important;
+}
+
+/* Fullscreen prev/next hover */
+.fullscreen-prev:hover,
+.fullscreen-next:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Fullscreen close hover */
+.fullscreen-close:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Zoom hint */
+.zoom-hint {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Load more reviews */
+.load-more-reviews {
+  background: var(--bg) !important;
+  color: var(--text-mid) !important;
+}
+
+/* Review verified badge */
+.review-verified {
+  color: #4caf50 !important;
+}
+
+/* Review photo remove button */
+.review-photo-remove {
+  background: #ff4444 !important;
+}
+
+/* Scrollbar theming */
+.container::-webkit-scrollbar-thumb {
+  background-color: var(--primary) !important;
+}
+
+/* Rating stars */
+.rating-stars,
+.rating-big-stars,
+.review-stars-daraz {
+  color: var(--primary) !important;
+}
+
+/* Rating score */
+.rating-score {
+  color: var(--text-dark) !important;
+}
+
+/* Rating count */
+.rating-count {
+  color: var(--text-light) !important;
+}
+
+/* Rating big number */
+.rating-big-number {
+  color: var(--text-dark) !important;
+}
+
+/* Rating total text */
+.rating-total-text {
+  color: var(--text-light) !important;
+}
+
+/* Review buyer name */
+.review-buyer-name {
+  color: var(--text-mid) !important;
+}
+
+/* Review date */
+.review-date-daraz {
+  color: var(--text-light) !important;
+}
+
+/* Review message */
+.review-message-daraz {
+  color: var(--text-dark) !important;
+}
+
+/* Share label */
+.share-label {
+  color: var(--text-mid) !important;
+}
+
+/* Share link input */
+.share-link-box input {
+  color: var(--text-mid) !important;
+}
+
+/* Section content */
+.section-content {
+  color: var(--text-mid) !important;
+}
+
+/* Similar heading */
+.similar-heading {
+  color: var(--text-dark) !important;
+}
+
+/* Item card title */
+.item-card h3 {
+  color: var(--text-dark) !important;
+}
+
+/* Title */
+#title {
+  color: var(--text-dark) !important;
+}
+
+/* Old price */
+.old-price {
+  color: var(--text-light) !important;
+}
+
+/* Reviews section header */
+.reviews-section-header h3 {
+  color: var(--text-dark) !important;
+}
+
+/* Review modal header */
+.review-modal-header h3 {
+  color: var(--text-dark) !important;
+}
+
+/* Review product info */
+.review-product-info span {
+  color: var(--text-dark) !important;
+}
+
+/* All reviews header */
+.all-reviews-header h3 {
+  color: var(--text-dark) !important;
+}
+
+/* Star rating text */
+.rating-text {
+  color: var(--text-light) !important;
+}
+
+/* Review star select text */
+.review-star-select p {
+  color: var(--text-mid) !important;
+}
+
+/* Photo upload label */
+.review-photo-upload label {
+  color: var(--text-mid) !important;
+}
+
+/* Photo upload area */
+.photo-upload-area {
+  color: var(--text-light) !important;
+}
+
+/* Review card border */
+.review-card-daraz {
+  border-bottom-color: var(--border) !important;
+}
+
+/* Reviews section border */
+.reviews-section {
+  border-color: var(--border) !important;
+}
+
+/* Rating summary border */
+.rating-summary-daraz {
+  border-bottom-color: var(--border) !important;
+}
+
+/* Review modal header border */
+.review-modal-header {
+  border-bottom-color: var(--border) !important;
+}
+
+/* All reviews header border */
+.all-reviews-header {
+  border-bottom-color: var(--border) !important;
+}
+
+/* Section border */
+.section {
+  border-bottom-color: var(--border) !important;
+}
+
+/* Item card border */
+.item-card {
+  border-color: var(--border) !important;
+}
+
+/* Share sheet border */
+.share-sheet {
+  border-color: var(--border) !important;
+}
+
+/* Share link box border */
+.share-link-box {
+  border-color: var(--border) !important;
+}
+
+/* Review modal sheet border */
+.review-modal-sheet {
+  border-color: var(--border) !important;
+}
+
+/* Photo upload area border */
+.photo-upload-area {
+  border-color: var(--border) !important;
+}
+
+/* Review form textarea border */
+.review-form-fields textarea {
+  border-color: var(--border) !important;
+}
+
+/* Color/Size button border */
+.color-btn,
+.size-btn {
+  border-color: var(--border) !important;
+}
+
+/* Supplier logo border */
+.supplier-logo {
+  border-color: var(--border) !important;
+}
+
+/* Shop info border */
+.shop-info {
+  border-color: var(--border) !important;
+}
+
+/* Bottom action bar border */
+.back {
+  border-top-color: var(--border) !important;
+}
+
+/* Slider background */
+#imageSlider {
+  background: var(--bg) !important;
+}
+
+/* Review product info background */
+.review-product-info {
+  background: var(--bg) !important;
+}
+
+/* Section header background */
+.section-header {
+  background: var(--card-bg) !important;
+  color: var(--text-dark) !important;
+}
+
+/* Section content background */
+.section-content {
+  background: var(--bg) !important;
+}
+
+/* Share option hover background */
+.share-option:hover {
+  background: var(--bg) !important;
+}
+
+/* Close share hover background */
+.close-share:hover {
+  background: var(--bg) !important;
+}
+
+/* Review modal close active background */
+.review-modal-close:active {
+  background: var(--bg) !important;
+}
+
+/* Write review button active background */
+.write-review-btn-daraz:active {
+  background: var(--primary-light) !important;
+}
+
+/* Photo upload area active background */
+.photo-upload-area:active {
+  background: var(--primary-light) !important;
+}
+
+/* Load more reviews background */
+.load-more-reviews {
+  background: var(--bg) !important;
+}
+
+/* Shop logo background */
+.shop-logo {
+  background: var(--card-bg) !important;
+}
+
+/* Review photo preview item background */
+.review-photo-preview-item img {
+  background: var(--border) !important;
+}
+
+/* Review product info image background */
+.review-product-info img {
+  background: var(--border) !important;
 }

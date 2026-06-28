@@ -4,31 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Cart Order – CucuCollection</title>
+<script src="themeEngine.js"></script>
 <style>
+/* ── THEME-AWARE VARIABLES ── */
 :root {
-  --orange: #e65100;
-  --orange2: #ff8f00;
-  --orange3: #ff9800;
-  --orange-bg: #fff8f0;
-  --orange-light: #fff3e0;
-  --orange-border: #ffcc80;
+  --t-accent:       var(--primary,       #e65100);
+  --t-accent-dark:  var(--primary-dark,  #bf360c);
+  --t-accent-light: var(--primary-light, #fff3e0);
+  --t-accent-glow:  var(--primary-glow,  rgba(230,81,0,0.12));
+  --t-bg:           var(--bg,            #f5f5f5);
+  --t-card:         var(--card-bg,       #ffffff);
+  --t-text:         var(--text-dark,     #1a1a1a);
+  --t-text-mid:     var(--text-mid,      #666666);
+  --t-text-light:   var(--text-light,    #999999);
+  --t-border:       var(--border,        #e0e0e0);
   --radius: 16px;
-  --shadow: 0 4px 20px rgba(230,81,0,0.12);
-  --shadow-lg: 0 8px 32px rgba(230,81,0,0.18);
+  --shadow: 0 4px 20px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.18);
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: linear-gradient(160deg, #fff3e0 0%, #f5f5f5 50%, #fafafa 100%);
-  min-height: 100vh; color: #1a1a1a; padding-bottom: 20px;
+  background: var(--t-bg) !important;
+  min-height: 100vh; color: var(--t-text) !important; padding-bottom: 20px;
 }
 
 /* HEADER */
 .hdr {
-  background: linear-gradient(135deg, var(--orange), var(--orange2), var(--orange3));
+  background: var(--primary, #e65100);
   padding: 16px 18px 14px; text-align: center;
   position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 4px 20px rgba(230,81,0,0.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
 .hdr h1 { color: #fff; font-size: 20px; font-weight: 800; letter-spacing: 0.3px; }
 .hdr p  { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; font-weight: 500; }
@@ -37,16 +45,18 @@ body {
 
 /* CART SECTION */
 .cart-sec {
-  background: #fff; border-radius: var(--radius);
-  box-shadow: var(--shadow); border: 1.5px solid var(--orange-border);
+  background: var(--t-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--t-border);
   overflow: hidden; margin-bottom: 14px;
 }
 .cart-head {
-  background: linear-gradient(90deg, var(--orange), var(--orange2));
+  background: var(--primary, #e65100);
   padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
 }
 .cart-head span { color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.3px; }
-.cart-head .cart-count { 
+.cart-head .cart-count {
   background: rgba(255,255,255,0.2); color: #fff; font-size: 12px; font-weight: 700;
   padding: 4px 10px; border-radius: 20px; backdrop-filter: blur(4px);
 }
@@ -55,76 +65,76 @@ body {
 /* Cart Item */
 .cart-item {
   display: flex; gap: 12px; padding: 14px 16px;
-  border-bottom: 1px solid #f0f0f0; align-items: flex-start;
+  border-bottom: 1px solid var(--t-border); align-items: flex-start;
   transition: background 0.2s; position: relative;
 }
 .cart-item:last-child { border-bottom: none; }
-.cart-item:hover { background: var(--orange-light); }
+.cart-item:hover { background: var(--t-accent-light); }
 .cart-item img {
   width: 72px; height: 72px; border-radius: 10px;
-  object-fit: cover; border: 2px solid var(--orange-border); flex-shrink: 0;
+  object-fit: cover; border: 2px solid var(--t-border); flex-shrink: 0;
 }
 .cart-item-info { flex: 1; min-width: 0; }
-.cart-item-title { font-size: 14px; font-weight: 700; line-height: 1.3; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cart-item-meta { font-size: 11.5px; color: #777; margin-bottom: 2px; }
-.cart-item-price { font-size: 15px; font-weight: 800; color: var(--orange); margin-top: 4px; }
+.cart-item-title { font-size: 14px; font-weight: 700; line-height: 1.3; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--t-text); }
+.cart-item-meta { font-size: 11.5px; color: var(--t-text-mid); margin-bottom: 2px; }
+.cart-item-price { font-size: 15px; font-weight: 800; color: var(--t-accent); margin-top: 4px; }
 
 /* Quantity Controls */
 .qty-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
 .qty-btn {
-  width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--orange-border);
-  background: var(--orange-light); color: var(--orange); font-size: 16px; font-weight: 700;
+  width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--t-border);
+  background: var(--t-accent-light); color: var(--t-accent); font-size: 16px; font-weight: 700;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   transition: all 0.2s; user-select: none;
 }
-.qty-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+.qty-btn:hover { background: var(--t-accent); color: #fff; border-color: var(--t-accent); }
 .qty-btn:active { transform: scale(0.92); }
-.qty-val { font-size: 14px; font-weight: 700; color: #1a1a1a; min-width: 24px; text-align: center; }
+.qty-val { font-size: 14px; font-weight: 700; color: var(--t-text); min-width: 24px; text-align: center; }
 
 /* Remove Button */
 .remove-btn {
   position: absolute; right: 12px; top: 12px;
   width: 26px; height: 26px; border-radius: 50%;
-  background: #ffebee; color: #ff1744; border: none;
+  background: rgba(255,23,68,0.12); color: #ff1744; border: none;
   font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; opacity: 0.7;
+  transition: all 0.2s; opacity: 0.8;
 }
 .remove-btn:hover { opacity: 1; background: #ff1744; color: #fff; transform: scale(1.1); }
 
 /* Cart Empty State */
-.cart-empty {
-  text-align: center; padding: 40px 20px; color: #aaa;
-}
+.cart-empty { text-align: center; padding: 40px 20px; color: var(--t-text-light); }
 .cart-empty .empty-icon { font-size: 56px; margin-bottom: 12px; opacity: 0.6; }
 .cart-empty p { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
 .shop-btn {
-  display: inline-block; background: linear-gradient(135deg, var(--orange), var(--orange2));
+  display: inline-block; background: var(--primary, #e65100);
   color: #fff; padding: 12px 28px; border-radius: 30px; font-size: 14px; font-weight: 700;
-  text-decoration: none; box-shadow: 0 4px 14px rgba(230,81,0,0.3); transition: transform 0.2s;
+  text-decoration: none; box-shadow: 0 4px 14px rgba(0,0,0,0.2); transition: transform 0.2s;
 }
 .shop-btn:hover { transform: translateY(-2px); }
 
 /* Cart Summary Bar */
 .cart-summary {
-  background: linear-gradient(135deg, var(--orange-light), #fff8f0);
-  padding: 14px 16px; border-top: 2px solid var(--orange-border);
+  background: var(--t-accent-light);
+  padding: 14px 16px; border-top: 2px solid var(--t-border);
   display: flex; justify-content: space-between; align-items: center;
 }
-.cart-summary .sum-label { font-size: 13px; color: #666; font-weight: 600; }
-.cart-summary .sum-val { font-size: 18px; font-weight: 800; color: var(--orange); }
+.cart-summary .sum-label { font-size: 13px; color: var(--t-text-mid); font-weight: 600; }
+.cart-summary .sum-val { font-size: 18px; font-weight: 800; color: var(--t-accent); }
 
 /* SECTIONS */
 .sec {
-  background: #fff; border-radius: var(--radius);
-  box-shadow: var(--shadow); border: 1.5px solid #eee;
+  background: var(--t-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--t-border);
   margin-bottom: 14px; overflow: hidden;
 }
 .sec-title {
-  font-size: 13px; font-weight: 700; color: var(--orange);
+  font-size: 13px; font-weight: 700; color: var(--t-accent);
   padding: 14px 16px 0; display: flex; align-items: center; gap: 8px;
 }
 .sec-title::after {
-  content: ''; flex: 1; height: 1.5px; background: var(--orange-border);
+  content: ''; flex: 1; height: 1.5px; background: var(--t-border);
   margin-left: 6px; border-radius: 2px;
 }
 .sec-body { padding: 14px 16px 16px; }
@@ -132,25 +142,27 @@ body {
 /* PAYMENT TYPE */
 .pay-type-row { display: flex; gap: 10px; margin-bottom: 0; }
 .pay-type-btn {
-  flex: 1; padding: 14px 10px; border: 2px solid #e0e0e0; border-radius: 14px;
-  background: #fafafa; cursor: pointer; text-align: center; font-family: inherit;
+  flex: 1; padding: 14px 10px; border: 2px solid var(--t-border); border-radius: 14px;
+  background: var(--t-bg); cursor: pointer; text-align: center; font-family: inherit;
   transition: all 0.25s;
 }
 .pay-type-btn .pt-icon { font-size: 28px; margin-bottom: 5px; transition: transform 0.3s; }
-.pay-type-btn .pt-lbl  { font-size: 13px; font-weight: 700; color: #888; }
-.pay-type-btn .pt-sub  { font-size: 11px; color: #bbb; margin-top: 3px; }
-.pay-type-btn:hover { border-color: #ccc; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.pay-type-btn .pt-lbl  { font-size: 13px; font-weight: 700; color: var(--t-text-light); }
+.pay-type-btn .pt-sub  { font-size: 11px; color: var(--t-text-light); margin-top: 3px; }
+.pay-type-btn:hover { border-color: var(--t-border); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.10); }
 .pay-type-btn:hover .pt-icon { transform: scale(1.15); }
 .pay-type-btn.sel-cod {
-  border-color: #2196f3; background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-  box-shadow: 0 4px 16px rgba(33,150,243,0.2);
+  border-color: #2196f3;
+  background: rgba(33,150,243,0.12);
+  box-shadow: 0 4px 16px rgba(33,150,243,0.15);
 }
 .pay-type-btn.sel-cod .pt-lbl { color: #1565c0; }
 .pay-type-btn.sel-adv {
-  border-color: var(--orange); background: linear-gradient(135deg, var(--orange-bg), var(--orange-light));
-  box-shadow: 0 4px 16px rgba(230,81,0,0.2);
+  border-color: var(--t-accent);
+  background: var(--t-accent-light);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
 }
-.pay-type-btn.sel-adv .pt-lbl { color: var(--orange); }
+.pay-type-btn.sel-adv .pt-lbl { color: var(--t-accent); }
 
 /* DELIVERY BANNER */
 .del-banner {
@@ -160,132 +172,141 @@ body {
 }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 .del-banner.show { display: flex; }
-.del-banner.cod-b { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border: 1.5px solid #90caf9; color: #1565c0; }
-.del-banner.adv-b { background: linear-gradient(135deg, var(--orange-bg), var(--orange-light)); border: 1.5px solid var(--orange-border); color: var(--orange); }
+.del-banner.cod-b {
+  background: rgba(33,150,243,0.12);
+  border: 1.5px solid rgba(33,150,243,0.3);
+  color: #1565c0;
+}
+.del-banner.adv-b {
+  background: var(--t-accent-light);
+  border: 1.5px solid var(--t-border);
+  color: var(--t-accent);
+}
 .del-banner .del-price { font-size: 17px; font-weight: 800; margin-left: auto; }
 
 /* PAYMENT METHOD */
 .pm-row { display: flex; gap: 10px; margin-top: 14px; }
 .pm-btn {
-  flex: 1; padding: 14px 10px; border: 2px solid #e0e0e0; border-radius: 14px;
-  background: #fafafa; cursor: pointer; text-align: center; font-family: inherit;
+  flex: 1; padding: 14px 10px; border: 2px solid var(--t-border); border-radius: 14px;
+  background: var(--t-bg); cursor: pointer; text-align: center; font-family: inherit;
   transition: all 0.25s;
 }
 .pm-btn .pm-ic { font-size: 28px; margin-bottom: 4px; transition: transform 0.3s; }
-.pm-btn .pm-nm { font-size: 12px; font-weight: 700; color: #999; }
-.pm-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.pm-btn .pm-nm { font-size: 12px; font-weight: 700; color: var(--t-text-light); }
+.pm-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.10); }
 .pm-btn:hover .pm-ic { transform: scale(1.15); }
-.pm-btn.sel-ep { border-color: #00a651; background: linear-gradient(135deg, #f0fff7, #e0f7fa); box-shadow: 0 4px 16px rgba(0,166,81,0.15); }
+.pm-btn.sel-ep { border-color: #00a651; background: rgba(0,166,81,0.10); box-shadow: 0 4px 16px rgba(0,166,81,0.12); }
 .pm-btn.sel-ep .pm-nm { color: #00a651; }
-.pm-btn.sel-jz { border-color: #d71920; background: linear-gradient(135deg, #fff5f5, #ffebee); box-shadow: 0 4px 16px rgba(215,25,32,0.15); }
+.pm-btn.sel-jz { border-color: #d71920; background: rgba(215,25,32,0.08); box-shadow: 0 4px 16px rgba(215,25,32,0.12); }
 .pm-btn.sel-jz .pm-nm { color: #d71920; }
 
 /* ACCOUNT BOX */
 .acct-box {
   display: none; margin-top: 14px;
-  background: linear-gradient(135deg, var(--orange-bg), #fff8f0);
-  border: 1.5px solid var(--orange-border); border-radius: 14px; padding: 16px;
+  background: var(--t-accent-light);
+  border: 1.5px solid var(--t-border); border-radius: 14px; padding: 16px;
   animation: fadeIn 0.4s ease;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .acct-box.show { display: block; }
 .acct-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-.acct-lbl { font-size: 10px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.acct-num { font-size: 20px; font-weight: 800; color: var(--orange); letter-spacing: 0.5px; }
-.acct-name { font-size: 13px; color: #555; margin-bottom: 12px; font-weight: 500; }
+.acct-lbl { font-size: 10px; color: var(--t-text-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.acct-num { font-size: 20px; font-weight: 800; color: var(--t-accent); letter-spacing: 0.5px; }
+.acct-name { font-size: 13px; color: var(--t-text-mid); margin-bottom: 12px; font-weight: 500; }
 .copy-btn {
-  background: linear-gradient(135deg, var(--orange), var(--orange2));
-  color: #fff; border: none; border-radius: 10px; padding: 7px 14px;
+  background: var(--t-accent); color: #fff; border: none; border-radius: 10px; padding: 7px 14px;
   font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
 }
-.copy-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(230,81,0,0.3); }
+.copy-btn:hover { transform: translateY(-1px); background: var(--t-accent-dark); }
 .copy-btn:active { transform: scale(0.95); }
 .send-amt {
-  display: inline-block; background: linear-gradient(135deg, var(--orange), var(--orange2));
+  display: inline-block; background: var(--t-accent);
   color: #fff; border-radius: 10px; padding: 8px 16px; font-size: 14px;
-  font-weight: 700; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(230,81,0,0.2);
+  font-weight: 700; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 .qr-img {
   width: 100%; max-width: 320px; display: block;
   margin: 0 auto 10px; border-radius: 10px;
-  border: 2px solid var(--orange-border); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 2px solid var(--t-border); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 /* SCREENSHOT UPLOAD */
 .ss-label {
   display: flex; flex-direction: column; align-items: center;
-  border: 2px dashed var(--orange-border); border-radius: 14px;
-  padding: 24px 16px; cursor: pointer; background: linear-gradient(135deg, var(--orange-bg), var(--orange-light));
+  border: 2px dashed var(--t-border); border-radius: 14px;
+  padding: 24px 16px; cursor: pointer;
+  background: var(--t-accent-light);
   transition: all 0.3s; margin-top: 14px;
 }
-.ss-label:hover { border-color: var(--orange); background: linear-gradient(135deg, var(--orange-light), #fff); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(230,81,0,0.12); }
+.ss-label:hover { border-color: var(--t-accent); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
 .ss-icon { font-size: 36px; margin-bottom: 8px; transition: transform 0.3s; }
 .ss-label:hover .ss-icon { transform: scale(1.1); }
-.ss-txt  { font-size: 14px; color: #777; font-weight: 600; }
-.ss-sub  { font-size: 12px; color: #bbb; margin-top: 3px; }
+.ss-txt  { font-size: 14px; color: var(--t-text-mid); font-weight: 600; }
+.ss-sub  { font-size: 12px; color: var(--t-text-light); margin-top: 3px; }
 #ssInput { display: none; }
 #ssPreview {
   width: 100%; max-height: 220px; object-fit: contain;
   border-radius: 12px; margin-top: 12px; display: none;
-  border: 2px solid var(--orange-border); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 2px solid var(--t-border); box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 /* FORM FIELDS */
 .field { margin-bottom: 14px; }
 .field label {
   display: block; font-size: 11px; font-weight: 700;
-  color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px;
+  color: var(--t-text-light); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px;
 }
 .field input, .field textarea {
   width: 100%; padding: 12px 14px;
-  border: 1.5px solid #e0e0e0; border-radius: 12px;
+  border: 1.5px solid var(--t-border); border-radius: 12px;
   font-size: 15px; font-family: inherit;
-  background: #fafafa; color: #1a1a1a;
+  background: var(--t-bg); color: var(--t-text);
   transition: all 0.25s; outline: none;
 }
+.field input::placeholder, .field textarea::placeholder { color: var(--t-text-light); }
 .field input:focus, .field textarea:focus {
-  border-color: var(--orange);
-  box-shadow: 0 0 0 4px rgba(230,81,0,0.08);
-  background: #fff;
+  border-color: var(--t-accent);
+  box-shadow: 0 0 0 4px var(--t-accent-glow);
+  background: var(--t-card);
 }
 .field textarea { resize: none; }
 
 /* PROVINCE DROPDOWN */
 .prov-btn {
   width: 100%; padding: 12px 14px;
-  border: 1.5px solid #e0e0e0; border-radius: 12px;
-  font-size: 15px; background: #fafafa; color: #1a1a1a;
+  border: 1.5px solid var(--t-border); border-radius: 12px;
+  font-size: 15px; background: var(--t-bg); color: var(--t-text);
   text-align: left; cursor: pointer;
   display: flex; justify-content: space-between; align-items: center;
   font-family: inherit; transition: all 0.25s;
 }
 .prov-btn.open {
-  border-color: var(--orange);
-  box-shadow: 0 0 0 4px rgba(230,81,0,0.08);
-  border-radius: 12px 12px 0 0; background: #fff;
+  border-color: var(--t-accent);
+  box-shadow: 0 0 0 4px var(--t-accent-glow);
+  border-radius: 12px 12px 0 0; background: var(--t-card);
 }
-.prov-arrow { font-size: 10px; transition: transform 0.3s; color: #999; }
-.prov-btn.open .prov-arrow { transform: rotate(180deg); color: var(--orange); }
+.prov-arrow { font-size: 10px; transition: transform 0.3s; color: var(--t-text-light); }
+.prov-btn.open .prov-arrow { transform: rotate(180deg); color: var(--t-accent); }
 .prov-dd {
-  display: none; border: 1.5px solid var(--orange);
+  display: none; border: 1.5px solid var(--t-accent);
   border-top: none; border-radius: 0 0 12px 12px;
-  background: #fff; overflow: hidden;
-  box-shadow: 0 12px 24px rgba(230,81,0,0.12);
+  background: var(--t-card); overflow: hidden;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
   max-height: 240px; overflow-y: auto;
 }
 .prov-dd.show { display: block; animation: slideDown 0.25s ease; }
 .prov-opt {
   padding: 13px 16px; cursor: pointer; font-size: 14px;
   display: flex; align-items: center; gap: 10px;
-  transition: all 0.15s;
+  color: var(--t-text); transition: all 0.15s;
 }
-.prov-opt:not(:last-child) { border-bottom: 1px solid #f5f5f5; }
-.prov-opt:hover { background: var(--orange-light); padding-left: 20px; }
-.prov-opt.active { background: var(--orange-light); color: var(--orange); font-weight: 700; }
+.prov-opt:not(:last-child) { border-bottom: 1px solid var(--t-border); }
+.prov-opt:hover { background: var(--t-accent-light); padding-left: 20px; }
+.prov-opt.active { background: var(--t-accent-light); color: var(--t-accent); font-weight: 700; }
 
 /* ORDER TOTAL */
 .order-total {
-  background: linear-gradient(135deg, var(--orange), var(--orange2), var(--orange3));
+  background: var(--primary, #e65100);
   border-radius: 14px; padding: 16px 18px; margin-bottom: 14px;
   display: none; box-shadow: var(--shadow-lg);
 }
@@ -296,10 +317,10 @@ body {
 /* SUBMIT */
 .submit-btn {
   width: 100%; padding: 16px;
-  background: linear-gradient(135deg, var(--orange), var(--orange2), var(--orange3));
+  background: var(--primary, #e65100);
   color: #fff; border: none; border-radius: 16px;
   font-size: 17px; font-weight: 800; cursor: pointer;
-  box-shadow: 0 6px 24px rgba(230,81,0,0.35);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
   transition: all 0.25s; letter-spacing: 0.4px; position: relative; overflow: hidden;
 }
 .submit-btn::after {
@@ -307,7 +328,7 @@ body {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
   transition: left 0.5s;
 }
-.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(230,81,0,0.4); }
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
 .submit-btn:hover::after { left: 100%; }
 .submit-btn:active { transform: scale(0.97); }
 .submit-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
@@ -315,7 +336,7 @@ body {
 /* LOADING */
 .overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5); z-index: 999;
+  background: rgba(0,0,0,0.55); z-index: 999;
   align-items: center; justify-content: center; flex-direction: column; gap: 16px;
   backdrop-filter: blur(4px);
 }
@@ -332,7 +353,7 @@ body {
 /* TOAST */
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: #222; color: #fff; padding: 12px 24px;
+  background: rgba(0,0,0,0.88); color: #fff; padding: 12px 24px;
   border-radius: 30px; font-size: 14px; font-weight: 500;
   opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 1000;
   max-width: 90vw; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
@@ -340,23 +361,40 @@ body {
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* NO PRODUCT */
-.no-product { text-align: center; padding: 60px 20px; color: #aaa; }
+.no-product { text-align: center; padding: 60px 20px; color: var(--t-text-light); }
 .no-product .ni { font-size: 56px; margin-bottom: 14px; }
 .no-product p { font-size: 16px; font-weight: 600; }
 
-/* RESPONSIVE */
 @media (max-width: 400px) {
   .wrap { padding: 10px 8px 30px; }
   .cart-item { padding: 12px; }
   .cart-item img { width: 60px; height: 60px; }
 }
 </style>
+
+  <!-- META PIXEL -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
 </head>
 <body>
 
 <div class="hdr">
   <h1>🛒 Place Your Order</h1>
-  <p>www.delightpk.shop</p>
+  <p>My.cucucollection.shop</p>
 </div>
 
 <div class="wrap" id="wrap"></div>
@@ -377,6 +415,36 @@ const ADMIN_PHONE = "03352166725";
 const customer = JSON.parse(localStorage.getItem("customer") || "null");
 if (!customer) { alert("Please login first!"); window.location.href = "login.html"; }
 
+// ── THEME ENGINE INIT ─────────────────────────────────────
+if (typeof DelightTheme !== 'undefined') {
+  DelightTheme.apply(ADMIN_PHONE);
+}
+
+// Apply gradient to themed elements after theme loads
+function applyHeaderTheme() {
+  const cacheKey = "dlTheme_" + ADMIN_PHONE;
+  const themeId  = localStorage.getItem(cacheKey) || "default";
+  if (typeof DelightTheme !== 'undefined') {
+    const t = DelightTheme.getTheme(themeId);
+    if (t) {
+      const hdr = document.querySelector('.hdr');
+      if (hdr) hdr.style.background = t.headerGrad;
+      const cartHead = document.querySelector('.cart-head');
+      if (cartHead) cartHead.style.background = t.headerGrad;
+      const submitBtn = document.querySelector('.submit-btn');
+      if (submitBtn) submitBtn.style.background = t.headerGrad;
+      const orderTotal = document.querySelector('.order-total');
+      if (orderTotal) orderTotal.style.background = t.headerGrad;
+      const sendAmt = document.querySelectorAll('.send-amt');
+      sendAmt.forEach(el => el.style.background = t.accent);
+      const shopBtn = document.querySelector('.shop-btn');
+      if (shopBtn) shopBtn.style.background = t.headerGrad;
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', applyHeaderTheme);
+setTimeout(applyHeaderTheme, 100);
+
 // ── CART ──
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let sellerSettings = null;
@@ -388,14 +456,12 @@ let screenshotFile = null;
 
 const wrap = document.getElementById("wrap");
 
-// ── TOAST ──
 function toast(msg, dur = 2800) {
   const t = document.getElementById("toast");
   t.textContent = msg; t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), dur);
 }
 
-// ── BOOT ──
 if (!cart || cart.length === 0) {
   renderEmptyCart();
 } else {
@@ -404,18 +470,14 @@ if (!cart || cart.length === 0) {
 
 async function init() {
   try {
-    // ── MULTI-STORE: Sab sellers ki delivery charges collect karo ──
     const sellerPhones = [...new Set(cart.map(item => item.sellerPhone || ADMIN_PHONE))];
     const sellerPromises = sellerPhones.map(phone =>
       fetch(`${BACKEND}/settings?phone=${phone}`).then(r => r.json()).catch(() => ({ delivery: 0, advanceDelivery: 0 }))
     );
     const sellerResults = await Promise.all(sellerPromises);
     sellerSettings = {};
-    sellerPhones.forEach((phone, i) => {
-      sellerSettings[phone] = sellerResults[i];
-    });
+    sellerPhones.forEach((phone, i) => { sellerSettings[phone] = sellerResults[i]; });
 
-    // ── ADMIN: Sirf admin ka settings (easypaisa/jazzcash) ──
     const adminR = await fetch(`${BACKEND}/settings?phone=${ADMIN_PHONE}`);
     adminSettings = await adminR.json();
   } catch(e) {
@@ -425,25 +487,21 @@ async function init() {
   render();
 }
 
-// ── PROVINCES ──
 const PROVS = [
   ["Punjab","🌾"], ["Sindh","🌊"], ["Khyber Pakhtunkhwa","⛰️"],
   ["Balochistan","🏜️"], ["Gilgit-Baltistan","🏔️"], ["Azad Kashmir","🍃"]
 ];
 
-// ── CALCULATIONS ──
 function getCartTotals() {
-  // Subtotal: har item ka price * qty
   const subtotal = cart.reduce((sum, item) => {
     return sum + (Number(item.finalPrice || item.price || 0) * (item.qty || item.quantity || 1));
   }, 0);
 
-  // Delivery: har unique seller ka delivery charge (first item per seller)
   let totalDel = 0;
   const seenSellers = new Set();
   cart.forEach(item => {
     const sellerPhone = item.sellerPhone || ADMIN_PHONE;
-    const sellerSet = sellerSettings[sellerPhone] || { delivery: 0, advanceDelivery: 0 };
+    const sellerSet = sellerSettings ? (sellerSettings[sellerPhone] || { delivery: 0, advanceDelivery: 0 }) : { delivery: 0, advanceDelivery: 0 };
     if (!seenSellers.has(sellerPhone)) {
       const del = payType === "cod"
         ? Number(sellerSet.delivery || 0)
@@ -457,18 +515,13 @@ function getCartTotals() {
   return { subtotal, del: totalDel, total };
 }
 
-// ── RENDER ──
 function render() {
   const { subtotal, del, total } = getCartTotals();
-
-  // ── ADMIN ACCOUNTS: Sirf admin ka (03133196595) ──
   const hasEP = !!(adminSettings?.easypaisa?.accountNumber);
   const hasJZ = !!(adminSettings?.jazzcash?.accountNumber);
   const hasAdvance = (hasEP || hasJZ);
 
   wrap.innerHTML = `
-
-  <!-- CART ITEMS -->
   <div class="cart-sec">
     <div class="cart-head">
       <span>📦 Cart Items</span>
@@ -478,7 +531,7 @@ function render() {
       ${cart.map((item, idx) => `
         <div class="cart-item" data-idx="${idx}">
           <button class="remove-btn" onclick="removeItem(${idx})" title="Remove">✕</button>
-          <img src="${item.image}" onerror="this.src='https://placehold.co/72x72/ffeedd/e65100?text=IMG'" alt="">
+          <img src="${item.image}" onerror="this.src='https://placehold.co/72x72/888/fff?text=IMG'" alt="">
           <div class="cart-item-info">
             <div class="cart-item-title">${item.title}</div>
             ${item.selectedColor ? `<div class="cart-item-meta">🎨 ${item.selectedColor}</div>` : ""}
@@ -499,7 +552,6 @@ function render() {
     </div>
   </div>
 
-  <!-- PAYMENT TYPE -->
   <div class="sec">
     <div class="sec-title">💰 Payment Type</div>
     <div class="sec-body">
@@ -517,32 +569,26 @@ function render() {
         </button>` : ""}
       </div>
 
-      <!-- COD DELIVERY BANNER -->
       <div class="del-banner cod-b" id="codBanner">
         <span>🚚 COD Delivery Charges</span>
         <span class="del-price" id="codDelPrice">Rs. ${del.toLocaleString()}</span>
       </div>
 
-      <!-- ADVANCE DELIVERY BANNER -->
       ${hasAdvance ? `
       <div class="del-banner adv-b" id="advBanner">
         <span>⚡ Advance Delivery Charges</span>
         <span class="del-price" id="advDelPrice">Rs. ${del.toLocaleString()}</span>
       </div>
 
-      <!-- PAYMENT METHOD BUTTONS -->
       <div class="pm-row" id="pmRow" style="display:none">
         ${hasEP ? `<button class="pm-btn" id="epBtn" type="button" onclick="selectPayMethod('easypaisa')">
-          <div class="pm-ic">💚</div>
-          <div class="pm-nm">Easypaisa</div>
+          <div class="pm-ic">💚</div><div class="pm-nm">Easypaisa</div>
         </button>` : ""}
         ${hasJZ ? `<button class="pm-btn" id="jzBtn" type="button" onclick="selectPayMethod('jazzcash')">
-          <div class="pm-ic">❤️</div>
-          <div class="pm-nm">JazzCash</div>
+          <div class="pm-ic">❤️</div><div class="pm-nm">JazzCash</div>
         </button>` : ""}
       </div>
 
-      <!-- EASYPAISA BOX -->
       ${hasEP ? `
       <div class="acct-box" id="epBox">
         <div class="send-amt">Send: Rs. ${total.toLocaleString()}</div>
@@ -558,7 +604,6 @@ function render() {
         ${adminSettings.easypaisa.qrCode ? `<img src="${adminSettings.easypaisa.qrCode}" class="qr-img" alt="QR Code">` : ""}
       </div>` : ""}
 
-      <!-- JAZZCASH BOX -->
       ${hasJZ ? `
       <div class="acct-box" id="jzBox">
         <div class="send-amt">Send: Rs. ${total.toLocaleString()}</div>
@@ -574,7 +619,6 @@ function render() {
         ${adminSettings.jazzcash.qrCode ? `<img src="${adminSettings.jazzcash.qrCode}" class="qr-img" alt="QR Code">` : ""}
       </div>` : ""}
 
-      <!-- SCREENSHOT UPLOAD -->
       <div id="ssSection" style="display:none">
         <label class="ss-label" for="ssInput">
           <span class="ss-icon">📸</span>
@@ -588,7 +632,6 @@ function render() {
     </div>
   </div>
 
-  <!-- TOTAL -->
   <div class="order-total" id="orderTotal">
     <div>
       <div class="ot-label">Total Price</div>
@@ -597,21 +640,11 @@ function render() {
     <div class="ot-amount" id="totalAmt">Rs. ${total.toLocaleString()}</div>
   </div>
 
-  <!-- DELIVERY DETAILS -->
   <div class="sec">
     <div class="sec-title">📋 Delivery Details</div>
     <div class="sec-body">
-
-      <div class="field">
-        <label>Your Name *</label>
-        <input type="text" id="fName" placeholder="Full Name" value="${customer?.name || ''}">
-      </div>
-
-      <div class="field">
-        <label>Phone Number *</label>
-        <input type="tel" id="fPhone" placeholder="03xxxxxxxxx" maxlength="11" inputmode="numeric" value="${customer?.phone || ''}">
-      </div>
-
+      <div class="field"><label>Your Name *</label><input type="text" id="fName" placeholder="Full Name" value="${customer?.name || ''}"></div>
+      <div class="field"><label>Phone Number *</label><input type="tel" id="fPhone" placeholder="03xxxxxxxxx" maxlength="11" inputmode="numeric" value="${customer?.phone || ''}"></div>
       <div class="field">
         <label>Province / Region *</label>
         <button type="button" class="prov-btn" id="provBtn" onclick="toggleProv()">
@@ -619,39 +652,36 @@ function render() {
           <span class="prov-arrow">▼</span>
         </button>
         <div class="prov-dd" id="provDd">
-          ${PROVS.map(([n,ic]) => `
-            <div class="prov-opt" onclick="pickProv('${n}')" data-name="${n}">
-              <span>${ic}</span>${n}
-            </div>`).join("")}
+          ${PROVS.map(([n,ic]) => `<div class="prov-opt" onclick="pickProv('${n}')" data-name="${n}"><span>${ic}</span>${n}</div>`).join("")}
         </div>
       </div>
-
-      <div class="field">
-        <label>City *</label>
-        <input type="text" id="fCity" placeholder="Lahore, Karachi, Peshawar...">
-      </div>
-
-      <div class="field">
-        <label>Area / Zone *</label>
-        <input type="text" id="fZone" placeholder="e.g: DHA, Saddar...">
-      </div>
-
-      <div class="field">
-        <label>Full Address *</label>
-        <textarea id="fAddr" rows="3" placeholder="Full address..."></textarea>
-      </div>
-
+      <div class="field"><label>City *</label><input type="text" id="fCity" placeholder="Lahore, Karachi, Peshawar..."></div>
+      <div class="field"><label>Area / Zone *</label><input type="text" id="fZone" placeholder="e.g: DHA, Saddar..."></div>
+      <div class="field"><label>Full Address *</label><textarea id="fAddr" rows="3" placeholder="Full address..."></textarea></div>
     </div>
   </div>
 
-  <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
-    ✅ Place Order
-  </button>
+  <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">✅ Place Order</button>
   <div style="height:20px"></div>
   `;
+
+  applyHeaderTheme();
+  setTimeout(applyHeaderTheme, 50);
 }
 
-// ── CART ACTIONS ──
+function renderEmptyCart() {
+  wrap.innerHTML = `
+  <div class="cart-sec">
+    <div class="cart-head"><span>🛒 Your Cart</span></div>
+    <div class="cart-empty">
+      <div class="empty-icon">🛒</div>
+      <p>Your cart is empty</p>
+      <a class="shop-btn" href="index.html">🛍️ Shop Now</a>
+    </div>
+  </div>`;
+  applyHeaderTheme();
+}
+
 function changeQty(idx, delta) {
   const item = cart[idx];
   const currentQty = item.qty || item.quantity || 1;
@@ -660,33 +690,21 @@ function changeQty(idx, delta) {
   if (newQty > 10) { toast("⚠️ Max 10 items per product"); return; }
   item.qty = newQty;
   if (item.quantity) item.quantity = newQty;
-  saveCart();
-  render();
+  saveCart(); render();
 }
 
 function removeItem(idx) {
   const item = cart[idx];
   if (!confirm(`Remove "${item.title}" from cart?`)) return;
-  cart.splice(idx, 1);
-  saveCart();
-  if (cart.length === 0) {
-    renderEmptyCart();
-  } else {
-    render();
-  }
+  cart.splice(idx, 1); saveCart();
+  if (cart.length === 0) { renderEmptyCart(); } else { render(); }
   toast("🗑️ Item removed");
 }
 
-function saveCart() {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
+function saveCart() { localStorage.setItem("cart", JSON.stringify(cart)); }
 
-// ── PAY TYPE ──
 function selectPayType(type) {
-  payType = type;
-  payMethod = "";
-  screenshotFile = null;
-
+  payType = type; payMethod = ""; screenshotFile = null;
   const { subtotal, del, total } = getCartTotals();
 
   const codBtn = document.getElementById("codBtn");
@@ -699,7 +717,6 @@ function selectPayType(type) {
   if (codB) codB.classList.toggle("show", type === "cod");
   if (advB) advB.classList.toggle("show", type === "advance");
 
-  // Update delivery prices
   const codDelPrice = document.getElementById("codDelPrice");
   const advDelPrice = document.getElementById("advDelPrice");
   if (codDelPrice) codDelPrice.textContent = `Rs. ${del.toLocaleString()}`;
@@ -712,21 +729,20 @@ function selectPayType(type) {
     const el = document.getElementById(id);
     if (el) { el.classList.remove("show"); el.style.display = "none"; }
   });
-  if (document.getElementById("epBtn")) document.getElementById("epBtn")?.classList.remove("sel-ep");
-  if (document.getElementById("jzBtn")) document.getElementById("jzBtn")?.classList.remove("sel-jz");
-  if (document.getElementById("ssPreview")) { document.getElementById("ssPreview").style.display = "none"; }
+  document.getElementById("epBtn")?.classList.remove("sel-ep");
+  document.getElementById("jzBtn")?.classList.remove("sel-jz");
+  if (document.getElementById("ssPreview")) document.getElementById("ssPreview").style.display = "none";
 
   const ot = document.getElementById("orderTotal");
   ot.classList.add("show");
   document.getElementById("totalAmt").textContent = `Rs. ${total.toLocaleString()}`;
-  document.getElementById("totalType").textContent =
-    type === "cod" ? "(Cash on Delivery)" : "(Advance Payment)";
+  document.getElementById("totalType").textContent = type === "cod" ? "(Cash on Delivery)" : "(Advance Payment)";
+
+  applyHeaderTheme();
 }
 
-// ── PAY METHOD ──
 function selectPayMethod(method) {
   payMethod = method;
-
   const epBtn = document.getElementById("epBtn");
   const jzBtn = document.getElementById("jzBtn");
   const epBox = document.getElementById("epBox");
@@ -745,11 +761,9 @@ function selectPayMethod(method) {
     jzBtn?.classList.add("sel-jz");
     jzBox.classList.add("show"); jzBox.style.display = "block";
   }
-
-  if (ssSection) { ssSection.style.display = "block"; }
+  if (ssSection) ssSection.style.display = "block";
 }
 
-// ── PROVINCE ──
 function toggleProv() {
   document.getElementById("provBtn").classList.toggle("open");
   document.getElementById("provDd").classList.toggle("show");
@@ -770,7 +784,6 @@ document.addEventListener("click", e => {
   }
 });
 
-// ── COPY ──
 function copyNum(id) {
   const txt = document.getElementById(id)?.textContent?.trim();
   if (!txt) return;
@@ -784,7 +797,6 @@ function copyNum(id) {
     });
 }
 
-// ── SCREENSHOT ──
 function handleSS(input) {
   const file = input.files[0]; if (!file) return;
   screenshotFile = file;
@@ -796,7 +808,6 @@ function handleSS(input) {
   r.readAsDataURL(file);
 }
 
-// ── SUBMIT ──
 async function handleSubmit() {
   const name  = document.getElementById("fName")?.value?.trim();
   const phone = document.getElementById("fPhone")?.value?.trim();
@@ -811,14 +822,12 @@ async function handleSubmit() {
   if (!city)                       return toast("⚠️ Please enter your city");
   if (!zone)                       return toast("⚠️ Please enter your area/zone");
   if (!addr)                       return toast("⚠️ Please enter your full address");
-
   if (payType === "advance") {
     if (!payMethod)      return toast("⚠️ Please select Easypaisa or JazzCash");
     if (!screenshotFile) return toast("⚠️ Please upload payment screenshot");
   }
 
   const { subtotal, del, total } = getCartTotals();
-
   const overlay    = document.getElementById("overlay");
   const overlayMsg = document.getElementById("overlayMsg");
   const submitBtn  = document.getElementById("submitBtn");
@@ -835,7 +844,6 @@ async function handleSubmit() {
       const sellerPhone = item.sellerPhone || ADMIN_PHONE;
       const itemPrice = Number(item.finalPrice || item.price || 0) * (item.qty || item.quantity || 1);
 
-      // Delivery sirf first item per seller pe lagti hai
       const isFirstForSeller = !seenSellers.has(sellerPhone);
       const sellerSet = sellerSettings[sellerPhone] || { delivery: 0, advanceDelivery: 0 };
       const itemDelivery = isFirstForSeller
@@ -843,12 +851,10 @@ async function handleSubmit() {
             ? Number(sellerSet.delivery || 0)
             : (Number(sellerSet.advanceDelivery || 0) > 0 ? Number(sellerSet.advanceDelivery || 0) : Number(sellerSet.delivery || 0)))
         : 0;
-
       if (isFirstForSeller) seenSellers.add(sellerPhone);
 
       overlayMsg.textContent = `Placing order ${i + 1} of ${cart.length}...`;
 
-      // ── FIX: Advance mein bhi actual price bhejo ──
       const orderData = {
         buyerName:    name,
         buyerPhone:   customer.phone,
@@ -856,7 +862,7 @@ async function handleSubmit() {
         address:      `${selectedProv}, ${city}, ${zone}, ${addr}`,
         product: {
           title:       item.title,
-          price:       payType === "advance" ? 0 : itemPrice,           // HAMESHA actual price
+          price:       payType === "advance" ? 0 : itemPrice,
           color:       item.selectedColor || "N/A",
           size:        item.selectedSize || "N/A",
           image:       item.image,
@@ -868,9 +874,8 @@ async function handleSubmit() {
       };
 
       const res  = await fetch(`${BACKEND}/place-order`, {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(orderData),
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body:   JSON.stringify(orderData),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || `Order failed for "${item.title}"`);
@@ -879,10 +884,8 @@ async function handleSubmit() {
       placedOrderIds.push(orderId);
     }
 
-    // ── Advance payment proof: sirf ek baar upload karo ──
     if (payType === "advance" && screenshotFile && placedOrderIds.length > 0) {
       overlayMsg.textContent = "Uploading payment proof...";
-
       const transactionId = `SS-${Date.now()}-${Math.floor(Math.random() * 9000 + 1000)}`;
       const fd = new FormData();
       fd.append("buyerName",     name);
@@ -899,10 +902,8 @@ async function handleSubmit() {
       if (!payRes.ok) throw new Error(payJson.message || "Payment proof upload failed");
     }
 
-    // ── FIX: Cart clear aur redirect ──
     localStorage.removeItem("cart");
     cart = [];
-
     overlay.classList.remove("show");
     window.location.replace("thanks.html");
 
@@ -915,5 +916,14 @@ async function handleSubmit() {
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'InitiateCheckout', { content_type: 'product', currency: 'PKR' });
+  }
+});
+</script>
+
 </body>
 </html>

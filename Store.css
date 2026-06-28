@@ -185,6 +185,7 @@ header.search-active .search-wrap {
   box-shadow: 0 2px 10px rgba(0,0,0,0.12);
   transition: all 0.3s ease;
   width: 100%;
+  overflow: hidden;
 }
 
 .search-input-box:focus-within {
@@ -207,6 +208,16 @@ header.search-active .search-wrap {
 header.search-active .search-back-btn { display: flex; align-items: center; }
 header.search-active .search-icon { display: none; }
 
+/* Remove default WebKit search styling */
+.search::-webkit-search-decoration,
+.search::-webkit-search-cancel-button,
+.search::-webkit-search-results-button,
+.search::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
 .search {
   border: none; outline: none;
   background: transparent;
@@ -218,9 +229,12 @@ header.search-active .search-icon { display: none; }
   height: auto;
   position: static;
   margin: 0;
-  border-radius: 0;
+  border-radius: 50px;
   padding: 0;
   transition: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .search::placeholder { color: #bbb; font-weight: 500; }
@@ -869,7 +883,8 @@ header.search-active .search-icon { display: none; }
    RECENTLY VIEWED — PROFESSIONAL REDESIGN
    ============================================ */
 .rv-section-block {
-  margin: 10px 12px 0;
+  margin: 8px 12px 0;
+  margin-bottom: 15px;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1373,4 +1388,159 @@ header.search-active .search-icon { display: none; }
   font-size: 12px; font-weight: 700;
   background: var(--primary-light); color: var(--primary);
   padding: 5px 14px; border-radius: 20px; cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME-AWARE DARK MODE FIXES
+   These work with themeEngine.js to ensure perfect dark themes
+   ═══════════════════════════════════════════════════════════ */
+
+/* Flash Sale Section - ensure theme-aware */
+.section-block,
+.flash-sale-section {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+}
+
+/* Skeleton cards - theme-aware shimmer */
+.skeleton-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+}
+
+.skeleton-card .skeleton-img,
+.skeleton-card .skeleton-title,
+.skeleton-card .skeleton-price,
+.skeleton-ad {
+  background: linear-gradient(90deg, var(--border) 25%, rgba(128,128,128,0.15) 50%, var(--border) 75%);
+  background-size: 300% 100%;
+}
+
+/* Search Panel - theme-aware */
+.search-panel {
+  background: var(--card-bg);
+}
+
+#recentSearches li {
+  color: var(--text-dark);
+  border-bottom-color: var(--border);
+}
+
+#recentSearches li:hover {
+  background: var(--primary-light);
+}
+
+.popular-chips span {
+  background: var(--bg);
+  color: var(--text-dark);
+  border-color: var(--border);
+}
+
+/* Suggestions dropdown - theme-aware */
+.suggestions-dropdown {
+  background: var(--card-bg);
+}
+
+.suggestion-item {
+  color: var(--text-dark);
+}
+
+.suggestion-item:hover {
+  background: var(--primary-light);
+}
+
+.suggestion-item .sug-category {
+  background: var(--bg);
+  color: var(--text-light);
+}
+
+/* Search input - ensure text is visible */
+.search {
+  color: var(--text-dark);
+}
+
+.search::placeholder {
+  color: var(--text-light);
+}
+
+.search-placeholder-anim {
+  color: var(--text-light);
+}
+
+/* Recently Viewed - theme-aware gradient fallback */
+.rv-section-block {
+  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(0,0,0,0.3) 50%, var(--bg) 100%);
+}
+
+.rv-card-new {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.rv-card-title {
+  color: var(--text-dark);
+}
+
+.rv-price {
+  color: var(--primary);
+}
+
+.rv-old-price {
+  color: var(--text-light);
+}
+
+/* All Products Header */
+.products-section-header .section-title {
+  color: var(--text-dark);
+}
+
+.products-section-header .all-word {
+  color: var(--primary);
+}
+
+/* Not Found */
+.not-found h3 {
+  color: var(--primary);
+}
+
+.not-found p {
+  color: var(--text-mid);
+}
+
+.not-found .try-tag {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Flash Sale Cards */
+.flash-sale-card {
+  background: var(--card-bg);
+  border-color: var(--border);
+}
+
+.flash-sale-card .card-title {
+  color: var(--text-dark);
+}
+
+.flash-sale-card .final-price {
+  color: var(--primary);
+}
+
+.flash-sale-card .old-price {
+  color: var(--text-light);
+}
+
+/* Product Cards */
+.item-card h3 {
+  color: var(--text-dark);
+}
+
+.item-card .old-price-inline {
+  color: var(--text-light);
+}
+
+/* Ensure body background always applies */
+body {
+  background: var(--bg) !important;
+  color: var(--text-dark) !important;
 }

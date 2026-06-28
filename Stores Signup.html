@@ -3,12 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - CucuCollection</title>
+
+  <!-- ✅ themeEngine PEHLE — CSS inject karta hai BODY dikhne se pehle -->
+  <script src="themeEngine.js"></script>
+
   <link rel="stylesheet" type="text/css" href="Signup.css">
-  <title>cucucollection.shop - Sign Up</title>
+
+  <!-- META PIXEL -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/></noscript>
 </head>
 <body>
 
-  <!-- 🔥 TOAST CONTAINER -->
   <div id="toastContainer"></div>
 
   <div class="delight">
@@ -17,19 +36,16 @@
     <h1 id="welcomeTitle">Cucu Collection 🛍</h1>
   </div>
 
-  <!-- 🔥 Store Logo Hardcoded -->
   <div class="store-info" id="storeInfo">
     <img id="storeLogo" src="Store icons/Cucu.png" alt="Store Logo">
   </div>
 
   <div class="login">
     <h3>Sign Up</h3>
-
     <form id="signupForm">
       <input type="text" id="name" required placeholder="Enter your name"><br>
       <input type="number" id="phone" required placeholder="Enter your phone number" minlength="11" maxlength="11"><br>
-      
-      <!-- 🔥 Password with Eye Toggle -->
+
       <div class="password-wrapper">
         <input type="password" id="pass" required placeholder="Minimum 6 characters" minlength="6">
         <span class="toggle-password" onclick="togglePassword()">
@@ -48,102 +64,80 @@
 
     <p style="margin-top:12px; font-size:13px; text-align:center;">
       Already have an account?
-      <a href="Stores Login.html" id="loginLink" style="color:#ef6c00; text-decoration:none; font-weight:bold;">🔑 Login</a>
+      <a href="Stores Login.html" id="loginLink">🔑 Login</a>
     </p>
   </div>
 
   <script>
-    // 🔥 HARDCODED STORE CONFIG
-    const STORE_CONFIG = {
-      name: "Cucu Collection",
-      logo: "Store icons/Cucu.png"
-    };
+    // ── CONFIG ──
+    const STORE_CONFIG = { name: "Cucu Collection", logo: "Store icons/Cucu.png" };
+    const ADMIN_PHONE  = "03352166725";
 
-    // ═══════════════════════════════
-    // TOAST SYSTEM
-    // ═══════════════════════════════
+    // ── THEME APPLY (API se seller ka theme fetch hoga) ──
+    DelightTheme.apply(ADMIN_PHONE);
+
+    // ── TOAST ──
     function showToast(message, type = "error") {
       const container = document.getElementById("toastContainer");
       const toast = document.createElement("div");
       toast.className = "toast toast-" + type;
       const icons = { success: "✅", error: "⚠️", info: "ℹ️" };
-      toast.innerHTML = `<span class="toast-icon">${icons[type] || "ℹ️"}</span><span class="toast-msg">${message}</span>`;
+      toast.innerHTML = `<span class="toast-icon">${icons[type]||"ℹ️"}</span><span class="toast-msg">${message}</span>`;
       container.appendChild(toast);
       requestAnimationFrame(() => toast.classList.add("show"));
-      setTimeout(() => {
-        toast.classList.remove("show");
-        setTimeout(() => toast.remove(), 350);
-      }, 3000);
+      setTimeout(() => { toast.classList.remove("show"); setTimeout(() => toast.remove(), 350); }, 3000);
     }
 
-    // ═══════════════════════════════
-    // SPINNER HELPERS
-    // ═══════════════════════════════
+    // ── LOADING ──
     function setLoading(loading) {
-      const btn = document.getElementById("signupBtn");
+      const btn     = document.getElementById("signupBtn");
       const spinner = document.getElementById("signupSpinner");
-      btn.disabled = loading;
+      btn.disabled  = loading;
       spinner.style.display = loading ? "inline-block" : "none";
     }
 
-    // 🔥 PASSWORD TOGGLE FUNCTION
+    // ── PASSWORD TOGGLE ──
     function togglePassword() {
       const passInput = document.getElementById("pass");
-      const eyeIcon = document.getElementById("eyeIcon");
+      const eyeIcon   = document.getElementById("eyeIcon");
       if (passInput.type === "password") {
         passInput.type = "text";
         eyeIcon.innerHTML = `
           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-          <line x1="1" y1="1" x2="23" y2="23"></line>
-        `;
+          <line x1="1" y1="1" x2="23" y2="23"></line>`;
       } else {
         passInput.type = "password";
         eyeIcon.innerHTML = `
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-          <circle cx="12" cy="12" r="3"></circle>
-        `;
+          <circle cx="12" cy="12" r="3"></circle>`;
       }
     }
 
-    // 🔥 LOAD STORE INFO - Direct hardcoded
+    // ── STORE INFO ──
     function loadStoreInfo() {
       document.getElementById("welcomeTitle").textContent = STORE_CONFIG.name + " 🛍";
       document.getElementById("storeLogo").src = STORE_CONFIG.logo;
     }
 
-    // ═══════════════════════════════
-    // FORM SUBMIT
-    // ═══════════════════════════════
-    document.getElementById("signupForm").addEventListener("submit", async function(event) {
-      event.preventDefault();
-
-      const name = document.getElementById("name").value.trim();
+    // ── FORM SUBMIT ──
+    document.getElementById("signupForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const name  = document.getElementById("name").value.trim();
       const phone = document.getElementById("phone").value.trim();
-      const pass = document.getElementById("pass").value.trim();
+      const pass  = document.getElementById("pass").value.trim();
 
       if (!name || phone.length !== 11 || pass.length < 6) {
-        showToast("Please enter valid details!", "error");
-        return;
+        showToast("Please enter valid details!", "error"); return;
       }
-
       setLoading(true);
-
       try {
-        const baseUrl = "https://delight-backend--araindaniyalo2.replit.app";
-        const res = await fetch(baseUrl + "/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const res  = await fetch("https://delight-backend--araindaniyalo2.replit.app/signup", {
+          method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, phone, password: pass })
         });
-
         const data = await res.json();
-
         if (res.ok && data.success) {
-          localStorage.setItem("customer", JSON.stringify({
-            id: data.user.id,
-            name: data.user.name,
-            phone: data.user.phone
-          }));
+          localStorage.setItem("customer", JSON.stringify({ id: data.user.id, name: data.user.name, phone: data.user.phone }));
           showToast("Signup successful! Redirecting...", "success");
           setTimeout(() => { window.location.href = "Profile Stores.html"; }, 1000);
         } else {
@@ -151,16 +145,22 @@
           setLoading(false);
         }
       } catch (err) {
-        console.error(err);
         showToast("Unable to connect. Please check your internet.", "error");
         setLoading(false);
       }
     });
 
-    // Initialize
-    document.addEventListener("DOMContentLoaded", () => {
-      loadStoreInfo();
+    document.addEventListener("DOMContentLoaded", loadStoreInfo);
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('submit', function() {
+      if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration', {
+        content_name: 'Cucu Collection Signup', currency: 'PKR', value: 0, status: true
+      });
     });
+  });
   </script>
 
 </body>

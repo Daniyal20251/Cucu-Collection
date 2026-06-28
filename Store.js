@@ -33,6 +33,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     logo: "Store icons/Cucu.png"
   };
 
+  // ── THEME: Seller ka selected theme apply karo ──────────────────
+  if (typeof DelightTheme !== "undefined") {
+    DelightTheme.apply(STORE_CONFIG.phone);
+  }
+  // ────────────────────────────────────────────────────────────────
+
   const AD_NAMES = [
     "Cucu-collection",
     "Cucu-collection1",

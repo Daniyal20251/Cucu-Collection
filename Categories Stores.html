@@ -3,97 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="themeEngine.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="Categories.css">
-<title>Categories - Cucu-collection</title>
-<style>
-  /* ── Header fix ── */
-  .main-header {
-    max-width: 480px;
-    left: 50%;
-    transform: translateX(-50%);
-    right: auto;
-    width: 100%;
-  }
+<title>Categories - CucuCollection</title>
+<!-- ===== META PIXEL (Facebook) ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
 
-  /* ── Sidebar item with image+label ── */
-  .sidebar-item span {
-    display: block;
-    font-size: 9.5px;
-    font-weight: 700;
-    line-height: 1.2;
-    color: inherit;
-  }
+  // Initialize Pixel
+  fbq('init', 'YOUR_PIXEL_ID');
 
-  /* ── Category section heading ── */
-  .content h2 {
-    font-size: 14px;
-  }
-
-  /* ── Sub item badge on hover ── */
-  .sub-item {
-    position: relative;
-    overflow: hidden;
-  }
-  .sub-item::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,107,0,0.07), transparent);
-    opacity: 0;
-    transition: opacity 0.2s;
-    border-radius: 12px;
-  }
-  .sub-item:hover::after { opacity: 1; }
-
-  /* ── Empty state ── */
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-light);
-  }
-  .empty-state svg {
-    width: 64px; height: 64px;
-    opacity: 0.3;
-    margin-bottom: 12px;
-  }
-  .empty-state p {
-    font-size: 13px;
-    font-weight: 700;
-  }
-
-  /* ── Page fade-in ── */
-  .content { animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-
-  /* ── Sub-grid stagger ── */
-  .sub-item {
-    animation: popIn 0.35s cubic-bezier(0.22,1,0.36,1) both;
-  }
-  @keyframes popIn {
-    from { opacity: 0; transform: scale(0.88); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-
-  /* ── Bottom bar fix for centered layout ── */
-  .bar {
-    max-width: 440px;
-  }
-
-  /* ── Active sidebar indicator dot ── */
-  .sidebar-item.active::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 50%;
-    transform: translateY(-50%);
-    width: 3px; height: 24px;
-    background: var(--primary);
-    border-radius: 3px 0 0 3px;
-  }
-  .sidebar-item { position: relative; }
-
-
-</style>
+  // PageView - every page
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- ===== END META PIXEL ===== -->
 </head>
 <body>
 
@@ -179,8 +114,8 @@
 <!-- CONTENT -->
 <div class="content" id="contentArea"></div>
 
-<!-- BOTTOM NAV -->
-<div class="bar">
+<!-- BOTTOM NAV — Changed from div to nav to match themeEngine selector -->
+<nav class="bar">
   <a href="index.html">
     <img src="Store icons/Home.png" width="22" height="22" alt="Home">
     <span>Home</span>
@@ -197,7 +132,7 @@
     <img src="Store icons/Profile.png" width="22" height="22" alt="Profile">
     <span>Profile</span>
   </a>
-</div>
+</nav>
 
 <script>
 const STORE_CONFIG = {
@@ -334,7 +269,6 @@ document.querySelectorAll('.sidebar-item').forEach(btn => {
     document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
     btn.classList.add('active');
     showSubcategories(btn.dataset.cat);
-    // Scroll sidebar item into view
     btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 });
@@ -342,8 +276,23 @@ document.querySelectorAll('.sidebar-item').forEach(btn => {
 document.addEventListener("DOMContentLoaded", () => {
   loadStoreInfo();
   showSubcategories("Men Fashion");
+
+  // ── THEME: Apply seller's selected theme ──
+  if (typeof DelightTheme !== "undefined") {
+    DelightTheme.apply(STORE_CONFIG.phone);
+  }
 });
 </script>
+
+
+  <!-- META PIXEL: ViewContent - Categories -->
+  <script>
+  fbq('track', 'ViewContent', {
+    content_name: 'Categories Page',
+    content_category: 'Categories',
+    content_type: 'product_group'
+  });
+  </script>
 
 </body>
 </html>

@@ -6,14 +6,25 @@
   <title>Category - cucucollection.shop</title>  
   <link rel="stylesheet" href="Store.css">  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <script src="themeEngine.js"></script>
+
   <style>
+    /* ═══════════════════════════════════════════════════════════
+       CATEGORY RESULTS PAGE — themeEngine.js Compatible
+       ═══════════════════════════════════════════════════════════ */
+
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: #f8f8f8;
+      background: var(--bg, #f8f8f8);
+      color: var(--text-dark, #1a1a2e);
+      min-height: 100vh;
+      padding-bottom: 20px;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Modern Gradient Header */
+    /* Header — themeEngine overrides via "header" selector */
     header {
       position: fixed;
       top: 0;
@@ -24,7 +35,7 @@
       align-items: center;
       justify-content: center;
       height: 65px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 3px 10px var(--accent-shadow, rgba(0,0,0,0.15));
       border-bottom-left-radius: 35px;
       border-bottom-right-radius: 35px;
       z-index: 20;
@@ -47,11 +58,9 @@
       cursor: pointer;
       transition: 0.2s ease;
     }
-
     .back-btn:hover {
       transform: translateY(-50%) scale(1.05);
     }
-
     .back-btn img {
       width: 22px;
       height: 22px;
@@ -69,7 +78,7 @@
       line-height: 65px;
     }
 
-    /* Container - Grid for 2-column layout */
+    /* Container */
     .container {
       margin-top: 80px;
       padding: 18px;
@@ -78,18 +87,119 @@
       gap: 10px;
     }
 
-    /* Loading */
+    /* ═══════════════════════════════════════════════════════════
+       SKELETON LOADING — Matching Store.css style
+       ═══════════════════════════════════════════════════════════ */
+    .skeleton-container {
+      margin-top: 80px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .skeleton-card {
+      background: var(--card-bg, white);
+      border-radius: 10px;
+      overflow: hidden;
+      height: 230px;
+      display: flex;
+      flex-direction: column;
+      border: 1.5px solid var(--border, #e8e8f0);
+    }
+
+    .skeleton-card .skeleton-img {
+      width: 100%;
+      height: 145px;
+      background: linear-gradient(90deg, var(--skeleton-base, #f0f0f0) 25%, var(--skeleton-shine, #e4e4e4) 50%, var(--skeleton-base, #f0f0f0) 75%);
+      background-size: 300% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+    }
+
+    .skeleton-card .skeleton-title {
+      width: 80%;
+      height: 13px;
+      border-radius: 6px;
+      margin: 10px 10px 0;
+      background: linear-gradient(90deg, var(--skeleton-base, #f0f0f0) 25%, var(--skeleton-shine, #e4e4e4) 50%, var(--skeleton-base, #f0f0f0) 75%);
+      background-size: 300% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+    }
+
+    .skeleton-card .skeleton-price {
+      width: 45%;
+      height: 16px;
+      border-radius: 6px;
+      margin: 8px 10px 0;
+      background: linear-gradient(90deg, var(--skeleton-base, #f0f0f0) 25%, var(--skeleton-shine, #e4e4e4) 50%, var(--skeleton-base, #f0f0f0) 75%);
+      background-size: 300% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-container.hidden { display: none !important; }
+
+    /* ═══════════════════════════════════════════════════════════
+       NOT FOUND / EMPTY STATE
+       ═══════════════════════════════════════════════════════════ */
+    .not-found {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .not-found img {
+      width: 180px;
+      opacity: 0.8;
+      margin-bottom: 14px;
+    }
+    .not-found h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary, #ff6b00);
+      margin-bottom: 6px;
+    }
+    .not-found p {
+      color: var(--text-mid, #555577);
+      font-size: 14px;
+    }
+
+    /* Loading text */
     #loading {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
-      color: #666;
+      color: var(--text-mid, #666);
       font-weight: 500;
       z-index: 10;
+      display: none;
     }
   </style>
+
+  <!-- ===== META PIXEL (Facebook) ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- ===== END META PIXEL ===== -->
 </head>  
 <body>  
 
@@ -101,37 +211,48 @@
     <h4 id="categoryTitle">Category</h4>  
   </header>  
 
+  <!-- SKELETON LOADING -->
+  <div id="skeletonContainer" class="skeleton-container">
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-title"></div><div class="skeleton-price"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-title"></div><div class="skeleton-price"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-title"></div><div class="skeleton-price"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-title"></div><div class="skeleton-price"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-title"></div><div class="skeleton-price"></div></div>
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-title"></div><div class="skeleton-price"></div></div>
+  </div>
+
   <!-- Product Container -->  
-  <div class="container" id="itemContainer"></div>  
+  <div class="container" id="itemContainer" style="display:none;"></div>  
 
   <!-- Loading -->  
   <div id="loading">Loading...</div>  
 
   <script>
-    // HARDCODED STORE CONFIG - Sirf yeh change karo
     const STORE_CONFIG = {
-      phone: "03352166725"  // Apna store phone number
+      phone: "03352166725",
+      name: "Cucu-collection",
+      logo: "Store icons/Cucu.png"
     };
 
-    // GET URL PARAMETER - Sirf category
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get("category");
 
-    // Set title - show subcategory name
     const displayTitle = category && category.includes(" - ") 
       ? category.split(" - ").pop().trim() 
       : (category || "Category");
     document.getElementById("categoryTitle").textContent = displayTitle;
 
-    // LOAD PRODUCTS - HARDCODED STORE
     async function loadCategoryProducts() {
       const container = document.getElementById("itemContainer");
+      const skeletonContainer = document.getElementById("skeletonContainer");
       const loading = document.getElementById("loading");
 
       if (!category) {
+        skeletonContainer.style.display = "none";
         loading.textContent = "Missing category!";
-        loading.style.color = "#ff6b00";
+        loading.style.color = "var(--primary, #ff6b00)";
         loading.style.fontWeight = "700";
+        loading.style.display = "block";
         return;
       }
 
@@ -139,39 +260,28 @@
         const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/products");
         const allProducts = await res.json();
 
-        console.log("Total products:", allProducts.length);
-        console.log("Looking for category:", category);
-        console.log("Store phone:", STORE_CONFIG.phone);
-
-        // FILTER: Category (includes match) + HARDCODED Store Phone
         const filtered = allProducts.filter(p => {
           const productCategory = (p.category || "").toLowerCase();
           const searchCategory = category.toLowerCase().trim();
           const matchCategory = productCategory.includes(searchCategory);
           const matchStore = p.sellerPhone === STORE_CONFIG.phone;
-
-          if (matchCategory && matchStore) {
-            console.log("Matched:", p.title, "| Cat:", p.category);
-          }
-
           return matchCategory && matchStore;
         });
 
-        console.log("Filtered products:", filtered.length);
-
+        skeletonContainer.style.display = "none";
+        container.style.display = "grid";
         loading.style.display = "none";
 
         if (filtered.length === 0) {
           container.innerHTML = `
-            <div class="not-found" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px;">
-              <img src="Store icons/not-found.png" alt="No Results" style="width:180px; opacity:0.8; margin-bottom: 14px;">
-              <h3 style="font-size: 18px; font-weight: 800; color: #ff6b00; margin-bottom: 6px;">Oops! No Items Found</h3>
-              <p style="color: #555577; font-size: 14px;">No products in this category for this store.</p>
+            <div class="not-found">
+              <img src="Store icons/not-found.png" alt="No Results">
+              <h3>Oops! No Items Found</h3>
+              <p>No products in this category for this store.</p>
             </div>`;
           return;
         }
 
-        // Render products with proper card structure
         filtered.forEach((item, index) => {
           const card = document.createElement("div");
           card.className = "item-card";
@@ -204,17 +314,17 @@
           container.appendChild(card);
         });
 
-        // Setup scroll reveal
         setupScrollReveal();
 
       } catch (err) {
         console.error("Error:", err);
+        skeletonContainer.style.display = "none";
         loading.textContent = "Error loading products! Check internet.";
-        loading.style.color = "#ff6b00";
+        loading.style.color = "var(--primary, #ff6b00)";
+        loading.style.display = "block";
       }
     }
 
-    // Scroll reveal animation
     function setupScrollReveal() {
       const cards = document.querySelectorAll('.item-card');
       if (!('IntersectionObserver' in window)) {
@@ -232,8 +342,27 @@
       cards.forEach(c => observer.observe(c));
     }
 
-    // Initialize
-    document.addEventListener("DOMContentLoaded", loadCategoryProducts);
+    document.addEventListener("DOMContentLoaded", () => {
+      loadCategoryProducts();
+
+      // ── THEME: Apply seller's selected theme ──
+      if (typeof DelightTheme !== "undefined") {
+        DelightTheme.apply(STORE_CONFIG.phone);
+      }
+    });
   </script>  
+
+  <!-- META PIXEL: Search -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var searchQuery = urlParams.get('q') || urlParams.get('search') || urlParams.get('category') || '';
+    fbq('track', 'Search', {
+      search_string: searchQuery,
+      content_category: 'Category'
+    });
+  });
+  </script>
+
 </body>  
 </html>

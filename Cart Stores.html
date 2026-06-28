@@ -2,22 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <link rel="stylesheet" href="Cart.css">
 <title>Your Cart - cucucollection.shop</title>
+
+<script src="themeEngine.js"></script>
+
+  <!-- ===== META PIXEL (Facebook) ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- ===== END META PIXEL ===== -->
 </head>
 <body>
 
 <!-- ====== HEADER ====== -->
-<div class="cart-header">
+<header class="cart-header">
   <h2>Your Cart</h2>
   <p>Review your items before checkout</p>
-</div>
+</header>
 
-<div id="cartContainer"></div>
-<div class="total" id="totalPrice">Total: Rs. 0</div>
-<button class="buy-all-btn" id="buyBtn" onclick="goToOrderPage()">Buy All</button>
-<button class="continue-btn" id="continueBtn" style="display:none;" onclick="goHome()">Continue Shopping</button>
+<!-- ====== SCROLLABLE CONTENT WRAPPER ====== -->
+<div class="cart-scroll-wrapper">
+  <div id="cartContainer"></div>
+  <div class="total" id="totalPrice">Total: Rs. 0</div>
+  <button class="buy-all-btn buy-btn" id="buyBtn" onclick="goToOrderPage()">Buy All</button>
+  <button class="continue-btn buy-btn" id="continueBtn" style="display:none;" onclick="goHome()">Continue Shopping</button>
+</div>
 
   <!-- ===== BOTTOM NAV ===== -->
   <nav class="bar">
@@ -29,7 +54,7 @@
       <img src="Store icons/Categories.png" width="22" height="22" alt="Categories">
       <span>Categories</span>
     </a>
-    <a href="Cart Stores.html"  class="active" id="cartLink">
+    <a href="Cart Stores.html" class="active" id="cartLink">
       <img src="Store icons/Cart.png" width="22" height="22" alt="Cart">
       <span>Cart</span>
     </a>
@@ -38,8 +63,14 @@
       <span>Profile</span>
     </a>
   </nav>
-  
+
 <script>
+const STORE_CONFIG = {
+  phone: "03352166725",
+  name: "Cucu-collection",
+  logo: "Store icons/Cucu.png"
+};
+
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 const cartContainer = document.getElementById('cartContainer');
 const totalPriceEl = document.getElementById('totalPrice');
@@ -124,19 +155,49 @@ function updateCart() {
   renderCart();
 }
 
-// 🔥 SIMPLE - Phone parameter nahi chahiye
 function goToOrderPage() {
   localStorage.setItem("orderCartItems", JSON.stringify(cart));
   window.location.href = "Stores Cart Orders.html";
 }
 
-// 🔥 SIMPLE - Direct home page
 function goHome() {
-  window.location.href = "Store.html";
+  window.location.href = "index.html";
 }
 
 renderCart();
+
+// ── THEME: Apply seller's selected theme ──
+if (typeof DelightTheme !== "undefined") {
+  DelightTheme.apply(STORE_CONFIG.phone);
+}
 </script>
+
+
+  <!-- META PIXEL: AddToCart + InitiateCheckout -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    fbq('track', 'AddToCart', {
+      content_type: 'product',
+      currency: 'PKR'
+    });
+
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#buyBtn, .buy-all-btn, [onclick*="goToOrderPage"], [onclick*="checkout"]')) {
+        var totalEl = document.querySelector('#totalPrice, .total, [class*="total"]');
+        var total = 0;
+        if (totalEl) {
+          var t = totalEl.innerText.replace(/[^0-9.]/g, '');
+          total = parseFloat(t) || 0;
+        }
+        fbq('track', 'InitiateCheckout', {
+          content_type: 'product',
+          currency: 'PKR',
+          value: total
+        });
+      }
+    });
+  });
+  </script>
 
 </body>
 </html>

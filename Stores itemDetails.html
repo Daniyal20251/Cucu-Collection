@@ -3,14 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <script src="themeEngine.js"></script>
   <link rel="stylesheet" href="itemDetails.css">
   <title>Product Details - CucuCollection</title>
+
+  <!-- ===== META PIXEL (Facebook) ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  // Initialize Pixel
+  fbq('init', 'YOUR_PIXEL_ID');
+
+  // PageView - every page
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- ===== END META PIXEL ===== -->
 </head>
 <body>
 
   <!-- 🔥 SHARE BUTTON -->
-  <button class="share-btn" onclick="openShareModal()" title="Share Product" aria-label="Share this product">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+  <button class="share-btn fab-btn" onclick="openShareModal()" title="Share Product" aria-label="Share this product">
+    <svg class="fab-icon" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
     </svg>
   </button>
@@ -46,16 +70,22 @@
   </div>
 
   <!-- 👜 Cart Bag -->
-  <div class="cart-bag" role="button" aria-label="Shopping cart">
-    <a href="Cart Stores.html" id="cartLink">
-      <img src="Store icons/Bag.png" width="23" height="23" alt="Cart">
+  <div class="cart-bag fab-btn" role="button" aria-label="Shopping cart">
+    <a href="Cart Stores.html" id="cartLink" class="fab-inner">
+      <svg class="fab-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM5.17 5H2V3H0v2h2l3.6 7.59L4.25 15C4.09 15.32 4 15.65 4 16c0 1.1.9 2 2 2h14v-2H6.42c-.14 0-.25-.11-.25-.25l.03-.12L7.1 14h9.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 21 5H5.17z"/>
+      </svg>
       <span id="cartCount" class="cart-count">0</span>
     </a>
   </div>
 
   <!-- 🔙 Home Bar -->
-  <div class="bar" role="button" aria-label="Go to home page">
-    <a onclick="history.back()"><img src="Store icons/Home.png" width="23" height="22" alt="Home"></a>
+  <div class="bar fab-btn" role="button" aria-label="Go to home page">
+    <a onclick="history.back()" class="fab-inner">
+      <svg class="fab-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </a>
   </div>
 
   <!-- Item Details -->
@@ -241,6 +271,48 @@
   </div>
 
   <script src="Stores itemDetails.js"></script>
+
+
+  <!-- META PIXEL: ViewContent - Product Page (Shopify style) -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Product naam aur price dynamically milta hai
+    var productName = document.querySelector('h1, h2, .product-title, #productName')?.innerText || document.title;
+    var priceEl = document.querySelector('.price, #productPrice, [class*="price"]');
+    var price = 0;
+    if (priceEl) {
+      var priceText = priceEl.innerText.replace(/[^0-9.]/g, '');
+      price = parseFloat(priceText) || 0;
+    }
+
+    fbq('track', 'ViewContent', {
+      content_name: productName,
+      content_category: 'Product',
+      content_type: 'product',
+      currency: 'PKR',
+      value: price
+    });
+
+    // Add to Cart button tracking
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('[onclick*="addToCart"], .add-cart-btn, #addToCartBtn, [class*="add-cart"]')) {
+        fbq('track', 'AddToCart', {
+          content_name: productName,
+          content_type: 'product',
+          currency: 'PKR',
+          value: price
+        });
+      }
+      // WhatsApp Order tracking
+      if (e.target.closest('a[href*="wa.me"], a[href*="whatsapp"]')) {
+        fbq('track', 'Contact', {
+          content_name: productName,
+          content_category: 'WhatsApp Order'
+        });
+      }
+    });
+  });
+  </script>
 
 </body>
 </html>

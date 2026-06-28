@@ -1,5 +1,11 @@
 // Final itemDetails.js — Clean, Bug-Free & Backend-Friendly
 document.addEventListener("DOMContentLoaded", async () => {
+  // ── THEME: Apply seller theme ──
+  if (typeof DelightTheme !== "undefined") {
+    const storePhone = localStorage.getItem("sellerPhone") || "";
+    DelightTheme.apply(storePhone);
+  }
+  // ───────────────────────────────
   // 🔥 STEP 1: Check URL for product parameter
   const urlParams = new URLSearchParams(window.location.search);
   const productFromUrl = urlParams.get('product');

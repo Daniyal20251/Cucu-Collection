@@ -5,13 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="Profile.css">
   <title>My Profile</title>
+
+  <script src="themeEngine.js"></script>
+
+  <!-- ===== META PIXEL (Facebook) ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('init', 'YOUR_PIXEL_ID');
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- ===== END META PIXEL ===== -->
 </head>
 <body>
   <header>
-  <p>My Account</p>
-  <div class="bar">
-    <a href="index.html" id="HomeLink"><img src="Store icons/Back.png" width="30" height="20" class="logo"></a>
-  </div>
+    <p>My Account</p>
+    <div class="bar">
+      <a href="index.html" id="HomeLink"><img src="Store icons/Back.png" width="30" height="20" class="logo"></a>
+    </div>
   </header>
 
   <!-- Login / Signup Buttons -->
@@ -21,7 +43,7 @@
   </div>
 
   <!-- Welcome Text -->
-  <h2 id="welcomeText" style="display:none; color:#f38300; text-align:center;">Loading...</h2>
+  <h2 id="welcomeText" style="display:none;">Loading...</h2>
 
   <!-- Logout Button -->
   <div class="btn">
@@ -30,18 +52,24 @@
 
   <!-- My Orders -->
   <div id="myOrders" class="od" style="display:none;">
-    <a href="myorders.html" style="text-decoration:none; font-weight:bold; color:#ef6c00;">
+    <a href="myorders.html">
       🧾 My Orders
     </a>
   </div>
 
   <!-- Always Visible Links -->
   <div class="od"><a href="Help.html">❓ Help Center</a></div>
-  <div class="od"><a href="Settings.html" style="color:#ef6c00;">⚙ Settings</a></div>
-  <div class="od"><a href="privacy.html" style="color:#ef6c00;">🔒 Privacy Policy</a></div>
-  <div class="od"><a href="terms.html" style="color:#ef6c00;">📜 Terms & Conditions</a></div>
+  <div class="od"><a href="Settings.html">⚙ Settings</a></div>
+  <div class="od"><a href="privacy.html">🔒 Privacy Policy</a></div>
+  <div class="od"><a href="terms.html">📜 Terms & Conditions</a></div>
 
   <script>
+    const STORE_CONFIG = {
+      phone: "03352166725",
+      name: "Cucu-collection",
+      logo: "Store icons/Cucu.png"
+    };
+
     const customer = JSON.parse(localStorage.getItem("customer"));
     const name = customer ? customer.name : null;
 
@@ -56,6 +84,11 @@
     function logout() {
       localStorage.removeItem("customer");
       window.location.reload();
+    }
+
+    // ── THEME: Apply seller's selected theme ──
+    if (typeof DelightTheme !== "undefined") {
+      DelightTheme.apply(STORE_CONFIG.phone);
     }
   </script>
 

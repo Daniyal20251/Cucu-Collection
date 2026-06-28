@@ -4,11 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>My Orders - cucucollection.shop</title>
+<!-- ── DELIGHT THEME ENGINE ── -->
+<script src="themeEngine.js"></script>
 <style>
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: #f8f8f8;
+  background: var(--bg, #f8f8f8);
+  color: var(--text-dark, #1a1a2e);
 }
 
 header {
@@ -16,7 +19,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(135deg, #ff6a00, #ff3d00);
+  background: var(--primary, linear-gradient(135deg, #ff6a00, #ff3d00));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,28 +65,28 @@ header h4 {
 
 .order-card {
   position: relative;
-  background: #fff;
+  background: var(--card-bg, #fff);
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 12px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-  border-left: 5px solid #ef6c00;
+  border-left: 5px solid var(--primary, #ef6c00);
   transition: 0.2s ease;
 }
 
 .order-card p { margin: 6px 0; font-size: 14px; }
 
-.buyer-info { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #ddd; }
+.buyer-info { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--border, #ddd); }
 
 .product-box {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fafafa;
+  background: var(--bg, #fafafa);
   padding: 10px;
   border-radius: 10px;
   margin-top: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border, #ddd);
   transition: 0.2s ease;
 }
 
@@ -125,24 +128,47 @@ header h4 {
 .cancel-btn:hover { background: #fff; transform: scale(1.05); }
 
 .address-box {
-  background: #fff7ef;
+  background: var(--primary-light, #fff7ef);
   padding: 10px 12px;
-  border-left: 4px solid #ff6a00;
+  border-left: 4px solid var(--primary, #ff6a00);
   border-radius: 8px;
   margin-top: 10px;
   font-size: 13.5px;
-  color: #333;
+  color: var(--text-dark, #333);
   line-height: 1.5;
 }
 
-.address-box strong { color: #ff6a00; }
-.address-box .heading { text-align: center; font-weight: 600; font-size: 14px; color: black; margin-bottom: 5px; }
+.address-box strong { color: var(--primary, #ff6a00); }
+.address-box .heading { text-align: center; font-weight: 600; font-size: 14px; color: var(--text-dark, black); margin-bottom: 5px; }
 
-.payment-method { font-size: 13px; margin-top: 4px; color: #555; }
+.payment-method { font-size: 13px; margin-top: 4px; color: var(--text-mid, #555); }
 
-#loading { text-align: center; color: #666; margin-top: 50px; font-weight: 500; }
-.small-muted { font-size: 12px; color: #666; margin-top:6px; }
+#loading { text-align: center; color: var(--text-mid, #666); margin-top: 50px; font-weight: 500; }
+.small-muted { font-size: 12px; color: var(--text-mid, #666); margin-top:6px; }
 </style>
+
+  <!-- ===== META PIXEL (Facebook) ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  // Initialize Pixel
+  fbq('init', 'YOUR_PIXEL_ID');
+
+  // PageView - every page
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- ===== END META PIXEL ===== -->
 </head>
 <body>
 
@@ -272,8 +298,23 @@ async function loadOrders(){
   }
 }
 
-window.onload = loadOrders;
+window.onload = function() {
+  // Theme apply karo
+  const _c = JSON.parse(localStorage.getItem("customer") || "{}");
+  const _sp = localStorage.getItem("sellerPhone") || _c.sellerPhone || null;
+  if (typeof DelightTheme !== "undefined") DelightTheme.apply(_sp);
+  loadOrders();
+};
 </script>
+
+
+  <!-- META PIXEL: ViewContent - My Orders -->
+  <script>
+  fbq('track', 'ViewContent', {
+    content_name: 'My Orders',
+    content_category: 'Account'
+  });
+  </script>
 
 </body>
 </html>

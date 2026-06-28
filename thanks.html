@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Thank You - cucucollection.shop</title>
+  <!-- ── DELIGHT THEME ENGINE ── -->
+  <script src="themeEngine.js"></script>
   <style>
     * {
       margin: 0;
@@ -14,8 +16,7 @@
     body {
       height: 100vh;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, 
-      #ffbc86, #a7eff9, #ffffff);
+      background: var(--bg, linear-gradient(135deg, #ffbc86, #a7eff9, #ffffff));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -23,7 +24,7 @@
     }
 
     .thank-you-card {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(var(--card-bg-rgb, 255,255,255), 0.92);
       backdrop-filter: blur(16px);
       border-radius: 20px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -46,13 +47,13 @@
 
     .thank-you-card h2 {
       font-size: 26px;
-      color: #2e7d32;
+      color: var(--primary, #2e7d32);
       margin-top: 20px;
     }
 
     .thank-you-card p {
       font-size: 16px;
-      color: #444;
+      color: var(--text-mid, #444);
       margin-top: 10px;
       margin-bottom: 25px;
     }
@@ -60,7 +61,7 @@
     .thank-you-card a {
       display: inline-block;
       padding: 12px 24px;
-      background: linear-gradient(135deg,#43cea2, #4390de,#ffb37a);
+      background: var(--primary, linear-gradient(135deg,#43cea2, #4390de,#ffb37a));
       color: #fff;
       font-weight: bold;
       text-decoration: none;
@@ -69,7 +70,7 @@
     }
 
     .thank-you-card a:hover {
-      background: linear-gradient(135deg, #185a9d, #43cea2);
+      opacity: 0.88;
     }
 
     /* Lottie container */
@@ -78,6 +79,29 @@
       margin: auto;
     }
   </style>
+
+  <!-- ===== META PIXEL (Facebook) ===== -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window,document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  // Initialize Pixel
+  fbq('init', 'YOUR_PIXEL_ID');
+
+  // PageView - every page
+  fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- ===== END META PIXEL ===== -->
 </head>
 <body>
   <div class="thank-you-card">
@@ -90,6 +114,12 @@
   <!-- ✅ Lottie Files Script -->
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <script>
+    // Theme apply karo
+    (function() {
+      var _sp = localStorage.getItem("sellerPhone") || null;
+      if (typeof DelightTheme !== "undefined") DelightTheme.apply(_sp);
+    })();
+
     const animation = document.createElement('lottie-player');
     animation.setAttribute('src', 'https://assets1.lottiefiles.com/packages/lf20_jbrw3hcz.json');
     animation.setAttribute('background', 'transparent');
@@ -99,5 +129,35 @@
     animation.style.width = '120px';
     document.getElementById('successAnimation').appendChild(animation);
   </script>
+
+  <!-- META PIXEL: Purchase - Most Important Event! -->
+  <script>
+  (function() {
+    // Order data URL params se ya localStorage se milta hai
+    var urlParams = new URLSearchParams(window.location.search);
+    var orderId = urlParams.get('order_id') || urlParams.get('id') || ('ORD-' + Date.now());
+    var orderValue = parseFloat(urlParams.get('total') || urlParams.get('amount') || '0');
+
+    // LocalStorage se try karo
+    if (!orderValue) {
+      try {
+        var cart = JSON.parse(localStorage.getItem('cart') || localStorage.getItem('cartItems') || '[]');
+        if (Array.isArray(cart)) {
+          cart.forEach(function(item) {
+            orderValue += (parseFloat(item.price || 0) * parseInt(item.qty || item.quantity || 1));
+          });
+        }
+      } catch(e) {}
+    }
+
+    fbq('track', 'Purchase', {
+      value: orderValue,
+      currency: 'PKR',
+      content_type: 'product',
+      order_id: orderId
+    });
+  })();
+  </script>
+
 </body>
 </html>
