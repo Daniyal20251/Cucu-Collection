@@ -299,10 +299,9 @@ async function loadOrders(){
 }
 
 window.onload = function() {
-  // Theme apply karo
-  const _c = JSON.parse(localStorage.getItem("customer") || "{}");
-  const _sp = localStorage.getItem("sellerPhone") || _c.sellerPhone || null;
-  if (typeof DelightTheme !== "undefined") DelightTheme.apply(_sp);
+  if (typeof DelightTheme !== "undefined") {
+    DelightTheme.apply("03352166725");
+  }
   loadOrders();
 };
 </script>

@@ -142,7 +142,9 @@ function generateLocalThreadId() {
 // ─── Load Seller ───
 async function loadSellerInfo(phone) {
   // Apply theme instantly from cache (no flash)
-  if (typeof DelightTheme !== "undefined") DelightTheme.apply(phone);
+  if (typeof DelightTheme !== "undefined") {
+  DelightTheme.apply("03352166725");
+}
 
   try {
     const res = await fetch(API_BASE + "/seller/" + phone);
