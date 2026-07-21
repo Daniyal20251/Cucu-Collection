@@ -2,8 +2,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   // ── THEME: Apply seller theme ──
   if (typeof DelightTheme !== "undefined") {
-    const storePhone = localStorage.getItem("sellerPhone") || "";
-    DelightTheme.apply(storePhone);
+    DelightTheme.apply("03352166725");
   }
   // ───────────────────────────────
   // 🔥 STEP 1: Check URL for product parameter
