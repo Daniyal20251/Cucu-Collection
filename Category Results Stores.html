@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <script src="themeEngine.js"></script>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Cucu">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="pwa.js" defer></script>
+
 
   <style>
     /* ═══════════════════════════════════════════════════════════
@@ -30,7 +37,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      background: linear-gradient(135deg, #ff6a00, #ff3d00);
+      background: linear-gradient(135deg, #8a8f98, #b5b9bf);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -159,7 +166,7 @@
     .not-found h3 {
       font-size: 18px;
       font-weight: 800;
-      color: var(--primary, #ff6b00);
+      color: var(--primary, #8a8f98);
       margin-bottom: 6px;
     }
     .not-found p {
@@ -250,7 +257,7 @@
       if (!category) {
         skeletonContainer.style.display = "none";
         loading.textContent = "Missing category!";
-        loading.style.color = "var(--primary, #ff6b00)";
+        loading.style.color = "var(--primary, #8a8f98)";
         loading.style.fontWeight = "700";
         loading.style.display = "block";
         return;
@@ -320,7 +327,7 @@
         console.error("Error:", err);
         skeletonContainer.style.display = "none";
         loading.textContent = "Error loading products! Check internet.";
-        loading.style.color = "var(--primary, #ff6b00)";
+        loading.style.color = "var(--primary, #8a8f98)";
         loading.style.display = "block";
       }
     }

@@ -11,7 +11,13 @@
 (function() {
   const s = document.createElement('style');
   s.id = '__theme_hide__';
-  s.textContent = 'body { opacity: 0 !important; transition: opacity 0.18s ease !important; }';
+  s.textContent =
+    'html { background: #f1f2f4 !important; }' +
+    'body { opacity: 0 !important; transition: opacity 0.18s ease !important; }' +
+    'html::before { content: ""; position: fixed; top: 50%; left: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px;' +
+    ' border: 3px solid rgba(120,124,132,0.25); border-top-color: rgba(120,124,132,0.85); border-radius: 50%;' +
+    ' animation: __thSpin 0.8s linear infinite; z-index: 2147483647; }' +
+    '@keyframes __thSpin { to { transform: rotate(360deg); } }';
   document.head.appendChild(s);
 })();
 
@@ -23,10 +29,10 @@ const DelightTheme = (() => {
   let SELLER_PHONE = null;
 
   // ============================================================
-  // ALL 22 THEMES
+  // ALL THEMES (default = Delight Orange; "delight" is an alias)
   // ============================================================
   const THEMES = {
-    default:  { name:"Delight Orange",    headerGrad:"linear-gradient(135deg,#ff5500,#ff7b00,#ff9500)",   accent:"#ff6b00", accentDark:"#e05a00", accentLight:"#fff3e8", accentGlow:"rgba(255,107,0,0.18)",    accentShadow:"rgba(255,107,0,0.4)",    bg:"#f2f2f7",  cardBg:"#ffffff", text:"#1a1a2e", textMid:"#555577", textLight:"#999",    border:"#e8e8f0", barGrad:"linear-gradient(135deg,#ff5500,#ff7b00,#ff9500)",   barShadow:"rgba(255,107,0,0.4)",    barText:"rgba(255,255,255,0.85)", searchBg:"#ffffff", searchText:"#1a1a2e", searchBorder:"#e8e8f0", skeletonBase:"#f0f0f0", skeletonShine:"#e4e4e4", suggestionBg:"#ffffff", suggestionText:"#1a1a2e", suggestionHover:"#fff3e8", flashBg:"#ffffff", flashBorder:"#e8e8f0", rvBg:"linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#a78bfa", placeholderColor:"#aaa", inputText:"#1a1a2e" },
+    default:   { name:"Delight Orange",    headerGrad:"linear-gradient(135deg,#e8590c,#f76707,#ff922b)",   accent:"#f76707", accentDark:"#d9480f", accentLight:"#fff4e6", accentGlow:"rgba(247,103,7,0.18)",    accentShadow:"rgba(217,72,15,0.4)",    bg:"#fff8f1",  cardBg:"#ffffff", text:"#2b1608", textMid:"#8a5a3a", textLight:"#c9a183", border:"#fde0c8", barGrad:"linear-gradient(135deg,#e8590c,#f76707,#ff922b)",   barShadow:"rgba(217,72,15,0.4)", barText:"rgba(255,255,255,0.88)", searchBg:"#ffffff", searchText:"#2b1608", searchBorder:"#fde0c8", skeletonBase:"#fbeee2", skeletonShine:"#f6dfcb", suggestionBg:"#ffffff", suggestionText:"#2b1608", suggestionHover:"#fff4e6", flashBg:"#ffffff", flashBorder:"#fde0c8", rvBg:"linear-gradient(135deg, #7c2d0a 0%, #a63b0c 50%, #c2410c 100%)", rvCardBg:"rgba(255,255,255,0.10)", rvText:"rgba(255,255,255,0.92)", rvPrice:"#ffd8a8", placeholderColor:"#c9a183", inputText:"#2b1608" },
     midnight: { name:"Midnight Blue",     headerGrad:"linear-gradient(135deg,#0f0c29,#302b63,#24243e)",   accent:"#818cf8", accentDark:"#6366f1", accentLight:"#1e1b4b", accentGlow:"rgba(129,140,248,0.2)",   accentShadow:"rgba(99,102,241,0.4)",   bg:"#0f0f1a",  cardBg:"#1a1a2e",  text:"#e8e8f5", textMid:"#9090b8", textLight:"#5f5f8a", border:"#2a2a44", barGrad:"linear-gradient(135deg,#0f0c29,#302b63,#24243e)",   barShadow:"rgba(99,102,241,0.5)",   barText:"rgba(255,255,255,0.85)", searchBg:"#1a1a2e", searchText:"#e8e8f5", searchBorder:"#2a2a44", skeletonBase:"#1e1e32", skeletonShine:"#2a2a44", suggestionBg:"#1a1a2e", suggestionText:"#e8e8f5", suggestionHover:"#1e1b4b", flashBg:"#1a1a2e", flashBorder:"#2a2a44", rvBg:"linear-gradient(135deg, #0a0a1a 0%, #12122e 50%, #0f0f25 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#818cf8", placeholderColor:"#5f5f8a", inputText:"#e8e8f5" },
     rose:     { name:"Rose Gold",         headerGrad:"linear-gradient(135deg,#c94b4b,#e57373,#f48fb1)",   accent:"#e57373", accentDark:"#c62828", accentLight:"#fce4ec", accentGlow:"rgba(229,115,115,0.18)",  accentShadow:"rgba(229,115,115,0.4)",  bg:"#fff0f3",  cardBg:"#ffffff", text:"#1a1a2e", textMid:"#666",    textLight:"#aaa",    border:"#fce4ec", barGrad:"linear-gradient(135deg,#c94b4b,#e57373,#f48fb1)",   barShadow:"rgba(229,115,115,0.4)", barText:"rgba(255,255,255,0.85)", searchBg:"#ffffff", searchText:"#1a1a2e", searchBorder:"#fce4ec", skeletonBase:"#f5e8ec", skeletonShine:"#ebd5dc", suggestionBg:"#ffffff", suggestionText:"#1a1a2e", suggestionHover:"#fce4ec", flashBg:"#ffffff", flashBorder:"#fce4ec", rvBg:"linear-gradient(135deg, #2e1a1a 0%, #3d1f2e 50%, #2a1520 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#f48fb1", placeholderColor:"#aaa", inputText:"#1a1a2e" },
     forest:   { name:"Forest Green",      headerGrad:"linear-gradient(135deg,#1b5e20,#2e7d32,#43a047)",   accent:"#43a047", accentDark:"#1b5e20", accentLight:"#e8f5e9", accentGlow:"rgba(67,160,71,0.18)",    accentShadow:"rgba(46,125,50,0.4)",    bg:"#f1f8f1",  cardBg:"#ffffff", text:"#1a2e1a", textMid:"#557755", textLight:"#99aa99", border:"#c8e6c9", barGrad:"linear-gradient(135deg,#1b5e20,#2e7d32,#43a047)",   barShadow:"rgba(46,125,50,0.4)",   barText:"rgba(255,255,255,0.85)", searchBg:"#ffffff", searchText:"#1a2e1a", searchBorder:"#c8e6c9", skeletonBase:"#e8f0e8", skeletonShine:"#d8e8d8", suggestionBg:"#ffffff", suggestionText:"#1a2e1a", suggestionHover:"#e8f5e9", flashBg:"#ffffff", flashBorder:"#c8e6c9", rvBg:"linear-gradient(135deg, #0a1a0a 0%, #122212 50%, #0f1a0f 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#81c784", placeholderColor:"#99aa99", inputText:"#1a2e1a" },
@@ -38,6 +44,7 @@ const DelightTheme = (() => {
     cherry:   { name:"Cherry Blossom",    headerGrad:"linear-gradient(135deg,#e91e8c,#ff5caa,#ff8fc1)",   accent:"#e91e8c", accentDark:"#ad1457", accentLight:"#fce4ec", accentGlow:"rgba(233,30,140,0.18)",   accentShadow:"rgba(233,30,140,0.4)",   bg:"#fff5f9",  cardBg:"#ffffff", text:"#1a0012", textMid:"#a0527a", textLight:"#f48fb1", border:"#fce4ec", barGrad:"linear-gradient(135deg,#e91e8c,#ff5caa,#ff8fc1)",   barShadow:"rgba(233,30,140,0.4)", barText:"rgba(255,255,255,0.85)", searchBg:"#ffffff", searchText:"#1a0012", searchBorder:"#fce4ec", skeletonBase:"#f5e8ee", skeletonShine:"#ebd5e0", suggestionBg:"#ffffff", suggestionText:"#1a0012", suggestionHover:"#fce4ec", flashBg:"#ffffff", flashBorder:"#fce4ec", rvBg:"linear-gradient(135deg, #1a0010 0%, #2a0018 50%, #1a0012 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#f48fb1", placeholderColor:"#f48fb1", inputText:"#1a0012" },
     slate:    { name:"Slate Dark",        headerGrad:"linear-gradient(135deg,#1c1c2e,#2d2d44,#3f3f60)",   accent:"#6c8ebf", accentDark:"#4a6fa5", accentLight:"#1c2540", accentGlow:"rgba(108,142,191,0.2)",   accentShadow:"rgba(108,142,191,0.3)",  bg:"#1c1c2e",  cardBg:"#2d2d44",  text:"#e0e0f0", textMid:"#9090b0", textLight:"#606080", border:"#3f3f60", barGrad:"linear-gradient(135deg,#1c1c2e,#2d2d44,#3f3f60)",   barShadow:"rgba(108,142,191,0.3)", barText:"rgba(255,255,255,0.85)", searchBg:"#2d2d44", searchText:"#e0e0f0", searchBorder:"#3f3f60", skeletonBase:"#252540", skeletonShine:"#353560", suggestionBg:"#2d2d44", suggestionText:"#e0e0f0", suggestionHover:"#1c2540", flashBg:"#2d2d44", flashBorder:"#3f3f60", rvBg:"linear-gradient(135deg, #0a0a1a 0%, #12122e 50%, #0f0f25 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#90a4ae", placeholderColor:"#606080", inputText:"#e0e0f0" },
     coral:    { name:"Coral Reef",        headerGrad:"linear-gradient(135deg,#ff6b6b,#ff8e53,#ff6b35)",   accent:"#ff6b35", accentDark:"#e55a00", accentLight:"#fff0eb", accentGlow:"rgba(255,107,53,0.18)",   accentShadow:"rgba(255,107,53,0.4)",   bg:"#fff5f0",  cardBg:"#ffffff", text:"#2e1000", textMid:"#a05030", textLight:"#ffb89a", border:"#ffd5c0", barGrad:"linear-gradient(135deg,#ff6b6b,#ff8e53,#ff6b35)",   barShadow:"rgba(255,107,53,0.4)", barText:"rgba(255,255,255,0.85)", searchBg:"#ffffff", searchText:"#2e1000", searchBorder:"#ffd5c0", skeletonBase:"#f5ebe5", skeletonShine:"#e8ddd5", suggestionBg:"#ffffff", suggestionText:"#2e1000", suggestionHover:"#fff0eb", flashBg:"#ffffff", flashBorder:"#ffd5c0", rvBg:"linear-gradient(135deg, #2e1000 0%, #3d1800 50%, #2a0f00 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#ffab91", placeholderColor:"#ffb89a", inputText:"#2e1000" },
+    delight:  { name:"Delight Orange",    headerGrad:"linear-gradient(135deg,#e8590c,#f76707,#ff922b)",   accent:"#f76707", accentDark:"#d9480f", accentLight:"#fff4e6", accentGlow:"rgba(247,103,7,0.18)",    accentShadow:"rgba(217,72,15,0.4)",    bg:"#fff8f1",  cardBg:"#ffffff", text:"#2b1608", textMid:"#8a5a3a", textLight:"#c9a183", border:"#fde0c8", barGrad:"linear-gradient(135deg,#e8590c,#f76707,#ff922b)",   barShadow:"rgba(217,72,15,0.4)", barText:"rgba(255,255,255,0.88)", searchBg:"#ffffff", searchText:"#2b1608", searchBorder:"#fde0c8", skeletonBase:"#fbeee2", skeletonShine:"#f6dfcb", suggestionBg:"#ffffff", suggestionText:"#2b1608", suggestionHover:"#fff4e6", flashBg:"#ffffff", flashBorder:"#fde0c8", rvBg:"linear-gradient(135deg, #7c2d0a 0%, #a63b0c 50%, #c2410c 100%)", rvCardBg:"rgba(255,255,255,0.10)", rvText:"rgba(255,255,255,0.92)", rvPrice:"#ffd8a8", placeholderColor:"#c9a183", inputText:"#2b1608" },
     indigo:   { name:"Indigo Night",      headerGrad:"linear-gradient(135deg,#1a237e,#283593,#3949ab)",   accent:"#3949ab", accentDark:"#1a237e", accentLight:"#e8eaf6", accentGlow:"rgba(57,73,171,0.18)",    accentShadow:"rgba(26,35,126,0.4)",    bg:"#eef0ff",  cardBg:"#ffffff", text:"#0d0f3a", textMid:"#4555a0", textLight:"#9fa8da", border:"#c5cae9", barGrad:"linear-gradient(135deg,#1a237e,#283593,#3949ab)",   barShadow:"rgba(26,35,126,0.4)",  barText:"rgba(255,255,255,0.85)", searchBg:"#ffffff", searchText:"#0d0f3a", searchBorder:"#c5cae9", skeletonBase:"#e8eaf5", skeletonShine:"#d8dce8", suggestionBg:"#ffffff", suggestionText:"#0d0f3a", suggestionHover:"#e8eaf6", flashBg:"#ffffff", flashBorder:"#c5cae9", rvBg:"linear-gradient(135deg, #0a0a2e 0%, #0f0f40 50%, #0a0a30 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#9fa8da", placeholderColor:"#9fa8da", inputText:"#0d0f3a" },
     mint:     { name:"Mint Fresh",        headerGrad:"linear-gradient(135deg,#00b09b,#96c93d,#00b09b)",   accent:"#00b09b", accentDark:"#00897b", accentLight:"#e0fff8", accentGlow:"rgba(0,176,155,0.18)",    accentShadow:"rgba(0,176,155,0.4)",    bg:"#f0fff9",  cardBg:"#ffffff", text:"#00251a", textMid:"#2a7a6a", textLight:"#80cbc4", border:"#b2ece6", barGrad:"linear-gradient(135deg,#00b09b,#96c93d,#00b09b)",   barShadow:"rgba(0,176,155,0.4)",  barText:"rgba(255,255,255,0.85)", searchBg:"#ffffff", searchText:"#00251a", searchBorder:"#b2ece6", skeletonBase:"#e0f5f0", skeletonShine:"#d0ece4", suggestionBg:"#ffffff", suggestionText:"#00251a", suggestionHover:"#e0fff8", flashBg:"#ffffff", flashBorder:"#b2ece6", rvBg:"linear-gradient(135deg, #001a10 0%, #002520 50%, #001a18 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#80cbc4", placeholderColor:"#80cbc4", inputText:"#00251a" },
     crimson:  { name:"Crimson Power",     headerGrad:"linear-gradient(135deg,#b71c1c,#c62828,#ef5350)",   accent:"#c62828", accentDark:"#b71c1c", accentLight:"#ffebee", accentGlow:"rgba(198,40,40,0.18)",    accentShadow:"rgba(183,28,28,0.4)",    bg:"#fff5f5",  cardBg:"#ffffff", text:"#1a0000", textMid:"#a02020", textLight:"#ef9a9a", border:"#ffcdd2", barGrad:"linear-gradient(135deg,#b71c1c,#c62828,#ef5350)",   barShadow:"rgba(183,28,28,0.4)",  barText:"rgba(255,255,255,0.85)", searchBg:"#ffffff", searchText:"#1a0000", searchBorder:"#ffcdd2", skeletonBase:"#f5e8e8", skeletonShine:"#ebd5d5", suggestionBg:"#ffffff", suggestionText:"#1a0000", suggestionHover:"#ffebee", flashBg:"#ffffff", flashBorder:"#ffcdd2", rvBg:"linear-gradient(135deg, #1a0000 0%, #2a0000 50%, #1a0000 100%)", rvCardBg:"rgba(255,255,255,0.06)", rvText:"rgba(255,255,255,0.88)", rvPrice:"#ef9a9a", placeholderColor:"#ef9a9a", inputText:"#1a0000" },
@@ -107,6 +114,8 @@ const DelightTheme = (() => {
         background: ${t.headerGrad} !important;
         box-shadow: 0 3px 20px ${t.accentShadow} !important;
       }
+
+      header h1#sellerName { color: #fff !important; text-shadow: 0 1px 6px rgba(0,0,0,0.25) !important; }
 
       /* ── BOTTOM NAV (.bar) — Main Store Nav ── */
       nav.bar, .store-nav.bar, body > nav.bar {
@@ -302,8 +311,7 @@ const DelightTheme = (() => {
       }
       .skeleton-ad {
         width: 100% !important;
-        height: 175px !important;
-        border-radius: var(--radius-md, 16px) !important;
+        border-radius: 20px !important;
         background: linear-gradient(90deg, ${t.skeletonBase} 25%, ${t.skeletonShine} 50%, ${t.skeletonBase} 75%) !important;
         background-size: 300% 100% !important;
         animation: shimmer 1.4s ease-in-out infinite !important;
@@ -700,6 +708,11 @@ const DelightTheme = (() => {
       }
     `;
 
+    // Browser address-bar colour bhi theme ke saath
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) { meta = document.createElement("meta"); meta.name = "theme-color"; document.head.appendChild(meta); }
+    meta.setAttribute("content", t.accentDark);
+
     // Body ko visible karo
     revealBody();
   }
@@ -708,44 +721,72 @@ const DelightTheme = (() => {
   function revealBody() {
     const hide = document.getElementById("__theme_hide__");
     if (hide) hide.remove();
-    document.body.style.opacity = "1";
+    if (document.body) document.body.style.opacity = "1";
   }
 
   // ============================================================
   // APPLY — Instant cached + fresh from API
   // ============================================================
+  let applyCalled = false;
+
   async function apply(sellerPhone) {
-    if (!sellerPhone) { revealBody(); return; }
+    applyCalled = true;
+    if (!sellerPhone) { injectCSS(THEMES[readLast()] || THEMES["default"]); return; }
     SELLER_PHONE = sellerPhone;
 
     // STEP 1: Cached theme turant lagao (zero flash)
     const cacheKey = "dlTheme_" + sellerPhone;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached && THEMES[cached]) {
-      injectCSS(THEMES[cached]);
-    } else {
-      // default lagao taake body visible ho
-      injectCSS(THEMES["default"]);
-    }
+    let cached = null;
+    try { cached = localStorage.getItem(cacheKey); } catch (e) {}
+    const hasCache = !!(cached && THEMES[cached]);
+    if (hasCache) injectCSS(THEMES[cached]);
+    // Naye device par (cache nahi) default theme NAHI lagate — warna 1 sec ke liye
+    // galat color dikh kar badalta hai. Body chhupi rehti hai (light grey + spinner)
+    // jab tak seller ki asal theme API se na aa jaye.
 
-    // STEP 2: API se fresh fetch (background mein)
+    // STEP 2: API se fresh fetch
+    let timer = null;
     try {
-      const res = await fetch(`${API}/seller-theme/${sellerPhone}`);
+      const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+      if (ctrl) timer = setTimeout(() => ctrl.abort(), hasCache ? 8000 : 3000);
+      const res = await fetch(`${API}/seller-theme/${sellerPhone}`, ctrl ? { signal: ctrl.signal } : undefined);
       const data = await res.json();
-      const themeId = (data.success && data.theme) ? data.theme : "default";
+      const themeId = (data.success && data.theme && THEMES[data.theme]) ? data.theme : "default";
 
-      // Sirf update karo agar change hua ho
-      if (themeId !== (cached || "default")) {
-        injectCSS(THEMES[themeId] || THEMES["default"]);
-      }
-      localStorage.setItem(cacheKey, themeId);
-
+      // Sirf update karo agar change hua ho (ya pehli dafa)
+      if (!hasCache || themeId !== cached) injectCSS(THEMES[themeId]);
+      try {
+        localStorage.setItem(cacheKey, themeId);
+        localStorage.setItem("dlTheme_last", themeId);
+      } catch (e) {}
     } catch (e) {
-      // Offline: cached chal raha hai already
+      // Offline / slow: cache chal raha hai, warna default
+      if (!hasCache) injectCSS(THEMES[readLast()] || THEMES["default"]);
+    } finally {
+      if (timer) clearTimeout(timer);
     }
   }
 
+  function readLast() {
+    try { return localStorage.getItem("dlTheme_last"); } catch (e) { return null; }
+  }
+
   function getTheme(id) { return THEMES[id] || THEMES["default"]; }
+
+  // ── ZERO-FLASH: script <head> mein load hote hi last-known theme lagao ──
+  // Agar is device par pehle kabhi theme nahi mili (naya device) to kuch inject nahi
+  // karte; apply() API se asal theme la kar hi page dikhata hai.
+  try {
+    const last = readLast();
+    if (last && THEMES[last]) injectCSS(THEMES[last]);
+  } catch (e) {}
+
+  // Safety: jin pages par apply() call nahi hota wahan body chhupi na reh jaye
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => { if (!applyCalled) injectCSS(THEMES[readLast()] || THEMES["default"]); }, 60);
+  });
+  // Aakhri safety: kisi bhi halat me 3.5 sec baad page zaroor dikhe
+  setTimeout(revealBody, 3500);
 
   return { apply, getTheme, THEMES };
 

@@ -8,7 +8,7 @@
 body {
   background: var(--bg, #f2f2f7) !important;
   color: var(--text-dark, #1a1a2e) !important;
-  border: 10px solid var(--primary, #ff6b00);
+  border: 10px solid var(--primary, #8a8f98);
   border-radius: 20px;
   padding: 20px;
   margin: 15px;
@@ -19,16 +19,16 @@ body {
 }
 
 @keyframes borderPulse {
-  0%   { border-color: var(--primary, #ff5500); }
-  33%  { border-color: var(--primary-dark, #e05a00); }
-  66%  { border-color: var(--accent-orange, #ff9500); }
-  100% { border-color: var(--primary, #ff5500); }
+  0%   { border-color: var(--primary, #8a8f98); }
+  33%  { border-color: var(--primary-dark, #6b7078); }
+  66%  { border-color: var(--accent-orange, #b5b9bf); }
+  100% { border-color: var(--primary, #8a8f98); }
 }
 
 /* ── WELCOME HEADER ── */
 .delight {
   font-size: small;
-  color: var(--primary, #ff6b00);
+  color: var(--primary, #8a8f98);
   text-shadow: 2px 5px #d0d0d0;
   margin: 10px;
   margin-bottom: 80px;
@@ -37,13 +37,13 @@ body {
   transition: color 0.3s;
 }
 .delight h1, .delight h2 {
-  color: var(--primary, #ff6b00);
+  color: var(--primary, #8a8f98);
   transition: color 0.3s;
 }
 @keyframes colorCycle {
-  0%   { color: var(--primary, #ff6b00); }
-  50%  { color: var(--accent-orange, #ff9500); }
-  100% { color: var(--primary, #ff6b00); }
+  0%   { color: var(--primary, #8a8f98); }
+  50%  { color: var(--accent-orange, #b5b9bf); }
+  100% { color: var(--primary, #8a8f98); }
 }
 
 /* ── STORE LOGO ── */
@@ -57,24 +57,24 @@ body {
   height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--primary, #ff6b00);
+  border: 3px solid var(--primary, #8a8f98);
   animation: pulseGlow 2s infinite;
   transition: border-color 0.3s;
 }
 .store-info h4 {
-  color: var(--primary, #ff6b00);
+  color: var(--primary, #8a8f98);
   margin: 10px 0 0 0;
   font-size: 22px;
   transition: color 0.3s;
 }
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 10px var(--primary-glow, rgba(255,107,0,0.3)); }
-  50%       { box-shadow: 0 0 25px var(--primary-glow, rgba(255,107,0,0.6)); }
+  0%, 100% { box-shadow: 0 0 10px var(--primary-glow, rgba(17,17,17,0.3)); }
+  50%       { box-shadow: 0 0 25px var(--primary-glow, rgba(17,17,17,0.6)); }
 }
 
 /* ── FORM CARD ── */
 .login {
-  border: 3px solid var(--primary, #ff6b00);
+  border: 3px solid var(--primary, #8a8f98);
   border-radius: 20px;
   margin: 0;
   background-color: var(--card-bg, #fafafa) !important;
@@ -85,7 +85,7 @@ body {
 }
 .login h3 {
   text-align: center;
-  color: var(--primary, #ff6b00);
+  color: var(--primary, #8a8f98);
   animation: slideIn 0.8s ease-out 0.7s both;
   transition: color 0.3s;
 }
@@ -117,8 +117,8 @@ body {
 .login input[type="text"]:focus,
 .login input[type="number"]:focus,
 .login input[type="password"]:focus {
-  border-color: var(--primary, #ff6b00) !important;
-  box-shadow: 0 0 0 3px var(--primary-glow, rgba(255,107,0,0.18)) !important;
+  border-color: var(--primary, #8a8f98) !important;
+  box-shadow: 0 0 0 3px var(--primary-glow, rgba(17,17,17,0.18)) !important;
   background: var(--card-bg, #fff) !important;
 }
 
@@ -145,8 +145,8 @@ body {
   transition: border-color 0.25s, box-shadow 0.25s;
 }
 .password-wrapper input:focus {
-  border-color: var(--primary, #ff6b00) !important;
-  box-shadow: 0 0 0 3px var(--primary-glow, rgba(255,107,0,0.18)) !important;
+  border-color: var(--primary, #8a8f98) !important;
+  box-shadow: 0 0 0 3px var(--primary-glow, rgba(17,17,17,0.18)) !important;
 }
 .toggle-password {
   position: absolute;
@@ -156,7 +156,7 @@ body {
   cursor: pointer;
   width: 20px;
   height: 20px;
-  color: var(--primary, #ff6b00);
+  color: var(--primary, #8a8f98);
   transition: color 0.3s;
 }
 .toggle-password svg { width: 18px; height: 18px; }
@@ -170,8 +170,8 @@ body {
   margin-bottom: 10px;
   color: #fff !important;
   font-weight: bold;
-  background: var(--primary, #ff6b00) !important;
-  background: linear-gradient(45deg, var(--primary, #ff5500), var(--accent-orange, #ff9500)) !important;
+  background: var(--primary, #8a8f98) !important;
+  background: linear-gradient(45deg, var(--primary, #8a8f98), var(--accent-orange, #b5b9bf)) !important;
   cursor: pointer;
   animation: pulse 2s infinite 1.5s;
   display: inline-flex;
@@ -180,7 +180,7 @@ body {
   gap: 8px;
   font-size: 14px;
   transition: opacity 0.2s, transform 0.2s, background 0.3s;
-  box-shadow: 0 4px 14px var(--primary-glow, rgba(255,107,0,0.35));
+  box-shadow: 0 4px 14px var(--primary-glow, rgba(17,17,17,0.35));
 }
 .submit-btn:hover   { transform: translateY(-1px); opacity: 0.92; }
 .submit-btn:active  { transform: scale(0.97); }
@@ -204,7 +204,7 @@ body {
 
 /* ── LINK (Signup / Login) ── */
 a#signupLink, a#loginLink {
-  color: var(--primary, #ff6b00) !important;
+  color: var(--primary, #8a8f98) !important;
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s;

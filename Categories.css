@@ -6,9 +6,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --primary: #ff6b00;
-  --primary-light: #fff3e8;
-  --primary-glow: rgba(255,107,0,0.18);
+  --primary: #8a8f98;
+  --primary-light: #f1f1f1;
+  --primary-glow: rgba(17,17,17,0.18);
   --bg: #f2f2f7;
   --card-bg: #ffffff;
   --text-dark: #1a1a2e;
@@ -395,7 +395,7 @@ nav.bar a.active::after {
   /* We only set layout styles here, not background */
   header.main-header {
     /* background handled by themeEngine's "header" selector */
-    box-shadow: 0 3px 16px var(--accent-shadow, rgba(255,107,0,0.35));
+    box-shadow: 0 3px 16px var(--accent-shadow, rgba(17,17,17,0.35));
   }
 
   .brand-name {
@@ -410,7 +410,7 @@ nav.bar a.active::after {
   /* Changed from div.bar to nav.bar to match themeEngine's selector */
   nav.bar {
     /* background handled by themeEngine's "nav.bar" selector */
-    box-shadow: 0 8px 28px var(--bar-shadow, rgba(255,107,0,0.4)), 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 28px var(--bar-shadow, rgba(17,17,17,0.4)), 0 2px 8px rgba(0,0,0,0.1);
   }
 
   nav.bar a {

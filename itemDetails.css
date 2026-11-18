@@ -2,10 +2,10 @@
    THEME VARIABLES — Controlled by themeEngine.js
    ═══════════════════════════════════════════════ */
 :root {
-  --primary: #ef6c00;
-  --primary-dark: #c42400;
-  --primary-light: #fff3e0;
-  --primary-glow: rgba(239, 108, 0, 0.18);
+  --primary: #2d2d2d;
+  --primary-dark: #282828;
+  --primary-light: #f1f1f1;
+  --primary-glow: rgba(17,17,17, 0.18);
   --bg: #f8f9fa;
   --card-bg: #ffffff;
   --text-dark: #1a1a1a;

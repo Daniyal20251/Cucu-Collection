@@ -49,6 +49,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     "Cucu-collection6"
   ];
 
+  // ─── Image loading progress (card me image puri aane tak sirf progress) ───
+  function wireImageLoading(root) {
+    if (!root) return;
+    root.querySelectorAll("img[data-load-wrap]").forEach(img => {
+      const wrap = img.parentElement;
+      if (!wrap) return;
+      img.removeAttribute("data-load-wrap");
+      wrap.classList.add("img-wrap-loading");
+      if (!wrap.querySelector(".img-progress")) {
+        const bar = document.createElement("span");
+        bar.className = "img-progress";
+        bar.setAttribute("aria-hidden", "true");
+        bar.innerHTML = "<i></i>";
+        wrap.insertBefore(bar, img);
+      }
+      const done = () => {
+        wrap.classList.remove("img-wrap-loading");
+        wrap.classList.add("img-wrap-ready");
+        const bar = wrap.querySelector(".img-progress");
+        if (bar) bar.remove();
+      };
+      const failed = () => {
+        img.src = "Store icons/not-found.png";
+        done();
+      };
+      img.addEventListener("load", done, { once: true });
+      img.addEventListener("error", failed, { once: true });
+      if (img.complete) {
+        if (img.naturalWidth > 0) done(); else if (img.getAttribute("src")) failed();
+      }
+    });
+  }
+
   // ─── Helpers ───────────────────────────────────────────────────
   function shuffleArray(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -403,7 +436,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.style.animationDelay = `${(index % 10) * 45}ms`;
       card.innerHTML = `
         <div class="card-img-wrap">
-          <img src="${item.images?.[0] || item.image || 'https://via.placeholder.com/150'}" alt="${item.title}" loading="lazy">
+          <img src="${item.images?.[0] || item.image || 'https://via.placeholder.com/150'}" alt="${escAttr(item.title)}" loading="lazy" data-load-wrap>
         </div>
         <div class="card-body">
           <h3>${item.title}</h3>
@@ -419,6 +452,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         localStorage.setItem("selectedItem", JSON.stringify(productData));
         window.location.href = "Stores itemDetails.html";
       });
+      wireImageLoading(card);
       return card;
     }
 
@@ -674,46 +708,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     return false;
   }
 
+  // ─── AD BANNER HELPERS ─────────────────────────────────────────
+  function escAttr(v) {
+    return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // Sirf http/https links allow hain (javascript: wagera block)
+  function safeAdLink(raw) {
+    if (!raw || typeof raw !== "string") return "";
+    let l = raw.trim();
+    if (!l) return "";
+    if (!/^https?:\/\//i.test(l)) {
+      if (/^[a-z][a-z0-9+.-]*:/i.test(l)) return "";   // koi aur scheme
+      l = "https://" + l.replace(/^\/+/, "");
+    }
+    try { return new URL(l).href; } catch (e) { return ""; }
+  }
+
+  function adSlideHTML(ad) {
+    const link = safeAdLink(ad.link);
+    const img  = `<img src="${escAttr(ad.image)}" alt="Cucu Collection offer" loading="lazy" draggable="false">`;
+    if (!link) {
+      return `<div class="swiper-slide ad-slide"><div class="ad-card">${img}</div></div>`;
+    }
+    let sameSite = false;
+    try { sameSite = new URL(link).host === location.host; } catch (e) {}
+    const target = sameSite ? "" : ' target="_blank" rel="noopener noreferrer"';
+    return `<div class="swiper-slide ad-slide"><a class="ad-card has-link" href="${escAttr(link)}"${target}>${img}<span class="ad-cta">Shop now</span></a></div>`;
+  }
+
   function sortAdsByOrder(ads, adNames) {
     const sorted = [];
     const adMap = new Map();
-    ads.forEach(ad => adMap.set(getAdName(ad).toLowerCase(), ad));
+    ads.forEach(ad => { const k = getAdName(ad).toLowerCase(); if (!adMap.has(k)) adMap.set(k, ad); });
     adNames.forEach(name => {
       const key = name.toLowerCase();
       if (adMap.has(key)) { sorted.push(adMap.get(key)); adMap.delete(key); }
     });
     adMap.forEach(ad => sorted.push(ad));
-    return sorted;
+    // Tarteeb ulti: last wala ad pehle, pehla wala end mein
+    return sorted.reverse();
   }
 
   async function loadSliderImages() {
-    showAdsSkeleton();
-    try {
-      const res  = await fetch(`${API_BASE}/admin/ads`);
-      const ads  = await res.json();
-      const matchedAds = ads.filter(ad => adMatchesStore(ad, STORE_CONFIG.name));
-      const sortedAds  = sortAdsByOrder(matchedAds, AD_NAMES);
-
-      if (sortedAds.length > 0) {
-        swiperWrapper.innerHTML = sortedAds.map(ad =>
-          `<div class="swiper-slide"><img src="${ad.image}" alt="${getAdName(ad)||'Ad'}" loading="lazy"></div>`
-        ).join('');
-        hideAdsSkeleton();
-        adSlider.style.display = "block";
-        if (swiperInstance) swiperInstance.destroy(true, true);
-        swiperInstance = new Swiper(".mySwiper", {
-          loop: sortedAds.length > 1,
-          autoplay: { delay: 3000, disableOnInteraction: false },
-          pagination: { el: ".swiper-pagination", clickable: true, dynamicBullets: sortedAds.length > 5 }
-        });
-      } else {
-        hideAdsSkeleton();
-        adSlider.style.display = "none";
-      }
-    } catch(e) {
-      hideAdsSkeleton();
-      adSlider.style.display = "none";
-    }
+    return loadSliderWithCache();
   }
 
   // ─── FLASH SALE ────────────────────────────────────────────────
@@ -799,38 +838,44 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function initSwiper(adsArr) {
-    swiperWrapper.innerHTML = adsArr.map(ad =>
-      `<div class="swiper-slide"><img src="${ad.image}" alt="${getAdName(ad)||'Ad'}" loading="lazy"></div>`
-    ).join('');
+    swiperWrapper.innerHTML = adsArr.map(adSlideHTML).join('');
+    adSlider.classList.toggle("ad-single", adsArr.length === 1);
     hideAdsSkeleton();
     adSlider.style.display = "block";
     if (swiperInstance) { try { swiperInstance.destroy(true,true); } catch(e){} }
     swiperInstance = new Swiper(".mySwiper", {
-      loop: adsArr.length > 1,
-      autoplay: { delay: 3000, disableOnInteraction: false },
-      pagination: { el: ".swiper-pagination", clickable: true, dynamicBullets: adsArr.length > 5 }
+      slidesPerView: "auto",
+      spaceBetween: 10,
+      slidesOffsetBefore: 12,
+      slidesOffsetAfter: 12,
+      rewind: adsArr.length > 1,
+      watchOverflow: true,
+      autoplay: adsArr.length > 1 ? { delay: 3500, disableOnInteraction: false } : false,
+      pagination: { el: ".swiper-pagination", clickable: true }
     });
   }
 
   async function loadSliderWithCache() {
-    const cached = loadCache("cucu_ads");
-    if (cached && cached.length > 0) {
-      initSwiper(cached);
-    } else {
-      showAdsSkeleton();
-      try {
-        const res = await fetch(`${API_BASE}/admin/ads`);
-        const ads = await res.json();
-        const matchedAds = ads.filter(ad => adMatchesStore(ad, STORE_CONFIG.name));
-        const sortedAds  = sortAdsByOrder(matchedAds, AD_NAMES);
-        if (sortedAds.length > 0) {
-          saveCache("cucu_ads", sortedAds);
-          initSwiper(sortedAds);
-        } else {
-          hideAdsSkeleton();
-          adSlider.style.display = "none";
-        }
-      } catch(e) { hideAdsSkeleton(); adSlider.style.display = "none"; }
+    const cached = loadCache("cucu_ads_v2");
+    const hadCache = !!(cached && cached.length > 0);
+    if (hadCache) initSwiper(cached); else showAdsSkeleton();
+
+    // Hamesha fresh data bhi lo (link/image change ho to 5 min cache ka wait na ho)
+    try {
+      const res = await fetch(`${API_BASE}/admin/ads`);
+      const ads = await res.json();
+      const matchedAds = ads.filter(ad => adMatchesStore(ad, STORE_CONFIG.name));
+      const sortedAds  = sortAdsByOrder(matchedAds, AD_NAMES);
+      if (sortedAds.length > 0) {
+        saveCache("cucu_ads_v2", sortedAds);
+        if (!hadCache || JSON.stringify(cached) !== JSON.stringify(sortedAds)) initSwiper(sortedAds);
+      } else {
+        try { sessionStorage.removeItem("cucu_ads_v2"); } catch(e) {}
+        hideAdsSkeleton();
+        adSlider.style.display = "none";
+      }
+    } catch(e) {
+      if (!hadCache) { hideAdsSkeleton(); adSlider.style.display = "none"; }
     }
   }
 

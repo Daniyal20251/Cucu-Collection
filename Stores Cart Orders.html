@@ -5,13 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Cart Order – CucuCollection</title>
 <script src="themeEngine.js"></script>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Cucu">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="pwa.js" defer></script>
+
 <style>
 /* ── THEME-AWARE VARIABLES ── */
 :root {
-  --t-accent:       var(--primary,       #e65100);
-  --t-accent-dark:  var(--primary-dark,  #bf360c);
-  --t-accent-light: var(--primary-light, #fff3e0);
-  --t-accent-glow:  var(--primary-glow,  rgba(230,81,0,0.12));
+  --t-accent:       var(--primary,       #2c2c2c);
+  --t-accent-dark:  var(--primary-dark,  #282828);
+  --t-accent-light: var(--primary-light, #f1f1f1);
+  --t-accent-glow:  var(--primary-glow,  rgba(17,17,17,0.12));
   --t-bg:           var(--bg,            #f5f5f5);
   --t-card:         var(--card-bg,       #ffffff);
   --t-text:         var(--text-dark,     #1a1a1a);
@@ -33,7 +40,7 @@ body {
 
 /* HEADER */
 .hdr {
-  background: var(--primary, #e65100);
+  background: var(--primary, #2c2c2c);
   padding: 16px 18px 14px; text-align: center;
   position: sticky; top: 0; z-index: 100;
   box-shadow: 0 4px 20px rgba(0,0,0,0.25);
@@ -52,7 +59,7 @@ body {
   overflow: hidden; margin-bottom: 14px;
 }
 .cart-head {
-  background: var(--primary, #e65100);
+  background: var(--primary, #2c2c2c);
   padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
 }
 .cart-head span { color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.3px; }
@@ -106,7 +113,7 @@ body {
 .cart-empty .empty-icon { font-size: 56px; margin-bottom: 12px; opacity: 0.6; }
 .cart-empty p { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
 .shop-btn {
-  display: inline-block; background: var(--primary, #e65100);
+  display: inline-block; background: var(--primary, #2c2c2c);
   color: #fff; padding: 12px 28px; border-radius: 30px; font-size: 14px; font-weight: 700;
   text-decoration: none; box-shadow: 0 4px 14px rgba(0,0,0,0.2); transition: transform 0.2s;
 }
@@ -306,7 +313,7 @@ body {
 
 /* ORDER TOTAL */
 .order-total {
-  background: var(--primary, #e65100);
+  background: var(--primary, #2c2c2c);
   border-radius: 14px; padding: 16px 18px; margin-bottom: 14px;
   display: none; box-shadow: var(--shadow-lg);
 }
@@ -317,7 +324,7 @@ body {
 /* SUBMIT */
 .submit-btn {
   width: 100%; padding: 16px;
-  background: var(--primary, #e65100);
+  background: var(--primary, #2c2c2c);
   color: #fff; border: none; border-radius: 16px;
   font-size: 17px; font-weight: 800; cursor: pointer;
   box-shadow: 0 6px 24px rgba(0,0,0,0.25);

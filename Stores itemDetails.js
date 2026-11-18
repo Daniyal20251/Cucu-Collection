@@ -8,6 +8,52 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 🔥 STEP 1: Check URL for product parameter
   const urlParams = new URLSearchParams(window.location.search);
   const productFromUrl = urlParams.get('product');
+  const productIdFromUrl = urlParams.get('pid');
+
+  // ── Title normalizer: emoji / symbols / extra spaces ignore karta hai ──
+  // (link share hone par emoji kai dafa badal jata hai ya hat jata hai, is liye
+  //  exact match fail hota tha. Ab dono taraf se emoji hata kar compare hota hai.)
+  function safeDecode(v) {
+    let out = String(v == null ? "" : v);
+    for (let i = 0; i < 2; i++) {
+      if (!/%[0-9a-f]{2}/i.test(out)) break;
+      try { out = decodeURIComponent(out); } catch (e) { break; }
+    }
+    return out;
+  }
+  function normTitle(v) {
+    let t = safeDecode(v);
+    try { t = t.normalize("NFKC"); } catch (e) {}
+    try {
+      t = t
+        .replace(/[\u200B-\u200F\u2060\uFE00-\uFE0F\uFEFF]/g, "")
+        .replace(/[\p{Extended_Pictographic}\p{Emoji_Presentation}\u{1F3FB}-\u{1F3FF}\u{1F1E6}-\u{1F1FF}\u{E0020}-\u{E007F}]/gu, "")
+        .replace(/[^\p{L}\p{N}]+/gu, " ");
+    } catch (e) {
+      t = t.replace(/[\u200B-\u200F\u2060\uFE00-\uFE0F\uFEFF]/g, "")
+           .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "")
+           .replace(/[^a-z0-9\u0600-\u06FF]+/gi, " ");
+    }
+    return t.replace(/\s+/g, " ").trim().toLowerCase();
+  }
+  function findProductByTitle(list, rawTitle, rawId) {
+    if (!Array.isArray(list) || !list.length) return null;
+    if (rawId) {
+      const byId = list.find(p => String(p.id) === String(rawId));
+      if (byId) return byId;
+    }
+    const wanted = normTitle(rawTitle);
+    const wantedRaw = safeDecode(rawTitle).trim().toLowerCase();
+    if (!wanted) return list.find(p => (p.title || "").trim().toLowerCase() === wantedRaw) || null;
+    // 1) exact (emoji ke baghair)
+    let hit = list.find(p => normTitle(p.title) === wanted);
+    if (hit) return hit;
+    // 2) ek dusre ke andar (title kat gaya ho to)
+    hit = list.find(p => { const n = normTitle(p.title); return n && (n.startsWith(wanted) || wanted.startsWith(n)); });
+    if (hit) return hit;
+    hit = list.find(p => { const n = normTitle(p.title); return n && wanted.length >= 6 && (n.includes(wanted) || wanted.includes(n)); });
+    return hit || null;
+  }
 
   let item = null;
   
@@ -26,10 +72,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const res = await fetch(`https://delight-backend--araindaniyalo2.replit.app/products`);
       if (res.ok) {
         const allProducts = await res.json();
-        // Product name se match karo (case-insensitive)
-        item = allProducts.find(p => 
-          (p.title || "").toLowerCase() === decodeURIComponent(productFromUrl).toLowerCase()
-        );
+        // Product id ya name se match karo (emoji / case / spaces ignore)
+        item = findProductByTitle(allProducts, productFromUrl, productIdFromUrl);
       }
     } catch (err) {
       console.warn("Backend fetch failed:", err);
@@ -38,7 +82,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔥 Agar URL se nahi mila, toh localStorage check karo
   if (!item) {
-    item = JSON.parse(localStorage.getItem("selectedItem"));
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem("selectedItem")); } catch (e) {}
+    // Link se aaye hain to sirf wahi saved item use karo jo isi title ka ho (galat product na dikhe)
+    if (!productFromUrl || (saved && normTitle(saved.title) === normTitle(productFromUrl))) {
+      item = saved;
+    }
   }
 
   // 🔥 Agar phir bhi nahi mila → Error show karo
@@ -46,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelector(".item-details").innerHTML = `
       <div style="text-align:center;padding:40px 20px;">
         <p style="font-size:18px;color:#666;margin-bottom:16px;">No item selected.</p>
-        <a href="index.html" style="color:#ef6c00;text-decoration:none;font-weight:600;">← Back to Home</a>
+        <a href="index.html" style="color:#2d2d2d;text-decoration:none;font-weight:600;">← Back to Home</a>
       </div>
     `;
     return;
@@ -137,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const shareLink = document.getElementById("shareLink");
 
     const currentUrl = window.location.href.split('?')[0];
-    const shareUrl = `${currentUrl}?product=${encodeURIComponent(item.title)}`;
+    const shareUrl = `${currentUrl}?product=${encodeURIComponent(item.title)}${(item.id && /^[A-Za-z0-9_-]+$/.test(String(item.id))) ? '&pid=' + encodeURIComponent(item.id) : ''}`;
 
     shareLink.value = shareUrl;
     modal.classList.add("active");
@@ -158,7 +207,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   window.shareVia = function(platform) {
     const currentUrl = window.location.href.split('?')[0];
-    const shareUrl = `${currentUrl}?product=${encodeURIComponent(item.title)}`;
+    const shareUrl = `${currentUrl}?product=${encodeURIComponent(item.title)}${(item.id && /^[A-Za-z0-9_-]+$/.test(String(item.id))) ? '&pid=' + encodeURIComponent(item.id) : ''}`;
 
     const text = `🔥 Check out this amazing deal!\n\n${item.title}\nPrice: Rs. ${item.finalPrice || item.price}\n\n${shareUrl}`;
 
@@ -200,7 +249,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     setTimeout(() => {
       btn.textContent = originalText;
-      btn.style.background = "#ef6c00";
+      btn.style.background = "#2d2d2d";
     }, 2000);
 
     document.getElementById("shareModal").classList.remove("active");

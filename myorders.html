@@ -6,6 +6,13 @@
 <title>My Orders - cucucollection.shop</title>
 <!-- ── DELIGHT THEME ENGINE ── -->
 <script src="themeEngine.js"></script>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Cucu">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="pwa.js" defer></script>
+
 <style>
 body {
   margin: 0;
@@ -19,7 +26,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  background: var(--primary, linear-gradient(135deg, #ff6a00, #ff3d00));
+  background: var(--primary, linear-gradient(135deg, #8a8f98, #b5b9bf));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,7 +77,7 @@ header h4 {
   margin-bottom: 20px;
   border-radius: 12px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-  border-left: 5px solid var(--primary, #ef6c00);
+  border-left: 5px solid var(--primary, #2d2d2d);
   transition: 0.2s ease;
 }
 
@@ -128,9 +135,9 @@ header h4 {
 .cancel-btn:hover { background: #fff; transform: scale(1.05); }
 
 .address-box {
-  background: var(--primary-light, #fff7ef);
+  background: var(--primary-light, #f1f1f1);
   padding: 10px 12px;
-  border-left: 4px solid var(--primary, #ff6a00);
+  border-left: 4px solid var(--primary, #8a8f98);
   border-radius: 8px;
   margin-top: 10px;
   font-size: 13.5px;
@@ -138,7 +145,7 @@ header h4 {
   line-height: 1.5;
 }
 
-.address-box strong { color: var(--primary, #ff6a00); }
+.address-box strong { color: var(--primary, #8a8f98); }
 .address-box .heading { text-align: center; font-weight: 600; font-size: 14px; color: var(--text-dark, black); margin-bottom: 5px; }
 
 .payment-method { font-size: 13px; margin-top: 4px; color: var(--text-mid, #555); }

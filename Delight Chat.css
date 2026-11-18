@@ -4,13 +4,13 @@
 
 :root {
   /* Fallback values (Orange theme) — overridden by themeEngine */
-  --primary: #ef6c00;
-  --primary-dark: #d45a00;
-  --primary-light: #ff9800;
-  --accent: #ef6c00;
-  --accent-orange: #ef6c00;
-  --accent-orange-light: #fff3e8;
-  --accent-orange-dark: #d45a00;
+  --primary: #2d2d2d;
+  --primary-dark: #292929;
+  --primary-light: #2f2f2f;
+  --accent: #2d2d2d;
+  --accent-orange: #2d2d2d;
+  --accent-orange-light: #f1f1f1;
+  --accent-orange-dark: #292929;
   --bg: #fafafa;
   --card-bg: #ffffff;
   --text-dark: #1a1a1a;
@@ -20,8 +20,8 @@
   --border-color: #e8e8f0;
 
   /* Chat-specific derived vars */
-  --chat-header-bg: linear-gradient(135deg, #ef6c00, #ff8f00);
-  --chat-bubble-buyer: #ffe0b2;
+  --chat-header-bg: linear-gradient(135deg, #2d2d2d, #2f2f2f);
+  --chat-bubble-buyer: #d9d9d9;
   --chat-bubble-seller: var(--card-bg);
   --chat-bubble-buyer-text: var(--text-dark);
   --chat-bubble-seller-text: var(--text-dark);
@@ -62,7 +62,7 @@ html, body {
 
 /* ========== HEADER ========== */
 .chat-header {
-  background: var(--chat-header-bg, linear-gradient(135deg, #ef6c00, #ff8f00)) !important;
+  background: var(--chat-header-bg, linear-gradient(135deg, #2d2d2d, #2f2f2f)) !important;
   color: white;
   height: var(--header-height);
   display: flex;
@@ -213,7 +213,7 @@ html, body {
 }
 
 .chat-view-product-btn {
-  background: var(--chat-header-bg, linear-gradient(135deg, #ef6c00, #ff8f00)) !important;
+  background: var(--chat-header-bg, linear-gradient(135deg, #2d2d2d, #2f2f2f)) !important;
   color: white !important;
   border: none;
   padding: 7px 16px;
@@ -295,7 +295,7 @@ html, body {
 /* ── BUYER (me) — RIGHT ── */
 .chat-message.buyer {
   align-self: flex-end;
-  background: var(--accent-orange-light, #ffe0b2) !important;
+  background: var(--accent-orange-light, #d9d9d9) !important;
   color: var(--text-dark) !important;
   border-radius: 16px 4px 16px 16px;
   margin-left: auto;
@@ -313,7 +313,7 @@ html, body {
   height: 0;
   border-style: solid;
   border-width: 10px 0 0 10px;
-  border-color: transparent transparent transparent var(--accent-orange-light, #ffe0b2);
+  border-color: transparent transparent transparent var(--accent-orange-light, #d9d9d9);
   filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.06));
 }
 
@@ -371,7 +371,7 @@ html, body {
   line-height: 1;
 }
 
-.chat-message.buyer  .chat-message-time { color: var(--accent-orange-dark, #b86200) !important; opacity: 0.8; }
+.chat-message.buyer  .chat-message-time { color: var(--accent-orange-dark, #262626) !important; opacity: 0.8; }
 .chat-message.seller .chat-message-time { color: var(--text-light) !important; }
 
 .chat-read-status {
@@ -507,7 +507,7 @@ html, body {
   transition: background 0.2s;
   flex-shrink: 0;
 }
-.chat-attach-btn:active { background: var(--accent-orange-light, #ffe0b2); }
+.chat-attach-btn:active { background: var(--accent-orange-light, #d9d9d9); }
 
 .chat-input-wrapper {
   flex: 1;
@@ -537,7 +537,7 @@ html, body {
 }
 
 .chat-send-btn {
-  background: var(--chat-header-bg, linear-gradient(135deg, #ef6c00, #ff8f00)) !important;
+  background: var(--chat-header-bg, linear-gradient(135deg, #2d2d2d, #2f2f2f)) !important;
   color: white;
   border: none;
   width: 38px;
@@ -595,7 +595,7 @@ html, body {
   transition: background 0.2s;
   min-width: 72px;
 }
-.attach-option:active { background: var(--accent-orange-light, #fff3e0); }
+.attach-option:active { background: var(--accent-orange-light, #f1f1f1); }
 .attach-option span:first-child { font-size: 26px; }
 .attach-option span:last-child {
   font-size: 11px;
@@ -645,7 +645,7 @@ html, body {
 
 .chat-login-btn {
   width: 100%;
-  background: var(--chat-header-bg, linear-gradient(135deg, #ef6c00, #ff8f00)) !important;
+  background: var(--chat-header-bg, linear-gradient(135deg, #2d2d2d, #2f2f2f)) !important;
   color: white;
   border: none;
   padding: 14px;

@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       container.innerHTML = `
         <div class="not-found" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px;">
           <img src="Delight icons/not-found.png" alt="No Results" style="width:180px; opacity:0.8; margin-bottom: 14px;">
-          <h3 style="font-size: 18px; font-weight: 800; color: #ff6b00; margin-bottom: 6px;">Oops! No Items Found</h3>
+          <h3 style="font-size: 18px; font-weight: 800; color: #111111; margin-bottom: 6px;">Oops! No Items Found</h3>
           <p style="color: #555577; font-size: 14px;">Try another category.</p>
         </div>`;
       if (loading) loading.style.display = "none";
