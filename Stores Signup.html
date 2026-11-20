@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sign Up - CucuCollection</title>
 
   <!-- ✅ themeEngine PEHLE — CSS inject karta hai BODY dikhne se pehle -->
@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Cucu">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <script src="pwa.js" defer></script>
 
 
@@ -32,8 +32,11 @@
   </script>
   <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/></noscript>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#e9ebee">
+  <link rel="stylesheet" href="responsive.css">
 </head>
-<body>
+<body data-page="auth">
 
   <div id="toastContainer"></div>
 

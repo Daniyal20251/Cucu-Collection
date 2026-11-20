@@ -157,7 +157,7 @@ async function loadSellerInfo(phone) {
       }
     }
   } catch (e) { console.warn("Seller fetch failed", e); }
-  currentSeller = { name: "Seller", phone: phone, logo: "lo.png" };
+  currentSeller = { name: "Seller", phone: phone, logo: "Store icons/Cucu.png" };
   updateSellerHeader();
 }
 
@@ -165,7 +165,7 @@ function updateSellerHeader() {
   const nameEl = document.getElementById("chatSellerName");
   const logoEl = document.getElementById("chatSellerLogo");
   if (nameEl) nameEl.textContent = currentSeller.name || "Seller";
-  if (logoEl) logoEl.src = currentSeller.logo || currentSeller.logoUrl || "lo.png";
+  if (logoEl) logoEl.src = currentSeller.logo || currentSeller.logoUrl || "Store icons/Cucu.png";
 }
 
 // ─── Product Bar ───
@@ -176,7 +176,7 @@ function showProductBar() {
   const price = document.getElementById("chatProductPrice");
   if (!currentProduct || !bar) return;
 
-  const imgSrc = currentProduct.images?.[0] || currentProduct.image || "noimg.png";
+  const imgSrc = currentProduct.images?.[0] || currentProduct.image || "Store icons/not-found.png";
   const basePrice = parseInt((currentProduct.price || "0").toString().replace(/[^\d]/g, "")) || 0;
   const discount = parseInt((currentProduct.discount || "0").toString().replace(/[^\d]/g, "")) || 0;
   const finalPrice = basePrice - discount;
@@ -190,7 +190,7 @@ function showProductBar() {
 function viewProduct() {
   if (currentProduct) {
     localStorage.setItem("selectedItem", JSON.stringify(currentProduct));
-    window.location.href = "itemDetails.html";
+    window.location.href = "Stores itemDetails.html";
   }
 }
 
@@ -458,7 +458,7 @@ function closeLoginModal() {
   document.getElementById("chatLoginModal").style.display = "none";
 }
 function goToLogin() {
-  window.location.href = "login.html";
+  window.location.href = "Stores Login.html";
 }
 
 // ─── Image Modal ───

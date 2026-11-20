@@ -1,5 +1,5 @@
 /**
- * DELIGHT THEME ENGINE v2.1
+ * DELIGHT THEME ENGINE v2.2
  * - Flash nahi hogi: cached theme INSTANTLY apply hoti hai <body> visible hone se pehle
  * - Bottom nav (.bar) properly themed hoti hai
  * - Har page pe kaam karta hai
@@ -715,6 +715,18 @@ const DelightTheme = (() => {
 
     // Body ko visible karo
     revealBody();
+
+    // Current theme yaad rakho + pages ko batao (inline-styled elements ke liye)
+    currentTheme = t;
+    try {
+      document.dispatchEvent(new CustomEvent("delight-theme", { detail: { theme: t, id: idOf(t) } }));
+    } catch (e) {}
+  }
+
+  let currentTheme = null;
+  function idOf(t) {
+    for (const k in THEMES) { if (THEMES[k] === t) return k; }
+    return "default";
   }
 
   // ── Show body after theme applied ──
@@ -728,18 +740,20 @@ const DelightTheme = (() => {
   // APPLY — Instant cached + fresh from API
   // ============================================================
   let applyCalled = false;
+  let applySeq = 0;
 
   async function apply(sellerPhone) {
     applyCalled = true;
     if (!sellerPhone) { injectCSS(THEMES[readLast()] || THEMES["default"]); return; }
     SELLER_PHONE = sellerPhone;
+    const myCall = ++applySeq;
 
     // STEP 1: Cached theme turant lagao (zero flash)
     const cacheKey = "dlTheme_" + sellerPhone;
     let cached = null;
     try { cached = localStorage.getItem(cacheKey); } catch (e) {}
     const hasCache = !!(cached && THEMES[cached]);
-    if (hasCache) injectCSS(THEMES[cached]);
+    if (hasCache && currentTheme !== THEMES[cached]) injectCSS(THEMES[cached]);
     // Naye device par (cache nahi) default theme NAHI lagate — warna 1 sec ke liye
     // galat color dikh kar badalta hai. Body chhupi rehti hai (light grey + spinner)
     // jab tak seller ki asal theme API se na aa jaye.
@@ -748,20 +762,25 @@ const DelightTheme = (() => {
     let timer = null;
     try {
       const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
-      if (ctrl) timer = setTimeout(() => ctrl.abort(), hasCache ? 8000 : 3000);
-      const res = await fetch(`${API}/seller-theme/${sellerPhone}`, ctrl ? { signal: ctrl.signal } : undefined);
+      if (ctrl) timer = setTimeout(() => ctrl.abort(), hasCache ? 8000 : 2500);
+      const res = await fetch(`${API}/seller-theme/${encodeURIComponent(sellerPhone)}`, {
+        cache: "no-store",
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      if (!res.ok) throw new Error("theme http " + res.status);
       const data = await res.json();
-      const themeId = (data.success && data.theme && THEMES[data.theme]) ? data.theme : "default";
+      if (myCall !== applySeq) return;               // naya apply() chal chuka hai, purana result ignore
+      const themeId = (data && data.success && data.theme && THEMES[data.theme]) ? data.theme : "default";
 
       // Sirf update karo agar change hua ho (ya pehli dafa)
-      if (!hasCache || themeId !== cached) injectCSS(THEMES[themeId]);
+      if (!hasCache || themeId !== cached || currentTheme !== THEMES[themeId]) injectCSS(THEMES[themeId]);
       try {
         localStorage.setItem(cacheKey, themeId);
         localStorage.setItem("dlTheme_last", themeId);
       } catch (e) {}
     } catch (e) {
-      // Offline / slow: cache chal raha hai, warna default
-      if (!hasCache) injectCSS(THEMES[readLast()] || THEMES["default"]);
+      // Offline / slow: cache chal raha hai, warna last-known ya default
+      if (!hasCache && myCall === applySeq) injectCSS(THEMES[readLast()] || THEMES["default"]);
     } finally {
       if (timer) clearTimeout(timer);
     }
@@ -788,6 +807,25 @@ const DelightTheme = (() => {
   // Aakhri safety: kisi bhi halat me 3.5 sec baad page zaroor dikhe
   setTimeout(revealBody, 3500);
 
-  return { apply, getTheme, THEMES };
+  // ── Theme hamesha fresh rahe ──
+  // Back/forward (bfcache) se page wapis aaye, ya tab dobara khule → theme dobara check
+  let lastRefresh = Date.now();
+  function refresh() {
+    if (!SELLER_PHONE) return;
+    lastRefresh = Date.now();
+    apply(SELLER_PHONE);
+  }
+  window.addEventListener("pageshow", (e) => { if (e.persisted) refresh(); });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && Date.now() - lastRefresh > 60000) refresh();
+  });
+  // Dusre tab me theme badli to yahan bhi foran
+  window.addEventListener("storage", (e) => {
+    if (e.key === "dlTheme_last" && e.newValue && THEMES[e.newValue] && currentTheme !== THEMES[e.newValue]) {
+      injectCSS(THEMES[e.newValue]);
+    }
+  });
+
+  return { apply, getTheme, getCurrent: () => currentTheme || getTheme(readLast()), THEMES };
 
 })();

@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cart Order – CucuCollection</title>
 <script src="themeEngine.js"></script>
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Cucu">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <script src="pwa.js" defer></script>
 
 <style>
@@ -396,8 +396,11 @@ body {
     <img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
   </noscript>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#e9ebee">
+  <link rel="stylesheet" href="responsive.css">
 </head>
-<body>
+<body data-page="order">
 
 <div class="hdr">
   <h1>🛒 Place Your Order</h1>
@@ -420,7 +423,7 @@ const ADMIN_PHONE = "03352166725";
 
 // ── LOGIN CHECK ──
 const customer = JSON.parse(localStorage.getItem("customer") || "null");
-if (!customer) { alert("Please login first!"); window.location.href = "login.html"; }
+if (!customer) { alert("Please login first!"); window.location.href = "Stores Login.html"; }
 
 // ── THEME ENGINE INIT ─────────────────────────────────────
 if (typeof DelightTheme !== 'undefined') {
@@ -429,10 +432,8 @@ if (typeof DelightTheme !== 'undefined') {
 
 // Apply gradient to themed elements after theme loads
 function applyHeaderTheme() {
-  const cacheKey = "dlTheme_" + ADMIN_PHONE;
-  const themeId  = localStorage.getItem(cacheKey) || "default";
   if (typeof DelightTheme !== 'undefined') {
-    const t = DelightTheme.getTheme(themeId);
+    const t = DelightTheme.getCurrent();   // engine ki asal (taza) theme
     if (t) {
       const hdr = document.querySelector('.hdr');
       if (hdr) hdr.style.background = t.headerGrad;
@@ -450,6 +451,7 @@ function applyHeaderTheme() {
   }
 }
 document.addEventListener('DOMContentLoaded', applyHeaderTheme);
+document.addEventListener('delight-theme', applyHeaderTheme);
 setTimeout(applyHeaderTheme, 100);
 
 // ── CART ──
@@ -538,7 +540,7 @@ function render() {
       ${cart.map((item, idx) => `
         <div class="cart-item" data-idx="${idx}">
           <button class="remove-btn" onclick="removeItem(${idx})" title="Remove">✕</button>
-          <img src="${item.image}" onerror="this.src='https://placehold.co/72x72/888/fff?text=IMG'" alt="">
+          <img src="${item.image}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/888/fff?text=IMG'" alt="">
           <div class="cart-item-info">
             <div class="cart-item-title">${item.title}</div>
             ${item.selectedColor ? `<div class="cart-item-meta">🎨 ${item.selectedColor}</div>` : ""}

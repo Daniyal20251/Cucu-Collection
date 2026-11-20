@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Terms & Conditions - cucucollection.shop</title>
   <!-- ── DELIGHT THEME ENGINE ── -->
   <script src="themeEngine.js"></script>
@@ -10,7 +10,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Cucu">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <script src="pwa.js" defer></script>
 
   <style>
@@ -85,8 +85,11 @@ header h4 {
     src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
   </noscript>
   <!-- ===== END META PIXEL ===== -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#e9ebee">
+  <link rel="stylesheet" href="responsive.css">
 </head>
-<body>
+<body data-page="legal">
   <header>
   <div class="back-btn" onclick="history.back()">
     <img src="Store icons/Back.png" alt="Back">

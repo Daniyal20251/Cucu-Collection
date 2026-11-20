@@ -320,7 +320,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     dotsContainer.innerHTML = "";
     if (mediaList.length === 0) {
       const img = document.createElement("img");
-      img.src = "noimg.png";
+      img.src = "Store icons/not-found.png";
       img.classList.add("slide", "active");
       img.alt = "No image available";
       slider.appendChild(img);
@@ -462,7 +462,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
     let sellerName = "Unknown Seller";
-    let sellerLogo = "lo.png";
+    let sellerLogo = "Store icons/Cucu.png";
     try {
       const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/all-stores");
       const stores = await res.json();
@@ -499,7 +499,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     supplierContainer.innerHTML = `
       <div class="supplier-info">
         <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
-          <img src="${sellerLogo}" alt="${sellerName}" class="supplier-logo" onerror="this.src='lo.png'">
+          <img src="${sellerLogo}" alt="${sellerName}" class="supplier-logo" onerror="this.onerror=null;this.src='Store icons/Cucu.png'">
           <span class="supplier-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${sellerName}</span>
         </div>
         <button id="viewSupplierBtn" class="view-supplier-btn">View Shop</button>
@@ -670,7 +670,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const modal = document.getElementById("reviewModalDaraz");
     const productImg = document.getElementById("reviewProductImg");
     const productTitle = document.getElementById("reviewProductTitle");
-    if (productImg) productImg.src = item.images?.[0] || item.image || "noimg.png";
+    if (productImg) productImg.src = item.images?.[0] || item.image || "Store icons/not-found.png";
     if (productTitle) productTitle.textContent = item.title || "Product";
     reviewRating = 0;
     reviewPhotoFiles = [];
@@ -1122,12 +1122,12 @@ window.openDelightChat = function() {
       const basePrice = parseInt(i.price?.toString().replace(/[^\d]/g, "")) || 0;
       const discountAmount = parseInt(i.discount?.toString().replace(/[^\d]/g, "")) || 0;
       const finalPrice = basePrice - discountAmount;
-      const imgSrc = i.images?.[0] || i.image || "noimg.png";
+      const imgSrc = i.images?.[0] || i.image || "Store icons/not-found.png";
 
       const card = document.createElement("div");
       card.className = "item-card";
       card.innerHTML = `
-        <img src="${imgSrc}" alt="${i.title}" loading="lazy" onerror="this.src='noimg.png'">
+        <img src="${imgSrc}" alt="${i.title}" loading="lazy" onerror="this.onerror=null;this.src='Store icons/not-found.png'">
         <h3>${i.title}</h3>
         <p class="price-wrapper">
           <span class="new-price">
@@ -1215,14 +1215,14 @@ window.openDelightChat = function() {
     if (phoneToSend) {
       window.location.href = `Stores Orders.html?phone=${encodeURIComponent(phoneToSend)}`;
     } else {
-      window.location.href = "order.html";
+      window.location.href = "Stores Orders.html";
     }
   };
 
   // ✅ FIXED: Fly to cart animation
   function animateFlyToCart(e) {
     try {
-      const imgSrc = item.images ? item.images[0] : item.image || "noimg.png";
+      const imgSrc = item.images ? item.images[0] : item.image || "Store icons/not-found.png";
       const flyImg = document.createElement("img");
       flyImg.src = imgSrc;
       flyImg.className = "fly-image";

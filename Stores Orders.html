@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2c2c2c">
 <title>Place Order – Cucu Collection</title>
 <script src="themeEngine.js"></script>
@@ -10,7 +10,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Cucu">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <script src="pwa.js" defer></script>
 
 <style>
@@ -359,8 +359,10 @@ body {
     src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
   </noscript>
   <!-- ===== END META PIXEL ===== -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="responsive.css">
 </head>
-<body>
+<body data-page="order">
 
 <div class="hdr">
   <h1>🛒 Place Your Order</h1>
@@ -391,10 +393,8 @@ if (typeof DelightTheme !== 'undefined') {
 }
 
 function applyHeaderTheme() {
-  const cacheKey = "dlTheme_" + ADMIN_PHONE;
-  const themeId  = localStorage.getItem(cacheKey) || "default";
   if (typeof DelightTheme !== 'undefined') {
-    const t = DelightTheme.getTheme(themeId);
+    const t = DelightTheme.getCurrent();   // engine ki asal (taza) theme
     if (t) {
       const hdr = document.querySelector('.hdr');
       if (hdr) hdr.style.background = t.headerGrad;
@@ -412,6 +412,7 @@ function applyHeaderTheme() {
   }
 }
 document.addEventListener('DOMContentLoaded', applyHeaderTheme);
+document.addEventListener('delight-theme', applyHeaderTheme);
 setTimeout(applyHeaderTheme, 100);
 
 const orderProduct = JSON.parse(localStorage.getItem("orderProduct") || "null");
@@ -478,7 +479,7 @@ function render() {
   <div class="prod-card">
     <div class="prod-card-head"><span>📦 Order Summary</span></div>
     <div class="prod-card-body">
-      <img src="${orderProduct.image}" onerror="this.src='https://placehold.co/86x86/ffeedd/e65100?text=IMG'" alt="">
+      <img src="${orderProduct.image}" onerror="this.onerror=null;this.src='https://placehold.co/86x86/ffeedd/e65100?text=IMG'" alt="">
       <div class="prod-info">
         <div class="prod-title">${orderProduct.title}</div>
         ${orderProduct.selectedColor ? `<div class="prod-meta">🎨 Color: ${orderProduct.selectedColor}</div>` : ""}

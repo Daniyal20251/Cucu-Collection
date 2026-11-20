@@ -2,11 +2,11 @@
    - HTML/JS/CSS: pehle network (hamesha fresh code), offline ho to cache
    - Images: cache-first
    - Cross-origin (API, fonts, CDN) ko haath nahi lagata */
-const VERSION = 'cucu-v2';
+const VERSION = 'cucu-v3';
 const CACHE = VERSION + '-assets';
 const PRECACHE = [
   './', './offline.html', './Store.css', './Store.js', './themeEngine.js',
-  './pwa.js', './Cucu.png', './icon-192.png', './icon-512.png'
+  './pwa.js', './responsive.css', './Cucu.png', './icon-192.png', './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {

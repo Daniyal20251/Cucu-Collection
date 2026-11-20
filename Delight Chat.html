@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Theme Engine: CSS se pehle load hona zaroori hai (no flash) -->
   <script src="themeEngine.js?v=5"></script>
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Cucu">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <script src="pwa.js" defer></script>
   <link rel="stylesheet" href="Delight Chat.css?v=5">
   <title>Cucu-Collection Chat</title>
@@ -36,14 +36,17 @@
     src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
   </noscript>
   <!-- ===== END META PIXEL ===== -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#e9ebee">
+  <link rel="stylesheet" href="responsive.css">
 </head>
-<body>
+<body data-page="chat">
 
   <!-- Header -->
   <div class="chat-header">
     <div class="chat-header-left">
       <button class="chat-back-btn" onclick="goBack()">&#10094;</button>
-      <img src="lo.png" id="chatSellerLogo" class="chat-seller-logo" onerror="this.src='lo.png'">
+      <img src="Store icons/Cucu.png" id="chatSellerLogo" class="chat-seller-logo" onerror="this.onerror=null;this.src='Store icons/Cucu.png'">
       <div class="chat-seller-text">
         <span class="chat-seller-name" id="chatSellerName">Loading...</span>
         <span class="chat-seller-status" id="chatSellerStatus">Online</span>
@@ -58,7 +61,7 @@
 
   <!-- Product Info Bar -->
   <div class="chat-product-bar" id="chatProductBar" style="display:none;">
-    <img src="" id="chatProductImg" class="chat-product-img" onerror="this.src='noimg.png'">
+    <img src="" id="chatProductImg" class="chat-product-img" onerror="this.onerror=null;this.src='Store icons/not-found.png'">
     <div class="chat-product-details">
       <span class="chat-product-title" id="chatProductTitle"></span>
       <span class="chat-product-price" id="chatProductPrice"></span>

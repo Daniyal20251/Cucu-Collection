@@ -950,7 +950,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ─── INIT ──────────────────────────────────────────────────────
-  if (sellerNameEl) { const n = STORE_CONFIG.name; sellerNameEl.innerHTML = `<span class="store-marquee">${n}&nbsp;&nbsp;•&nbsp;&nbsp;${n}&nbsp;&nbsp;•&nbsp;&nbsp;</span>`; }
+  if (sellerNameEl) { const n = STORE_CONFIG.name; sellerNameEl.innerHTML = `<span class="store-marquee"><span class="mq-a">${n}<span class="mq-dot">&nbsp;&nbsp;•&nbsp;&nbsp;</span></span><span class="mq-b">${n}&nbsp;&nbsp;•&nbsp;&nbsp;</span></span>`; }
   if (sellerLogoEl) sellerLogoEl.src = STORE_CONFIG.logo;
 
   const savedScroll = sessionStorage.getItem("cucu_scroll");

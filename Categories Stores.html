@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="themeEngine.js"></script>
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Cucu">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <script src="pwa.js" defer></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -36,8 +36,11 @@
     src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
   </noscript>
   <!-- ===== END META PIXEL ===== -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#e9ebee">
+  <link rel="stylesheet" href="responsive.css">
 </head>
-<body>
+<body data-page="categories">
 
 <!-- HEADER -->
 <header class="main-header">
@@ -256,7 +259,7 @@ function showSubcategories(catName) {
     <div class="sub-grid">
       ${subs.map((sub, i) => `
         <div class="sub-item" data-value="${catName} - ${sub}" style="animation-delay:${i * 40}ms">
-          <img src="${subcategoryIcons[sub] || 'Category icons/default.png'}" alt="${sub}" onerror="this.src='Category icons/other.png'">
+          <img src="${subcategoryIcons[sub] || 'Category icons/default.png'}" alt="${sub}" onerror="this.onerror=null;this.src='Category icons/other.png'">
           <span>${sub}</span>
         </div>
       `).join("")}
