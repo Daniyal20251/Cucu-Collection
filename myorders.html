@@ -212,7 +212,7 @@ async function loadOrders(){
 
   try {
     const phone = encodeURIComponent(customer.phone);
-    const res = await fetch(`https://delight-backend--araindaniyalo2.replit.app/customer-orders/${phone}`);
+    const res = await fetch(`https://delight-lilac.vercel.app/customer-orders/${phone}`);
     if (!res.ok) throw new Error("Failed to fetch orders");
     let orders = await res.json();
     if (!orders || orders.length === 0) {
@@ -240,7 +240,7 @@ async function loadOrders(){
           e.stopPropagation();
           if (!confirm("Are you sure you want to cancel this order?")) return;
           try {
-            await fetch(`https://delight-backend--araindaniyalo2.replit.app/cancel-order/${order.id}`, { method: 'PUT' });
+            await fetch(`https://delight-lilac.vercel.app/cancel-order/${order.id}`, { method: 'PUT' });
             statusBadge.innerText = "Cancelled";
             statusBadge.className = `status-badge ${statusClassName('Cancelled')}`;
             cancelBtn.remove();

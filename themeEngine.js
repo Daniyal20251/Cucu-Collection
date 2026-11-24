@@ -23,7 +23,7 @@
 
 const DelightTheme = (() => {
 
-  const API = "https://delight-backend--araindaniyalo2.replit.app";
+  const API = "https://delight-lilac.vercel.app";
 
   // ── Seller phone: Store.js se milta hai, ya localStorage se ──
   let SELLER_PHONE = null;

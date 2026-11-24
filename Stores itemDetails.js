@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔥 Increment View Count Function (also for direct link opens)
   async function incrementView(productId) {
     try {
-      await fetch(`https://delight-backend--araindaniyalo2.replit.app/products/${productId}/view`, { method: "POST" });
+      await fetch(`https://delight-lilac.vercel.app/products/${productId}/view`, { method: "POST" });
     } catch (err) {
       console.error("View count error:", err);
     }
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (productFromUrl) {
     // 🔥 URL se product name mila → Backend se fetch karo
     try {
-      const res = await fetch(`https://delight-backend--araindaniyalo2.replit.app/products`);
+      const res = await fetch(`https://delight-lilac.vercel.app/products`);
       if (res.ok) {
         const allProducts = await res.json();
         // Product id ya name se match karo (emoji / case / spaces ignore)
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let allReviews = [];
   let displayedReviews = 0;
   const REVIEWS_PER_PAGE = 3;
-  const API_BASE = "https://delight-backend--araindaniyalo2.replit.app";
+  const API_BASE = "https://delight-lilac.vercel.app";
 
   // Elements
   const slider = document.getElementById("imageSlider");
@@ -464,7 +464,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let sellerName = "Unknown Seller";
     let sellerLogo = "Store icons/Cucu.png";
     try {
-      const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/all-stores");
+      const res = await fetch("https://delight-lilac.vercel.app/all-stores");
       const stores = await res.json();
 
       const norm = p => p?.toString().replace(/\D/g, "");
@@ -1072,7 +1072,7 @@ window.openDelightChat = function() {
     let backendItems = [];
     let localItems = window.items || [];
     try {
-      const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/products");
+      const res = await fetch("https://delight-lilac.vercel.app/products");
       if (res.ok) backendItems = await res.json();
     } catch (err) {
       console.warn("Backend products not loaded:", err);

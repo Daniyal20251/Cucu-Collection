@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Increment View Count
   async function incrementView(productId) {
     try {
-      await fetch(`https://delight-backend--araindaniyalo2.replit.app/products/${productId}/view`, { method: "POST" });
+      await fetch(`https://delight-lilac.vercel.app/products/${productId}/view`, { method: "POST" });
     } catch (err) {
       console.error("View count error:", err);
     }
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Fetch products
   try {
-    const res = await fetch("https://delight-backend--araindaniyalo2.replit.app/products");
+    const res = await fetch("https://delight-lilac.vercel.app/products");
     const data = await res.json();
 
     console.log("Total products:", data.length);

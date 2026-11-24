@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let swiperInstance = null;
 
   // ─── Config ────────────────────────────────────────────────────
-  const API_BASE = "https://delight-backend--araindaniyalo2.replit.app";
+  const API_BASE = "https://delight-lilac.vercel.app";
 
   const STORE_CONFIG = {
     phone: "03352166725",

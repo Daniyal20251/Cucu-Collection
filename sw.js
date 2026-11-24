@@ -2,7 +2,7 @@
    - HTML/JS/CSS: pehle network (hamesha fresh code), offline ho to cache
    - Images: cache-first
    - Cross-origin (API, fonts, CDN) ko haath nahi lagata */
-const VERSION = 'cucu-v3';
+const VERSION = 'cucu-v4';
 const CACHE = VERSION + '-assets';
 const PRECACHE = [
   './', './offline.html', './Store.css', './Store.js', './themeEngine.js',
